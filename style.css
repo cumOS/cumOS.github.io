@@ -173,6 +173,7 @@ h1.glitch { animation: jitter 0.38s steps(1) both; }
 .fragments h2 { font-weight: 300; font-size: clamp(20px, 3vw, 26px); letter-spacing: 0.06em; }
 .fragments p { color: var(--dim); max-width: 56ch; transition: color 0.4s ease; }
 .fragments li:hover p { color: var(--fg); }
+.fragments p code { font-family: var(--mono); font-size: 0.88em; color: var(--fg); }
 
 .end { text-align: left; padding-bottom: clamp(96px, 18vh, 180px); }
 .small { margin-top: 14px; color: var(--dim); }
@@ -207,3 +208,5 @@ footer {
   .glow { transition: none; }
   .tears { display: none; }
 }
+
+.links { display: flex; flex-wrap: wrap; gap: 14px 32px; }
