@@ -426,9 +426,11 @@ Nothing is hidden here; this is only how the pages are reached and how they look
 
 | Key | Values |
 |---|---|
-| `nav` | `pivot` (the big titles, the default), `tabs` (a row of titles at the top with a line under the open one), `bar` (the same titles as a bar at the bottom, in reach of the thumb, the open one on a pill; it goes on behind the navigation bar), `dock` (a floating rounded bar with one icon per page, like the dock of macOS or GNOME: the open icon is bigger and lifted, its name is above the dock; it shows 5 big icons at a time and slides to keep the open page in the middle, see `dock` below), `none` (pages of the main screen are opened one by one as in stock Settings; the KamiOS settings need a way between their pages, so they use the pivot) |
+| `nav` | `pivot` (the big titles, the default), `tabs` (a row of titles at the top with a line under the open one), `bar` (the same titles as a bar of glass at the bottom, in reach of the thumb, the open one on a pill; it goes on behind the navigation bar), `dock` (a floating bar of glass with one icon per page, like the dock of macOS or GNOME: the open icon is bigger and lifted, its name is above the dock; it shows 5 big icons at a time and slides to keep the open page in the middle, see `dock` below), `none` (pages of the main screen are opened one by one as in stock Settings; the KamiOS settings need a way between their pages, so they use the pivot) |
 | `swipe` | `false` stops swiping between the pages (the titles still work) |
-| `transition` | `fade` (default), `slide`, `none` |
+| `transition` | how a page replaces the one before: `fade` (default), `slide`, `none`, `zoom` (the pages fly in and out like a jump through space), `cube` (the pages are the sides of a cube), `depth` (the new page slides over the old one, which sinks back), `flip` (the page turns over like a card) |
+| `blur` | for `nav: bar` and `nav: dock`: how much the glass of the bar blurs what is behind it, 0 to 60 dp (default 24, 0 leaves the glass flat). The pages run under the bar and are blurred in it, and so is the page behind Settings, also when it moves |
+| `glass` | for `nav: bar` and `nav: dock`: the look of the glass of the bar, an object with `blur` (0 to 60 dp, the same as `blur` above), `shine` (light on the top edge, default 33), `gloss` (a bright diagonal band like a reflection, default 0), `frost` (a milky veil with a fine grain, default 0), `rim` (the bright edge, default 70) and `shade` (shade at the bottom, default 19); the last five are 0 to 100. Make the bar colour in `colors.bar` see-through (for example `#5A150E3A`) so that the glass shows what is behind it |
 | `title` | `case` (`normal`, `lower`, `upper`), `size` (14 to 64 sp), `app` (`false` hides the small line with the name of Settings above the titles), `app_color` (its colour) |
 | `colors` | `selected`, `unselected`, `indicator` (the line or the pill), `bar` (the background of the tabs, the bar or the dock) |
 | `dock` | for `nav: dock`: `items` (3 to 9, how many icons are in view, default 5) and `size` (32 to 72 dp, default 56). Fewer and bigger, or more and smaller; the icons shrink if the screen is too narrow |
@@ -862,6 +864,60 @@ stock look returns)
 | `color/kami_page_bg`, `drawable/kami_page_background` | | The page behind, see "Moving pictures" |
 
 With these a flat, square Settings is a module, not a build.
+
+**Shade clock** (`com.android.systemui`): the clock and the date above the quick settings. A size of 0 and a fully transparent
+colour keep the look of the theme.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `dimen/kami_shade_clock_size`, `dimen/kami_shade_date_size` | dimension | 0sp | Text size of the clock and of the date |
+| `color/kami_shade_clock_color`, `color/kami_shade_date_color` | color | transparent | Their colours |
+| `dimen/kami_shade_clock_offset_x`, `..._offset_y`, `dimen/kami_shade_date_offset_x`, `..._offset_y` | dimension | 0dp | Move them; negative is left or up |
+| `string/kami_shade_clock_digits` | string | empty | One entry for every digit from the left (hour tens, hour ones, minute tens, minute ones), separated by commas; an entry is `scale/colour/lift` and any part may be empty: `1.3/#FF5CC8/-4,1/#FFFFFF/0,,` makes the first digit bigger, pink and 4dp lower and the second white |
+| `dimen/kami_shade_clock_expanded_scale` | float | 0 | How much bigger the clock gets when the quick settings are open (1 to 4). 0 keeps the size the clock has in the stock theme, whatever size you gave it, so a big clock does not run into the date |
+
+**Unlock and screen on** (`com.android.systemui`): how the lock screen goes away and comes back.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `integer/kami_unlock_duration` | int | 0 | Length of the unlock animation in milliseconds; 0 keeps the stock 300 |
+| `dimen/kami_unlock_start_scale` | float | 0.95 | How big the screen behind the lock screen is when unlocking starts, 1 is full size: 1.3 starts big and shrinks into place, 0.5 grows from half |
+| `dimen/kami_unlock_translation_y`, `dimen/kami_unlock_translation_x` | float | 0.05, 0 | Where it starts, as a part of the screen height or width (negative is up or left) |
+| `dimen/kami_unlock_rotation` | float | 0 | Degrees it is turned at the start; it turns back to 0 |
+| `dimen/kami_unlock_pivot_y` | float | 0.66 | The height it grows and turns around, 0 top to 1 bottom |
+| `integer/kami_wake_style` | int | 0 | How the lock screen comes in when the screen turns on: 0 stock, 1 starts big and settles, 2 starts small and grows, 3 rises from below, 4 falls in with a bounce, 5 turns in, 6 flips like a card |
+| `integer/kami_wake_duration` | int | 350 | Length of it in milliseconds (80 to 2000) |
+
+**Screen off effects** are not a knob but a setting: `system/screen_off_animation` takes 0 (fade), 1 (CRT), 2 (scale) and, with the
+KamiOS display service, 10 vortex, 11 dissolve into blocks, 12 ripple, 13 blinds, 14 glitch, 15 warp. The effects with a shader
+of their own (10 to 15) need a build that has them; the other builds treat an unknown value as the fade.
+
+**Bottom sheets and the expanded volume panel** (`com.android.systemui`): tapping the settings icon under the volume bar opens a
+sheet with all the sliders; the same knobs dress every bottom sheet of the system UI. The sliders of that sheet take the knobs of the
+volume bar (`color/kami_volume_slider_active`, `..._inactive`, `drawable/kami_volume_slider_image`,
+`integer/kami_volume_slider_thickness`, `integer/kami_volume_slider_corner`).
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `color/kami_sheet_tint` | color | transparent | Colour of the sheet; a see-through colour lets the blur behind it show |
+| `drawable/kami_sheet_image` | drawable | none | A picture behind the content of the sheet (it may move) |
+| `integer/kami_sheet_corner` | int | -1 | Rounding of the top corners in dp; -1 keeps the theme |
+| `integer/kami_sheet_blur` | int | -1 | Blur behind the sheet in dp, 0 is none, -1 keeps the theme |
+| `integer/kami_sheet_frost`, `..._shine`, `..._gloss`, `..._rim` | int | 0 | Glass, each 0 to 100: a milky veil, light on the top edge, a bright diagonal band like a reflection, a bright edge round the sheet |
+
+**Settings switches and sliders** (`com.android.settings`): the switches and sliders of the Settings pages, with the KamiOS style on.
+A fully transparent colour and a transparent picture keep the theme.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `color/kami_switch_track_on`, `..._track_off`, `..._thumb_on`, `..._thumb_off` | color | transparent | Track and knob of a switch that is on and off |
+| `drawable/kami_switch_track_image` | drawable | none | A picture for the track of a switch that is on (it may move) |
+| `drawable/kami_switch_icon_on`, `..._icon_off` | drawable | none | A picture in the knob in place of the check mark and the cross (about 16dp, it may move) |
+| `bool/kami_switch_icons_hidden` | bool | false | `true` removes the check mark and the cross |
+| `integer/kami_switch_toggle_animation` | int | 0 | How a switch moves when you turn it: 0 not, 1 pop, 2 spin, 3 jelly, 4 drop with a bounce |
+| `drawable/kami_switch_sheet`, `integer/kami_switch_sheet_frames` | drawable, int | none, 0 | The whole switch, track and knob together, as a strip of frames side by side from off (left) to on (right), 2 to 60 frames, up to 2560 px wide, as high as the switch (96 px for 32dp at 3 times). The switch plays it forward when it is turned on and backward when it is turned off and cross-fades between the frames, so a moon can turn into a sun |
+| `color/kami_slider_active`, `..._inactive` | color | transparent | The filled and the empty part of the sliders (the round new sliders take only these) |
+| `drawable/kami_slider_image` | drawable | none | A picture for the filled part of the bar-shaped sliders (it may move) |
 
 **Not knobs yet.** These were tried and had no effect, so they are not in the list: the number of quick settings columns and
 rows as resources (use the `settings` keys above), tile height and icon size, the gap between tiles, status bar clock and icon
