@@ -23,16 +23,17 @@ written from the working system. Where something has not been looked at on a rea
 9. [Emoji](#emoji)
 10. [Sounds](#sounds)
 11. [Boot and shutdown animation](#boot-and-shutdown-animation)
-12. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
-13. [Settings: layout, blur, speed](#settings-layout-blur-speed)
-14. [Moving pictures](#moving-pictures)
-15. [Knob reference](#knob-reference)
-16. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
-17. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
-18. [A complete module](#a-complete-module)
-19. [The module store](#the-module-store)
-20. [Safety and recovery](#safety-and-recovery)
-21. [Limits and what does not work](#limits-and-what-does-not-work)
+12. [Settings layout: how Settings looks and moves](#settings-layout-how-settings-looks-and-moves)
+13. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
+14. [Settings: layout, blur, speed](#settings-layout-blur-speed)
+15. [Moving pictures](#moving-pictures)
+16. [Knob reference](#knob-reference)
+17. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
+18. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
+19. [A complete module](#a-complete-module)
+20. [The module store](#the-module-store)
+21. [Safety and recovery](#safety-and-recovery)
+22. [Limits and what does not work](#limits-and-what-does-not-work)
 
 ## What a module can do
 
@@ -59,6 +60,7 @@ sandbox with no files and no network.
 | The emoji of the whole system | `emoji` |
 | System sounds: ringtone, notification, alarm, touch and keyboard clicks, lock screen, charging, low battery, dock, screenshot | `sounds` |
 | The animation while the phone starts, and while it shuts down | `bootanimation`, `shutdownanimation` |
+| The look of Settings itself: tiles of the main screen, tabs or a bar for the sub pages, backgrounds | `settings_layout` |
 | Wallpaper and lock screen | `wallpaper` |
 | Material You accent colour and style | `accent`, `accent_style` |
 | Home app | `home_app` |
@@ -360,6 +362,82 @@ the **Android boot animation format** that custom ROMs have always used, so exis
 
 `examples/bootanimation-example.zip` ("Orbit", three dots on a ring, built by `examples/make-bootanimation-example.py`) sets
 both and is a good starting point.
+
+**Preview.** Open the module in the Theme Engine: a module with a boot or shutdown animation has a page with a "Preview" row for each.
+It plays the animation full screen on black at its real size, the way the boot animation draws it, until you tap or press back.
+Pictures are decoded while it plays, so a very big animation can look slower there than on the real start.
+
+## Settings layout: how Settings looks and moves
+
+`settings_layout` changes the main screen of Settings and the way its sub pages are reached. It is only data: it arranges and
+paints what is already there, it cannot add pages or run anything. Give `main`, `pages`, or both. The module has to be on, and
+the last module that has a `settings_layout` wins. Open Settings again to see it. Anything the layout leaves out stays as it is,
+and a layout that is wrong is left out as a whole (the import says why).
+
+```json
+"settings_layout": {
+  "main": {
+    "hero": false,
+    "columns": 2,
+    "tiles": [
+      { "page": "network", "color": "#0078D7", "text_color": "#FFFFFF" },
+      { "page": "themes", "size": "full" },
+      { "page": "storage", "hide": true }
+    ]
+  },
+  "pages": {
+    "nav": "bar",
+    "transition": "fade",
+    "title": { "case": "normal", "size": 14 },
+    "colors": { "selected": "#FFFFFF", "unselected": "#9AA0A6", "indicator": "#33FFFFFF", "bar": "#161B22" },
+    "background": { "gradient": ["#0F2027", "#2C5364"], "angle": 270, "dim": 0.2 }
+  }
+}
+```
+
+### main: the first screen
+
+| Key | Meaning |
+|---|---|
+| `hero` | `false` takes the card with the name of the system away |
+| `columns` | 1, 2 or 3 tiles in a row (the tiles that have no `size` share the row) |
+| `tiles` | a list. The tiles named here come first, in this order; the others follow in the usual order |
+| `text` | the texts of the tiles: `title_size` (10 to 28 sp), `title_lines` (1 to 3), `summary_size` (9 to 20 sp), `summary_lines` (0 to 3; 0 shows no summary line). With 3 tiles in a row the titles are 14 sp unless you say otherwise |
+
+A tile has `page` and any of: `size` (`third`, `half` or `full` of the width; a tile with a size starts a row of its own),
+`color` and `text_color` (`#RRGGBB` or `#AARRGGBB`; the symbol takes the text colour), `hide` (`true` takes the tile off the screen).
+
+Pages that are tiles: `network`, `connected_devices`, `sound`, `display`, `themes` (the Theme Engine), `notifications`, `modes`,
+`wallpaper`, `kamios` (the KamiOS settings), `battery`, `storage`, `apps`, `system`.
+
+The pages that Android lists under them are tiles of the same grid, so the whole main screen looks uniform: `about_device`,
+`safety_center`, `security`, `privacy`, `location`, `accounts` (passwords and passkeys), `accounts_and_backup`, `supervision`,
+`emergency`, `accessibility`, `support`. They follow the others in the usual order, and `size`, `color`, `text_color` and `hide`
+work on them like on any tile. Which of them exist depends on the phone: where Android has Safety Center, the tile called "Security
+and privacy" is `safety_center` and `security` is not on the screen. Colouring both is harmless.
+
+**`themes` and `kamios` cannot be hidden**: they are the way
+back to the modules, so a layout can never lock you out. Corner radius, gap and tile height are `targets` as before
+(`dimen/kami_bento_radius`, `kami_bento_gap`, `kami_bento_tile_height`).
+
+### pages: the sub pages
+
+Nothing is hidden here; this is only how the pages are reached and how they look.
+
+| Key | Values |
+|---|---|
+| `nav` | `pivot` (the big titles, the default), `tabs` (a row of titles at the top with a line under the open one), `bar` (the same titles as a bar at the bottom, in reach of the thumb, the open one on a pill; it goes on behind the navigation bar), `dock` (a floating rounded bar with one icon per page, like the dock of macOS or GNOME: the open icon is bigger and lifted, its name is above the dock; it shows 5 big icons at a time and slides to keep the open page in the middle, see `dock` below), `none` (pages of the main screen are opened one by one as in stock Settings; the KamiOS settings need a way between their pages, so they use the pivot) |
+| `swipe` | `false` stops swiping between the pages (the titles still work) |
+| `transition` | `fade` (default), `slide`, `none` |
+| `title` | `case` (`normal`, `lower`, `upper`), `size` (14 to 64 sp), `app` (`false` hides the small line with the name of Settings above the titles), `app_color` (its colour) |
+| `colors` | `selected`, `unselected`, `indicator` (the line or the pill), `bar` (the background of the tabs, the bar or the dock) |
+| `dock` | for `nav: dock`: `items` (3 to 9, how many icons are in view, default 5) and `size` (32 to 72 dp, default 56). Fewer and bigger, or more and smaller; the icons shrink if the screen is too narrow |
+| `background` | behind all the pages of Settings: `color`, or `gradient` (2 or 3 colours) with `angle` (0 left to right, 90 bottom to top, 180, 270 top to bottom), or `image` (a path in the zip, a GIF or animated WebP moves), and `dim` (0 to 0.8) to darken it |
+
+`examples/metro-tiles.zip` (flat coloured tiles in two columns, lowercase tabs), `examples/plain-list.zip` (one column of wide rows,
+a bar at the bottom, a dark gradient), `examples/dock.zip` (three tiles in a row, a floating dock) and `examples/stock-pages.zip`
+(`nav: none`: every page opens on its own, as in stock Settings, with a flat dark background), built by
+`examples/make-layout-examples.py`, are the ones to start from.
 
 ## Wallpaper, home app, accent, launcher icons
 
