@@ -22,16 +22,17 @@ written from the working system. Where something has not been looked at on a rea
 8. [Fonts](#fonts)
 9. [Emoji](#emoji)
 10. [Sounds](#sounds)
-11. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
-12. [Settings: layout, blur, speed](#settings-layout-blur-speed)
-13. [Moving pictures](#moving-pictures)
-14. [Knob reference](#knob-reference)
-15. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
-16. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
-17. [A complete module](#a-complete-module)
-18. [The module store](#the-module-store)
-19. [Safety and recovery](#safety-and-recovery)
-20. [Limits and what does not work](#limits-and-what-does-not-work)
+11. [Boot and shutdown animation](#boot-and-shutdown-animation)
+12. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
+13. [Settings: layout, blur, speed](#settings-layout-blur-speed)
+14. [Moving pictures](#moving-pictures)
+15. [Knob reference](#knob-reference)
+16. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
+17. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
+18. [A complete module](#a-complete-module)
+19. [The module store](#the-module-store)
+20. [Safety and recovery](#safety-and-recovery)
+21. [Limits and what does not work](#limits-and-what-does-not-work)
 
 ## What a module can do
 
@@ -43,7 +44,7 @@ A module works in two ways, and one module can use both:
 2. **Settings.** Options that already exist on the phone (quick settings layout, blur, animation speed, the Kami Shell script,
    freeform windows, ...) that the module writes while it is on (`settings`). The old values come back when it is switched off.
 
-On top of that a module can carry fonts, system sounds, wallpapers, an accent colour, launcher icons, a different home app, and a script for
+On top of that a module can carry fonts, system sounds, a boot animation, wallpapers, an accent colour, launcher icons, a different home app, and a script for
 the Kami Shell home screen.
 
 A module cannot run code of its own. The only code it can bring is a Lua script for Kami Shell (see below), which runs in a
@@ -57,6 +58,7 @@ sandbox with no files and no network.
 | System font, also variable fonts | `fonts` |
 | The emoji of the whole system | `emoji` |
 | System sounds: ringtone, notification, alarm, touch and keyboard clicks, lock screen, charging, low battery, dock, screenshot | `sounds` |
+| The animation while the phone starts, and while it shuts down | `bootanimation`, `shutdownanimation` |
 | Wallpaper and lock screen | `wallpaper` |
 | Material You accent colour and style | `accent`, `accent_style` |
 | Home app | `home_app` |
@@ -101,13 +103,13 @@ A small module:
 | `id` | `a-z`, `0-9`, `-` and `_`. Importing a file with the id of a module you already have replaces it. The ids of the modules that ship with the ROM cannot be used. |
 | `name`, `author`, `description` | shown in the list |
 | `module_version` | optional, like `1.2` or `2.0-beta`. Shown in the lists, and compared with the version in the module store to offer an update. `version` above is the version of the file format, not of your module. |
-| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `emoji`, `fonts`, `wallpaper` or `icons`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
+| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `bootanimation`, `emoji`, `fonts`, `wallpaper` or `icons`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only a boot animation, emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds, boot animation) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
 | `group` | optional. Modules of the same group switch each other off. Use it for separate modules that exclude each other; for the choices inside one module use `options`. |
 | `restart` | optional, `true`. System UI is started again when the module is switched, for resources that are only read at start. |
 | `targets` | knob resources, per package, see below |
 | `options` | choices for the user |
 | `overlays` | resources of any app |
-| `fonts`, `wallpaper`, `home_app`, `accent`, `accent_style`, `launcher_icons` | see the sections below |
+| `bootanimation`, `shutdownanimation`, `fonts`, `wallpaper`, `home_app`, `accent`, `accent_style`, `launcher_icons` | see the sections below |
 | `settings` | options of the phone to write while the module is on |
 
 **Values** by kind:
@@ -325,6 +327,39 @@ volume beep and sounds that an app brings along. Apps keep their own notificatio
 
 `examples/sounds-example.zip`
 ("Glass sounds", built by `examples/make-sounds-example.py` from synthesised bells) sets every slot and is a good starting point.
+
+## Boot and shutdown animation
+
+A module can replace the animation that plays while the phone starts, and the one that plays when it shuts down. Both are
+the **Android boot animation format** that custom ROMs have always used, so existing `bootanimation.zip` files work as they are.
+
+```json
+"bootanimation": "bootanimation.zip",
+"shutdownanimation": "shutdownanimation.zip"
+```
+
+- Each one is the path of a zip inside the module's zip. Give both, either, or only one (the other stays as the ROM has it).
+  The file name has to contain `anim`. Each zip may be up to 64 MB.
+- **A plain `bootanimation.zip` needs no module at all.** Import it in Settings > KamiOS > Darkmoon Theme Engine like a module:
+  the phone makes a module of it, named after the file. Switch it on, and the next start shows it.
+- The animation zip has a `desc.txt` and folders of pictures, as always:
+
+  ```
+  720 720 30          width height fps
+  p 1 0 part0         play part0 once, no pause
+  p 0 0 part1         play part1 in a loop until the phone has started
+  ```
+
+  The pictures (`part0/00000.png` ...) have to be **stored, not compressed** (the system maps them, it does not unpack them):
+  `zip -0 -r bootanimation.zip desc.txt part0 part1`. The phone refuses a zip that is compressed and says so.
+- The animation is drawn at its own size in the middle of the screen, on black (or the colour of the part line). Make it as big
+  as the screen to fill it, or smaller to leave black around it.
+- Switching the module on only copies the zip; nothing restarts. Switching it off, or removing the module, puts the animation
+  of the ROM back. If a zip cannot be played when the phone starts, the ROM's animation plays instead of a black screen.
+- If two modules set a boot animation, the one that was switched on last wins; the same goes for the shutdown animation.
+
+`examples/bootanimation-example.zip` ("Orbit", three dots on a ring, built by `examples/make-bootanimation-example.py`) sets
+both and is a good starting point.
 
 ## Wallpaper, home app, accent, launcher icons
 
