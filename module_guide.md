@@ -20,15 +20,18 @@ written from the working system. Where something has not been looked at on a rea
 6. [Overlays for any app](#overlays-for-any-app)
 7. [Zip modules and pictures](#zip-modules-and-pictures)
 8. [Fonts](#fonts)
-9. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
-10. [Settings: layout, blur, speed](#settings-layout-blur-speed)
-11. [Moving pictures](#moving-pictures)
-12. [Knob reference](#knob-reference)
-13. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
-14. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
-15. [A complete module](#a-complete-module)
-16. [Safety and recovery](#safety-and-recovery)
-17. [Limits and what does not work](#limits-and-what-does-not-work)
+9. [Emoji](#emoji)
+10. [Sounds](#sounds)
+11. [Wallpaper, home app, accent, launcher icons](#wallpaper-home-app-accent-launcher-icons)
+12. [Settings: layout, blur, speed](#settings-layout-blur-speed)
+13. [Moving pictures](#moving-pictures)
+14. [Knob reference](#knob-reference)
+15. [Kami Shell: a home screen in Lua](#kami-shell-a-home-screen-in-lua)
+16. [Windows in tiles: the Tiling WM module](#windows-in-tiles-the-tiling-wm-module)
+17. [A complete module](#a-complete-module)
+18. [The module store](#the-module-store)
+19. [Safety and recovery](#safety-and-recovery)
+20. [Limits and what does not work](#limits-and-what-does-not-work)
 
 ## What a module can do
 
@@ -40,7 +43,7 @@ A module works in two ways, and one module can use both:
 2. **Settings.** Options that already exist on the phone (quick settings layout, blur, animation speed, the Kami Shell script,
    freeform windows, ...) that the module writes while it is on (`settings`). The old values come back when it is switched off.
 
-On top of that a module can carry fonts, wallpapers, an accent colour, launcher icons, a different home app, and a script for
+On top of that a module can carry fonts, system sounds, wallpapers, an accent colour, launcher icons, a different home app, and a script for
 the Kami Shell home screen.
 
 A module cannot run code of its own. The only code it can bring is a Lua script for Kami Shell (see below), which runs in a
@@ -52,6 +55,8 @@ sandbox with no files and no network.
 | Pictures and animations (GIF, animated WebP) on tiles, shade, volume panel, notification cards, sliders, Settings, status bar icons, battery, pill | `targets` with a picture path |
 | Resources of any other app | `overlays` |
 | System font, also variable fonts | `fonts` |
+| The emoji of the whole system | `emoji` |
+| System sounds: ringtone, notification, alarm, touch and keyboard clicks, lock screen, charging, low battery, dock, screenshot | `sounds` |
 | Wallpaper and lock screen | `wallpaper` |
 | Material You accent colour and style | `accent`, `accent_style` |
 | Home app | `home_app` |
@@ -95,6 +100,8 @@ A small module:
 | `version` | always `1` |
 | `id` | `a-z`, `0-9`, `-` and `_`. Importing a file with the id of a module you already have replaces it. The ids of the modules that ship with the ROM cannot be used. |
 | `name`, `author`, `description` | shown in the list |
+| `module_version` | optional, like `1.2` or `2.0-beta`. Shown in the lists, and compared with the version in the module store to offer an update. `version` above is the version of the file format, not of your module. |
+| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `emoji`, `fonts`, `wallpaper` or `icons`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
 | `group` | optional. Modules of the same group switch each other off. Use it for separate modules that exclude each other; for the choices inside one module use `options`. |
 | `restart` | optional, `true`. System UI is started again when the module is switched, for resources that are only read at start. |
 | `targets` | knob resources, per package, see below |
@@ -247,6 +254,78 @@ A zip can change the system font:
 - After the module is switched off nothing uses the files any more. `adb shell cmd font clear` removes all of them.
 - A font whose PostScript name equals the one of an installed font with a newer version is refused.
 
+## Emoji
+
+A zip can replace the emoji of the whole system with another set (iOS style, WhatsApp style, Blobmoji, ...):
+
+```json
+"emoji": "emoji.ttf"
+```
+
+- One `.ttf` in the zip with colour glyphs (bitmaps `CBDT`/`CBLC`, `COLR`, `sbix` or `SVG`) and a `cmap`, like `NotoColorEmoji.ttf`.
+  The file name has to contain `emoji`. It may be up to 64 MB (emoji fonts
+  made of bitmaps are 30 MB and more), the rest of the zip up to 32 MB.
+- The font goes in front of the emoji of the ROM, which stay behind it for what it does not have (new emoji, flags).
+  Switching the module off takes it out again; the stock emoji are back.
+- The system UI restarts when you switch the module; other apps change when they are opened again. Apps that draw their own
+  emoji (some messengers, keyboards with their own set) keep them.
+- A font that has the PostScript name of the stock emoji font is fine: the phone gives it a name of its own when it installs
+  it.
+- If two modules set an emoji font, the one that was switched on last wins.
+- Only Settings can install it (no signature is needed), like the fonts above.
+
+Emoji fonts are not part of the repository: they come with the licence of the people who made them.
+
+## Sounds
+
+A module can replace the sounds of the system. It works as a **sound pack** (a module with only `sounds`) or as a part of a
+theme: `sounds` sits in the same file as colours, fonts and wallpapers.
+
+```json
+"sounds": {
+  "ringtone": { "file": "sounds/ring.ogg", "title": "Glass ringtone" },
+  "notification": "sounds/notify.ogg",
+  "touch": "sounds/tick.wav",
+  "charging": "sounds/charge.ogg"
+}
+```
+
+The value is the path of an audio file in the zip, or an object with `file` and a `title` (the name in the list of sounds;
+the module's name when there is none). The files are `.ogg`, `.oga` (Vorbis or Opus), `.wav`, `.mp3`, `.flac` or `.m4a`.
+
+| Slot | What it is | Longest | Biggest |
+|---|---|---|---|
+| `ringtone` | the ringtone (also the SIM 2 ringtone, unless the module has a `ringtone2`) | 120 s | 15 MB |
+| `ringtone2` | the ringtone of SIM 2 | 120 s | 15 MB |
+| `notification` | the default notification sound | 30 s | 5 MB |
+| `alarm` | the default alarm sound | 120 s | 15 MB |
+| `touch` | tap and click sounds (Settings > Sound > Tap and click sounds), also the focus and back sounds | 3 s | 1 MB |
+| `keypress_standard`, `keypress_spacebar`, `keypress_delete`, `keypress_return`, `keypress_invalid` | the keyboard clicks of keyboards that use the system sounds | 3 s | 1 MB |
+| `lock`, `unlock`, `trusted` | locking and unlocking the screen, and a trusted device unlocking it | 5 s | 2 MB |
+| `charging`, `wireless_charging` | a charger is plugged in, the phone is put on a wireless charger | 10 s | 5 MB |
+| `low_battery` | the warning at low battery | 10 s | 5 MB |
+| `dock`, `undock` | the phone is put in a desk or car dock, and taken out | 10 s | 5 MB |
+| `screenshot` | taking a screenshot | 10 s | 5 MB |
+
+How it behaves:
+
+- The ringtone, notification and alarm are added to the sounds of the phone (they show in the list when you pick a sound, under
+  the module's `title`) and set as the default ones. They go away with the module.
+- The other sounds replace the sound of the system for as long as the module is on. The switches of Settings > Sound
+  (charging sounds, dock sounds, tap and click sounds, screen locking sound) still decide *whether* a sound plays.
+- Before a module sets a sound the old value is kept. It is given back when no module sets that sound any more, unless you
+  picked another one yourself in the meantime.
+- If two modules set the same sound, the one that was switched on last wins.
+- The lock screen and the low battery warning load their sounds when the system UI starts, so the system UI restarts when you
+  switch a module with those sounds. The others change at once.
+- The sounds are plain files: nothing runs. Keep UI sounds short; the system keeps them in memory.
+
+What a module cannot change: the camera shutter and focus sounds (the camera app plays them itself), the dial pad tones, the
+volume beep and sounds that an app brings along. Apps keep their own notification sounds unless they use the system default.
+
+`examples/sounds-example.zip`
+("Glass sounds", built by `examples/make-sounds-example.py` from synthesised bells) sets every slot and is a good starting point.
+
 ## Wallpaper, home app, accent, launcher icons
 
 **Wallpaper and lock screen**
@@ -370,6 +449,33 @@ For every animation of the system a module can set the three animation scales of
 as fast, 0 none. The knob `dimen/kami_launch_duration_scale` (launcher) makes only the opening of apps from the launcher
 faster or slower (0.6 faster, 1.5 slower).
 
+**Easing curves and times of the system animations**
+
+The framework animations (apps opening and closing, dialogs, sheets, fades) get their feel from ten easing curves and a set of
+durations. A module can set all of them with the target `android`:
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `string/kami_curve_fast_out_slow_in` | string | `M 0,0 C 0.4,0 0.2,1 1,1` | The standard curve, used almost everywhere |
+| `string/kami_curve_emphasized`, `..._fast_out_extra_slow_in` | string | long calm end | The big movements (app from the launcher, activity changes) |
+| `string/kami_curve_emphasized_decelerate`, `..._emphasized_accelerate` | string | | Things that arrive, things that leave |
+| `string/kami_curve_standard`, `..._standard_decelerate`, `..._standard_accelerate` | string | | The Material curves for small movements |
+| `string/kami_curve_linear_out_slow_in`, `..._fast_out_linear_in` | string | | Fades that enter and leave |
+| `integer/kami_activity_dur` | int | 450 | Milliseconds of a screen opening or closing over another one of an app |
+| `integer/kami_task_dur` | int | 500 | Milliseconds of the movement between two apps |
+| `integer/kami_fragment_open_dur`, `kami_fragment_close_dur` | int | 400, 200 | Milliseconds of split layouts opening and closing |
+| `integer/config_shortAnimTime`, `config_mediumAnimTime`, `config_longAnimTime` | int | 200, 400, 500 | Milliseconds of menus, popups, dialogs and the like |
+| `integer/config_activityShortDur`, `config_activityDefaultDur` | int | 150, 220 | Milliseconds of popups and dialogs opening and closing |
+
+Opening an app from the launcher is moved by the launcher, not by these: its speed is `dimen/kami_launch_duration_scale` (see the
+speed section above).
+
+A curve is SVG path data from `0,0` to `1,1`, where x is the time and y the progress: `M 0,0 C 0.4,0 0.2,1 1,1` is one cubic
+curve with two handles, and more `C` segments can follow. The time may not go back, but the progress may go over 1, which
+makes a movement overshoot: `M 0,0 C 0.25,1.35 0.5,1 1,1` is a soft bounce. A curve that is not valid is refused on import,
+the system never sees it. The `motion.json` example has the choices snappy, smooth, bouncy and mechanical (linear). For the speed of everything at once see the three
+animation scales above.
+
 **Freeform windows**
 
 `global/enable_freeform_support` and `global/force_resizable_activities`, both set to `1`, let apps open as real windows. The
@@ -461,6 +567,40 @@ edge and y from -1 to 1. The stock chevron is `M 1,-1 L 0,0 L 1,1`; add a tail w
 it. A path that cannot be read falls back to the chevron. The colours are read when the panel is set up, so restart the
 system UI.
 
+**The back swipe animation.** What the two screens do when you swipe back from the edge, between two apps or two screens of
+one app (the system draws the stock one: the screen shrinks and the one below comes up). `string/kami_back_style` of
+`com.android.systemui` picks the look:
+
+| Value | Look |
+|---|---|
+| `stock` | the shrinking card (default) |
+| `off` | nothing moves, the screen changes the moment you let go |
+| `fade` | the old screen fades out and shrinks a little, the one below comes up |
+| `zoom` | the old screen flies at you and fades, the new one grows into place |
+| `flip` | the screen turns like a card and the new screen is its back |
+| `book` | the screen turns like a page around the edge you swiped from, the new screen is under it |
+| `spin` | the screen is thrown to the side and falls away |
+| `glitch` | the screen stutters, jumps and flickers into the new one |
+
+Your finger takes the animation part of the way (it follows the swipe and goes back if you cancel), letting go plays the rest.
+`integer/kami_back_duration` sets the length of that second part in milliseconds (0 takes the length of the look, 300 to 520).
+`drawable/kami_back_overlay` is a picture over both screens while it plays, centred and cropped to the display; an animated
+GIF or WebP moves, so a glitch, static or light leak animation makes a new look of its own. Give it some alpha to see the screens
+through it. `integer/kami_back_overlay_alpha` is how strong it is in percent, `integer/kami_back_overlay_mode` is 0 to show it the
+whole time or 1 to fade it in and out so it is strongest in the middle. The look and the picture are read again for every swipe,
+no restart. Not changed by this: the swipe back to the home screen, the animation that an app draws itself (some apps draw their
+own preview) and windows that are not full screen (freeform, split screen, letterboxed), which keep the stock look.
+
+**Going into a screen and leaving it.** `string/kami_open_style` is how a screen of an app comes in when you open it (a sub page of
+Settings, the details of something), `string/kami_close_style` how it goes when the app finishes it (the arrow in the top bar, the
+back button); `integer/kami_transition_duration` is the length in milliseconds. They take the same names as the back swipe
+(`stock`, `off`, `fade`, `zoom`, `flip`, `book`, `spin`, `glitch`). Leaving plays the same poses as the back swipe; going in has
+looks of its own, because the new screen is on top of the old one: it zooms in, lands like a page from the right edge, or is
+thrown in from the side. Opening an app (a new task), dialogs and screens that bring an animation of their own keep their
+animation. The picture over the back swipe is not drawn here.
+`examples/make-back-lab.py` builds a module with the looks of the back swipe, of opening a page and of leaving a page as three
+separate choices, and a glitch animation over the swipe.
+
 **The gesture pill** (the bar at the bottom that you swipe up from), resources of `com.android.launcher3`:
 
 | Resource | What it does |
@@ -492,6 +632,18 @@ has seen them change on a device yet.
 | `integer/kami_slider_shape` | int | -1 | -1 is the shape chosen in Settings, 1 circle, 2 rounded square, 3 square |
 | `integer/kami_footer_button_shape` | int | 0 | Shape of the settings and power buttons: 0 circle, 1 square, 2 rounded |
 | `color/kami_qs_tile_active_bg`, `..._active_fg`, `..._inactive_bg`, `..._inactive_fg` | color | theme | Tile colours; `day`/`night` allowed. What is not set keeps the Material You colour |
+
+**Tile sizes**: `string/kami_qs_tile_layout` gives tiles a size of their own, as a list like
+`internet:2x1,flashlight:1x2,dnd:2x2`: the name of the tile, a colon, the columns it covers, an `x` and the rows it covers (1 to
+3). The names are the ones of the tile pictures below (`internet`, `bt`, `flashlight`, `dnd`, ...). A tile of one column shows
+only its symbol, wider ones show the label too, and a tile that covers several rows is centred in all of them.
+
+Join tiles with a plus to put several of them in one cell: `dnd+flashlight:2x2` is one big cell with Do Not Disturb above the
+flashlight (in a cell of one row they sit side by side). Each keeps its own switch.
+
+The tiles keep their order and each cell goes to the first free place from the top left, so a tall tile leaves a gap beside it
+that the small tiles after it fill. A tile that is not in the list keeps its stock size, and an empty list keeps the stock grid.
+The `tile-mosaic.json` example is made for four columns. Only the panel itself changes: the edit screen still shows the stock grid.
 
 Tile symbols: the `drawable/qs_<name>_icon_on` and `_off` knobs, with the names `airplane`, `flashlight`, `dnd`, `bluetooth`,
 `location`, `auto_rotate`, `battery_saver`, `hotspot`, `nightlight`, `invert_colors`, `light_dark_theme`, `data_saver`. White
@@ -532,6 +684,10 @@ Wi-Fi and mobile signal (several states and levels), the Bluetooth icons with a 
 | `color/kami_volume_slider_active`, `color/kami_volume_slider_inactive` | color | theme | Filled and empty part of the volume sliders; a gradient replaces the filled colour while it is on |
 | `integer/kami_volume_slider_corner` | int | -1 | Corner radius of the slider in the panel, dp; -1 keeps the stock 12 |
 | `integer/kami_volume_slider_thickness` | int | -1 | Thickness of the slider in the panel, dp; -1 keeps the stock 40 |
+| `integer/kami_volume_enter_style` | int | 0 | How the panel comes in: 0 slides in from the edge, 1 grows out of the edge, 2 pops up and fades in, 3 only fades |
+| `integer/kami_volume_spring_stiffness` | int | 700 | Stiffness of the spring that moves the panel in and out, 50 to 5000; higher is quicker |
+| `dimen/kami_volume_spring_damping` | float | 0.9 | Damping of that spring, 0.2 to 1.5; lower wobbles more, 1 does not overshoot |
+| `bool/kami_volume_all_sliders` | bool | false | Shows the sliders of ring, notification, alarm, call and system beside the media one, in a row at the side of the panel |
 
 The width of the slider cannot be changed: the track is drawn with its own size. Icons of the panel (`drawable`, scaled to 24
 dp high, white shapes; the panel may tint them): `ic_volume_media`, `ic_volume_media_low`, `ic_volume_media_mute`,
@@ -539,6 +695,19 @@ dp high, white shapes; the panel may tint them): `ic_volume_media`, `ic_volume_m
 `ic_ring_volume_off`, `ic_volume_alarm_mute`, `ic_alarm`, `ic_volume_system`, `ic_volume_system_mute`,
 `ic_notifications_active`, `ic_notifications_off`, `ic_tuner`, `ic_volume_odi_captions`, `ic_music_note`. `ic_volume_media`
 and `ic_mobile_vibrate` have been seen changing.
+
+**Lock screen shortcuts** (`com.android.systemui`): the two buttons at the bottom corners (flashlight, camera, wallet and the
+other shortcuts a user picks in Settings).
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `dimen/keyguard_affordance_fixed_width`, `..._fixed_height` | dimension | 48dp | Size of a button; give a different width and height for a pill or a bar |
+| `dimen/keyguard_affordance_fixed_radius` | dimension | 24dp | Rounding: half of the size makes a circle, less a rounded square |
+| `dimen/keyguard_affordance_fixed_padding` | dimension | 12dp | Space around the symbol; more makes the symbol smaller |
+| `dimen/keyguard_affordance_horizontal_offset`, `..._vertical_offset` | dimension | 16dp, 32dp | Distance from the side and from the bottom of the screen |
+| `color/kami_lockscreen_shortcut_active_bg`, `..._active_fg` | color | theme | Button and symbol of a shortcut that is on (the lit flashlight) |
+| `color/kami_lockscreen_shortcut_inactive_bg`, `..._inactive_fg` | color | theme | Button and symbol of a shortcut that is off |
+| `drawable/ic_camera`, `ic_videocam`, `ic_wallet_lockscreen`, `ic_qr_code_scanner`, `ic_assistant`, `ic_notifications_silence`, `ic_do_not_disturb` | drawable | | Symbols of the shortcuts, white shapes, scaled to 24dp high (untested). The flashlight is changed with `drawable/qs_flashlight_icon_on` and `_off` |
 
 **Brightness bar** (`com.android.systemui`): `color/kami_brightness_slider_active` (filled part and thumb),
 `color/kami_brightness_slider_inactive` (empty part). The shape is `integer/kami_slider_shape` or the setting
@@ -892,6 +1061,17 @@ nord-tiles.zip
 }
 ```
 
+## The module store
+
+Settings > KamiOS > Darkmoon Theme Engine > **Module store** lists modules that other people made. A tap downloads one and puts it in
+**Your modules**, switched off: you switch it on there, with the same warnings as for a module you imported yourself. The list is a
+file (`modules.json`) in a GitHub repository, so adding or updating a module is a push to that repository and needs no update of the
+ROM. Each entry has an id (the id in `module.json`), a name, author, version and description, a link to the zip, a thumbnail and
+screenshots (PNG, JPG, WebP or GIF; a tap on a screenshot opens it full screen). Put a `module_version` in your `module.json` so that
+the store can tell when yours is newer than the one on the phone.
+
+Nobody at KamiOS reviews the modules in the store. Read what a module changes before you switch it on.
+
 ## Safety and recovery
 
 Nobody reviews modules, and there is no store. Read a module before you switch it on, and do not install every module you
@@ -911,6 +1091,7 @@ A module that breaks the system UI or the launcher is not permanent:
 |---|---|
 | Pictures | 2560 x 2560 px, 3 MB per file, 200 files and 32 MB per zip |
 | Fonts | `.ttf`/`.otf`, 10 MB each |
+| Sounds | `.ogg`, `.oga`, `.wav`, `.mp3`, `.flac`, `.m4a`; 15 MB per file, 64 MB per zip with sounds, the length and size per slot are in the table in Sounds |
 | Launcher icons | up to 512 px |
 | Options | 8 per module, 16 choices each |
 | Axes per font slot | 4 |
