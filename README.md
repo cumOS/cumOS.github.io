@@ -8,6 +8,7 @@ The site of KamiOS, served by GitHub Pages: static files, no framework, no build
 | `module_guide.md` | **the module guide**, the only source of the guide. Edit this one. |
 | `modules.html` | the guide as a page, generated from `module_guide.md`. Do not edit by hand. |
 | `doc.css`, `doc.js` | the look of the guide page (on top of `style.css`) |
+| `counter.js` | the visit count in the footer, from Tally API (free, no account) |
 | `build.py` | turns `module_guide.md` into `modules.html` (Python 3, no packages) |
 
 ## Changing the guide
@@ -31,3 +32,10 @@ it; with `prefers-reduced-motion` the effects are off.
 
 KamiOS is built on crDroid and LineageOS. Public builds are not out yet.
 Telegram: <https://t.me/kamiosofficial>
+
+## The visit counter
+
+The footer count comes from [Tally API](https://github.com/xueelf/tally-api), a free counter with no account and no keys.
+The counter name lives in `counter.js`, under the `kumiaomi` namespace. Change `ns` there and reload: the number is
+counted at `https://tally.yuki.sh/hits/<ns>/site.json`. It counts every page view, so the guide page bumps it too.
+If the request ever fails, the footer says "many visits" instead of showing a broken number.

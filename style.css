@@ -190,6 +190,9 @@ footer {
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--dim);
 }
 
+.visits { font-variant-numeric: tabular-nums; }
+.visits #visit-count { color: var(--fg); }
+
 /* things appear as you reach them */
 .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 1.1s ease, transform 1.1s ease; }
 .js .reveal.seen { opacity: 1; transform: none; }

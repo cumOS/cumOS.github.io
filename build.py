@@ -172,7 +172,9 @@ PAGE = """<!doctype html>
 <footer>
   <span>KamiOS &middot; kept by KamiKaonashi</span>
   <span>built on crDroid and LineageOS, with thanks</span>
+  <span class="visits"><span id="visit-count">&mdash;</span> visits</span>
 </footer>
+<script src="counter.js"></script>
 <script src="doc.js"></script>
 </body>
 </html>
