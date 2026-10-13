@@ -40,7 +40,7 @@ body.doc.nav-open { overflow: hidden; }
 /* ------------------------------------------------------------------ sidebar */
 .search { position: relative; margin-bottom: 18px; }
 .search input {
-  width: 100%; background: rgba(255, 255, 255, .035); border: 1px solid var(--faint); border-radius: 8px; color: var(--fg);
+  width: 100%; background: rgba(255, 255, 255, .035); border: 1px solid #5c5c66; border-radius: 8px; color: var(--fg);
   font: inherit; font-size: 14px; padding: 10px 34px 10px 12px; outline: none; transition: border-color .25s, background .25s;
 }
 .search input::placeholder { color: var(--dim); }
@@ -54,7 +54,7 @@ body.doc.nav-open { overflow: hidden; }
   position: relative; display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border-radius: 6px;
   text-decoration: none; color: #b9b7b4; font-size: 14.5px; line-height: 1.35; transition: color .25s, background .25s, transform .25s;
 }
-.item em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: #55555d; letter-spacing: .06em; min-width: 1.5em; transition: color .25s; }
+.item em { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: #7a7a84; letter-spacing: .06em; min-width: 1.5em; transition: color .25s; }
 .item:hover { color: var(--fg); background: rgba(255, 255, 255, .04); transform: translateX(2px); }
 .item:hover em { color: var(--accent); }
 .item.on { color: var(--fg); background: rgba(154, 134, 255, .08); }
@@ -66,17 +66,21 @@ body.doc.nav-open { overflow: hidden; }
 .results b { display: block; font-weight: 400; font-size: 14px; color: var(--fg); }
 .results small { display: block; font-size: 12.5px; color: var(--dim); line-height: 1.45; margin-top: 2px; }
 .results mark { background: none; color: var(--accent); }
+.results code { font-family: var(--mono); font-size: 12px; color: var(--accent); overflow-wrap: anywhere; }
 .results .none { color: var(--dim); font-size: 14px; padding: 4px 10px; }
 
 /* ------------------------------------------------------------------ the tabs */
 .tab { max-width: 860px; margin: 0 auto; }
 .js .tab { display: none; }
 .js .tab.active { display: block; }
-.tab.enter > * { animation: rise .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 38ms); }
+.tab.enter > * { animation: rise .35s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 30ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .tab-title { font-weight: 200; font-size: clamp(30px, 5.2vw, 52px); letter-spacing: .06em; line-height: 1.12; padding: 0; margin: 0 0 22px; }
 .tab h2 { font-weight: 300; font-size: clamp(21px, 3vw, 28px); letter-spacing: .03em; margin: clamp(40px, 7vh, 64px) 0 14px; padding-top: 20px; border-top: 1px solid var(--faint); scroll-margin-top: calc(var(--bar) + 18px); }
 .tab h3 { font-weight: 400; font-size: 18px; letter-spacing: .03em; margin: 30px 0 10px; scroll-margin-top: calc(var(--bar) + 18px); }
+/* search jumps land on paragraphs, list items and cells too: keep them clear of the bar */
+.tab p, .tab li, .tab td, .tab pre, .tab .demo, .tab .callout { scroll-margin-top: calc(var(--bar) + 18px); }
+.tab-title:focus { outline: none; }
 .tab .anchor { text-decoration: none; color: inherit; border-bottom: 0; position: relative; }
 .tab .anchor::before { content: "#"; position: absolute; left: -1.1em; color: var(--accent); opacity: 0; transition: opacity .2s; font-family: var(--mono); font-weight: 300; }
 .tab h2:hover .anchor::before, .tab h3:hover .anchor::before { opacity: .7; }
@@ -106,7 +110,7 @@ body.doc.nav-open { overflow: hidden; }
 pre:hover .copy, .copy:focus-visible { opacity: 1; }
 .copy:hover { color: var(--accent); border-color: var(--accent); }
 @media (hover: none) { .copy { opacity: .7; } }
-.tk-k { color: #b8a8ff; } .tk-s { color: #8fd8b5; } .tk-n { color: #f0b27a; } .tk-c { color: #6c6c76; } .tk-b { color: #e58fa4; }
+.tk-k { color: #b8a8ff; } .tk-s { color: #8fd8b5; } .tk-n { color: #f0b27a; } .tk-c { color: #8a8a94; } .tk-b { color: #e58fa4; }
 
 .tw { overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--faint); border-radius: 8px; }
 .tab table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14px; }
@@ -125,7 +129,7 @@ pre:hover .copy, .copy:focus-visible { opacity: 1; }
 /* the first tab: the introduction */
 .intro { position: relative; margin: 0 0 clamp(28px, 6vh, 56px); padding: clamp(8px, 3vh, 28px) 0 8px; isolation: isolate; }
 .intro .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .24em; text-transform: lowercase; color: var(--accent); margin: 0 0 14px; }
-.intro .tab-title { font-size: clamp(36px, 7vw, 76px); letter-spacing: .1em; font-weight: 200; margin: 0 0 22px; background: linear-gradient(100deg, #fff 20%, #b8a8ff 55%, #fff 85%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 9s ease-in-out infinite; }
+.intro .tab-title { font-size: clamp(36px, 7vw, 76px); letter-spacing: .1em; font-weight: 200; margin: 0 0 22px; background: linear-gradient(100deg, #fff 20%, #b8a8ff 55%, #fff 85%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 9s ease-in-out 1 both; }
 @keyframes sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
 .intro .lead p { font-size: clamp(17px, 2.2vw, 21px); line-height: 1.55; color: #d6d4d1; max-width: 46ch; margin: 0 0 8px; }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0 !important; }
@@ -154,6 +158,17 @@ pre:hover .copy, .copy:focus-visible { opacity: 1; }
 .toc a.sub { padding-left: 24px; font-size: 12.5px; }
 .toc a:hover { color: var(--fg); }
 .toc a.on { color: var(--fg); border-left-color: var(--accent); }
+/* the same list under the open page in the sidebar, where there is no room for the column on the right */
+.subnav { display: none; margin: 2px 0 8px 2.6em; font-size: 13.5px; }
+.subnav a { display: block; padding: 5px 10px; border-left: 1px solid var(--faint); text-decoration: none; color: var(--dim); line-height: 1.35; }
+.subnav a.sub { padding-left: 22px; font-size: 13px; }
+.subnav a:hover, .subnav a.on { color: var(--fg); border-left-color: var(--accent); }
+@media (max-width: 1240px) { .subnav { display: block; } }
+/* a skip link, seen only when it has the focus */
+.skip { position: absolute; left: 8px; top: -60px; z-index: 50; padding: 8px 14px; border-radius: 6px; background: var(--accent); color: #0a0a0c; font-family: var(--mono); font-size: 12px; text-decoration: none; }
+.skip:focus { top: 8px; }
+body.doc :focus-visible { outline-width: 2px; outline-offset: 3px; }
+body.doc .grain { z-index: 0; }
 
 /* ------------------------------------------------------------------ narrower screens */
 @media (max-width: 1240px) {
@@ -161,16 +176,19 @@ pre:hover .copy, .copy:focus-visible { opacity: 1; }
   .toc { display: none; }
 }
 @media (max-width: 900px) {
-  .shell { grid-template-columns: minmax(0, 1fr); }
+  /* .shell keeps no stacking context here, or the scrim (outside it) covers the drawer (inside it) */
+  .shell { grid-template-columns: minmax(0, 1fr); z-index: auto; }
+  .stage { position: relative; z-index: 1; overflow-x: clip; }
   .burger { display: block; }
   .bar-links { display: none; }
   .bar-title { text-align: left; }
   .brand i { display: none; }
   .side {
     position: fixed; z-index: 40; top: var(--bar); left: 0; bottom: 0; width: min(86vw, 340px); height: auto; background: #08080a;
-    border-right: 1px solid var(--faint); padding-left: 18px; transform: translateX(-102%); transition: transform .4s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 0 60px rgba(0, 0, 0, .8);
+    border-right: 1px solid var(--faint); padding-left: 18px; transform: translateX(-102%); box-shadow: 0 0 60px rgba(0, 0, 0, .8);
+    visibility: hidden; transition: transform .4s cubic-bezier(.2, .8, .2, 1), visibility 0s .4s;
   }
-  .nav-open .side { transform: none; }
+  .nav-open .side { transform: none; visibility: visible; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
   .scrim { display: block; position: fixed; inset: var(--bar) 0 0 0; z-index: 35; background: rgba(0, 0, 0, .6); opacity: 0; pointer-events: none; transition: opacity .35s; }
   .nav-open .scrim { opacity: 1; pointer-events: auto; }
   .stage { padding-left: var(--gutter); padding-right: var(--gutter); }
@@ -182,13 +200,26 @@ pre:hover .copy, .copy:focus-visible { opacity: 1; }
   .pager .next, .pager .prev { grid-column: 1; text-align: left; }
   .tab-title { letter-spacing: .03em; }
   .intro .tab-title { letter-spacing: .05em; }
+  /* tables become one card per row, each cell with its column name */
+  .tw.stack { border: 0; overflow: visible; }
+  .tab table.stack, .stack tbody, .stack tr, .stack td { display: block; min-width: 0; width: auto; }
+  .stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .stack tr { border: 1px solid var(--faint); border-radius: 8px; padding: 10px 14px; margin: 0 0 10px; }
+  .stack td { border: 0; padding: 3px 0; }
+  .stack td:first-child { color: var(--fg); padding-bottom: 6px; }
+  .stack td[data-label]:not(:first-child)::before { content: attr(data-label); display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: lowercase; color: var(--dim); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tab.enter > *, .intro .tab-title, .aur i { animation: none !important; }
+  .tab.enter > *, .intro .tab-title, .aur i, .tab h2.flash, .tab h3.flash { animation: none !important; }
   .ind, .side, .item { transition: none; }
 }
 /* without scripts every page is shown, one after the other */
-html:not(.js) .side, html:not(.js) .toc, html:not(.js) .burger, html:not(.js) .results { display: none; }
+html:not(.js) .toc, html:not(.js) .burger, html:not(.js) .results, html:not(.js) .search, html:not(.js) .ind { display: none; }
+/* without scripts the sidebar is the contents at the top */
+html:not(.js) .side { position: static; height: auto; border: 0; padding: 28px clamp(20px, 4vw, 56px) 0; max-width: calc(860px + 2 * clamp(20px, 4vw, 56px)); margin: 0 auto; columns: 2 240px; }
+html:not(.js) .grp { break-inside: avoid; }
+html:not(.js) .demo { border-style: dashed; padding: 12px 16px; background: none; }
+html:not(.js) .demo p { margin: 0; color: var(--dim); font-size: 14px; }
 html:not(.js) .shell { display: block; }
 html:not(.js) .tab { margin-bottom: 60px; }
 .tab pre, .tw { scrollbar-width: thin; scrollbar-color: #3a3846 transparent; }

@@ -92,7 +92,10 @@ def blocks(lines):
             continue
         m = re.match(r"^<!--\s*demo:\s*([\w-]+)\s*-->\s*$", line)
         if m:
-            out.append('<div class="demo" data-demo="%s"></div>' % m.group(1))
+            name = m.group(1)
+            note = ('The searchable list needs JavaScript. The same list is in <a href="knobs.json">knobs.json</a>.' if name == "knobs"
+                    else "A live example is here; it needs JavaScript.")
+            out.append('<div class="demo" data-demo="%s"><noscript><p>%s</p></noscript></div>' % (name, note))
             i += 1
             continue
         if re.match(r"^<!--.*-->\s*$", line):
@@ -128,12 +131,14 @@ def blocks(lines):
             while j < n and lines[j].lstrip().startswith("|"):
                 rows.append(split_row(lines[j]))
                 j += 1
-            t = ['<div class="tw"><table>']
+            t = ['<div class="tw stack"><table class="stack">']
+            labels = [html.unescape(re.sub(r"<[^>]+>", "", inline(c))) for c in head]
             if any(head):
                 t.append("<thead><tr>%s</tr></thead>" % "".join("<th>%s</th>" % inline(c) for c in head))
             t.append("<tbody>")
             for r in rows:
-                t.append("<tr>%s</tr>" % "".join("<td>%s</td>" % inline(c) for c in r))
+                t.append("<tr>%s</tr>" % "".join('<td%s>%s</td>' % (' data-label="%s"' % html.escape(labels[k], quote=True)
+                                                              if k < len(labels) and labels[k] else "", inline(c)) for k, c in enumerate(r)))
             t.append("</tbody></table></div>")
             out.append("".join(t))
             i = j
@@ -205,12 +210,13 @@ PAGE = """<!doctype html>
 <meta property="og:title" content="Making KamiOS modules">
 <meta property="og:description" content="The whole manual for the Darkmoon theme engine, with live examples.">
 <link rel="icon" href="@@FAVICON@@">
-<script>document.documentElement.className+=" js"</script>
+<script>document.documentElement.className+=" js";setTimeout(function(){if(!document.querySelector(".tab.active"))document.documentElement.classList.remove("js")},4000)</script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="doc.css">
 <link rel="stylesheet" href="demos.css">
 </head>
 <body class="doc">
+<a class="skip" href="#stage">skip to the text</a>
 <div class="glow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <header class="bar">

@@ -684,12 +684,12 @@ Nothing is hidden here; this is only how the pages are reached and how they look
 | `dock` | for `nav: dock`: `items` (3 to 9, how many icons are in view, default 5) and `size` (32 to 72 dp, default 56). Fewer and bigger, or more and smaller; the icons shrink if the screen is too narrow. `icons` gives a page its own picture: an object from the id of the page (`network`, `display`, `sound`, ... as in `main`) to an image in the zip (png or webp, 192 to 256 px square works best); a picture is drawn as it is, with its own round, and a page without one keeps its stock icon (the dock draws those at 256 px, sharp on every screen) |
 | `background` | behind all the pages of Settings: `color`, or `gradient` (2 or 3 colours) with `angle` (0 left to right, 90 bottom to top, 180, 270 top to bottom), or `image` (a path in the zip, a GIF or animated WebP moves), and `dim` (0 to 0.8) to darken it |
 
-<!-- demo: glass -->
-
 `examples/metro-tiles.zip` (flat coloured tiles in two columns, lowercase tabs), `examples/plain-list.zip` (one column of wide rows,
 a bar at the bottom, a dark gradient), `examples/dock.zip` (three tiles in a row, a floating dock) and `examples/stock-pages.zip`
 (`nav: none`: every page opens on its own, as in stock Settings, with a flat dark background), built by
 `examples/make-layout-examples.py`, are the ones to start from.
+
+<!-- demo: glass -->
 
 ### The page behind Settings
 
@@ -856,10 +856,8 @@ Emoji fonts are not part of the repository: they come with the licence of the pe
 
 ## Sounds
 
-A module can be a sound pack, or a theme that brings its own ringtone, notification and alarm sound next to colours and fonts.
-
-A module can replace the sounds of the system. It works as a **sound pack** (a module with only `sounds`) or as a part of a
-theme: `sounds` sits in the same file as colours, fonts and wallpapers.
+A module can replace the sounds of the system, among them the ringtone, the notification and the alarm. It works as a **sound pack**
+(a module with only `sounds`) or as a part of a theme: `sounds` sits in the same file as colours, fonts and wallpapers.
 
 ```json
 "sounds": {
@@ -869,6 +867,8 @@ theme: `sounds` sits in the same file as colours, fonts and wallpapers.
   "charging": "sounds/charge.ogg"
 }
 ```
+
+<!-- demo: sound -->
 
 The value is the path of an audio file in the zip, or an object with `file` and a `title` (the name in the list of sounds;
 the module's name when there is none). The files are `.ogg`, `.oga` (Vorbis or Opus), `.wav`, `.mp3`, `.flac` or `.m4a`.
@@ -905,8 +905,6 @@ volume beep and sounds that an app brings along. Apps keep their own notificatio
 
 `examples/sounds-example.zip`
 ("Glass sounds", built by `examples/make-sounds-example.py` from synthesised bells) sets every slot and is a good starting point.
-
-<!-- demo: sound -->
 
 ## Boot and shutdown animation
 

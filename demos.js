@@ -89,7 +89,7 @@
       box.appendChild(b);
       return [o[0], b];
     });
-    function set(v) { btns.forEach(function (p) { p[1].classList.toggle('on', p[0] === v); }); }
+    function set(v) { btns.forEach(function (p) { p[1].classList.toggle('on', p[0] === v); p[1].setAttribute('aria-pressed', p[0] === v ? 'true' : 'false'); }); }
     set(val);
     return { el: box, set: set };
   }
@@ -108,12 +108,16 @@
     var tiles = [['wifi', 'Internet', 1], ['bt', 'Bluetooth', 1], ['flash', 'Torch', 0], ['plane', 'Airplane', 0], ['rotate', 'Rotate', 0], ['batt', 'Saver', 0]];
     var grid = h('div', { class: 'qgrid' });
     tiles.forEach(function (t) {
-      var b = h('button', { type: 'button', class: 'qt' + (t[2] ? ' on' : ''), html: '<span class="qi">' + svg(t[0]) + '</span><span>' + t[1] + '</span>' });
-      b.addEventListener('click', function () { b.classList.toggle('on'); });
+      var b = h('button', { type: 'button', class: 'qt' + (t[2] ? ' on' : ''), 'aria-pressed': t[2] ? 'true' : 'false', html: '<span class="qi">' + svg(t[0]) + '</span><span>' + t[1] + '</span>' });
+      b.addEventListener('click', function () { b.setAttribute('aria-pressed', b.classList.toggle('on') ? 'true' : 'false'); });
       grid.appendChild(b);
     });
-    var sw = h('button', { type: 'button', class: 'mini-sw on', 'aria-label': 'Dark theme switch' });
-    sw.addEventListener('click', function () { sw.classList.toggle('on'); });
+    var sw = h('button', { type: 'button', class: 'mini-sw on', 'aria-label': 'Dark theme', 'aria-pressed': 'true' });
+    sw.addEventListener('click', function () {
+      var dark = sw.classList.toggle('on');
+      sw.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      phone.firstChild.classList.toggle('day', !dark);
+    });
     qs.appendChild(h('div', { class: 'clock', html: '10:42<small>TUE 13 OCT</small>' }));
     qs.appendChild(grid);
     qs.appendChild(h('div', { class: 'qbright' }));
@@ -129,6 +133,7 @@
     var cSl = colour('brightness bar', s.sl, function (v) { s.sl = v; render(); });
     var cSw = colour('switch (Settings)', s.sw, function (v) { s.sw = v; render(); });
     [chipBox.el, rAct.row, rIn.row, rIc.row, cAct.row, cIn.row, cSl.row, cSw.row].forEach(function (e) { c.ctl.appendChild(e); });
+    c.ctl.appendChild(h('p', { class: 'note', html: 'These knobs are explained in <a href="#colours-corners-and-shapes">quick settings: colours, corners and shapes</a>.' }));
     function apply(p) {
       s = Object.assign({}, p);
       rAct.set(s.aR); rIn.set(s.iR); rIc.set(s.icR); cAct.set(s.act); cIn.set(s.inact); cSl.set(s.sl); cSw.set(s.sw);
@@ -285,7 +290,7 @@
     function play(to) {
       if (anim) cancelAnimationFrame(anim);
       var from = p, d = s.dur > 0 ? s.dur : STOCK, t0 = performance.now();
-      if (reduce || d < 20) { p = to; paint(); return; }
+      if (d < 20) { p = to; paint(); return; }
       (function step(now) {
         var t = clamp((now - t0) / d, 0, 1);
         p = from + (to - from) * (1 - Math.pow(1 - t, 2.8));
@@ -294,7 +299,7 @@
       })(t0);
     }
     function toggleAnim() {
-      if (s.style !== 'plain' || s.anim === 'none' || !main.animate || reduce) return;
+      if (s.style !== 'plain' || s.anim === 'none' || !main.animate) return;
       var k = (s.dur > 0 ? s.dur : STOCK) / STOCK;
       var A = {
         pop: [[{ transform: 'scale(1)' }, { transform: 'scale(1.25)', offset: .3 }, { transform: 'scale(1)' }], { duration: 370 * k, easing: 'cubic-bezier(.3,1.6,.5,1)' }],
@@ -362,15 +367,26 @@
       });
     }
     drag(h1, 'x1', 'y1'); drag(h2, 'x2', 'y2');
-    var timer;
-    function replay() {
+    [[h1, 'x1', 'y1', 'first handle'], [h2, 'x2', 'y2', 'second handle']].forEach(function (d) {
+      d[0].setAttribute('tabindex', '0'); d[0].setAttribute('role', 'button'); d[0].setAttribute('aria-label', d[3] + ', move it with the arrow keys');
+      d[0].addEventListener('keydown', function (e) {
+        var k = { ArrowLeft: [d[1], -0.05, 0, 1], ArrowRight: [d[1], 0.05, 0, 1], ArrowUp: [d[2], 0.05, -0.3, 1.5], ArrowDown: [d[2], -0.05, -0.3, 1.5] }[e.key];
+        if (!k) return;
+        e.preventDefault();
+        P[k[0]] = Math.round(clamp(P[k[0]] + k[1], k[2], k[3]) * 100) / 100;
+        draw(); render(true);
+      });
+    });
+    var timer, runs = 0;
+    function replay(auto) {
       clearTimeout(timer);
-      if (!ball.animate || reduce) return;
+      if (auto !== true) runs = 0;
+      if (!ball.animate || !host.offsetParent || (reduce && auto === true) || runs++ >= 3) return;
       var easing = 'cubic-bezier(' + P.x1 + ',' + P.y1 + ',' + P.x2 + ',' + P.y2 + ')';
       var w = track.clientWidth - 32;
       ball.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(' + w + 'px)' }], { duration: dur, easing: easing, fill: 'both' });
       card1.animate([{ transform: 'scale(.4) translateY(30%)', opacity: 0.2 }, { transform: 'scale(1)', opacity: 1 }], { duration: dur, easing: easing, fill: 'both' });
-      timer = setTimeout(replay, dur + 900);
+      timer = setTimeout(function () { replay(true); }, dur + 900);
     }
     var presets = [['stock', 'stock', [0.4, 0, 0.2, 1]], ['snappy', 'snappy', [0.2, 0, 0, 1]], ['smooth', 'smooth', [0.35, 0, 0.15, 1]], ['bouncy', 'bouncy', [0.25, 1.35, 0.5, 1]], ['linear', 'mechanical', [0.33, 0.33, 0.66, 0.66]]];
     var ch = chips(presets.map(function (p) { return [p[0], p[1]]; }), 'bouncy', function (k) {
@@ -412,14 +428,14 @@
     function wake() {
       lock.getAnimations && lock.getAnimations().forEach(function (a) { a.cancel(); });
       lock.style.opacity = 1;
-      if (reduce || !lock.animate) return;
+      if (!lock.animate) return;
       var from = { 1: 'scale(1.25)', 2: 'scale(.7)', 3: 'translateY(12%)', 4: 'translateY(-20%)', 5: 'rotate(-12deg) scale(.85)', 6: 'perspective(500px) rotateY(-80deg)' }[s.style];
       home.style.opacity = 1;
       if (!from) { lock.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160 }); return; }
       lock.animate([{ transform: from, opacity: 0.4 }, { transform: 'none', opacity: 1 }], { duration: s.dur, easing: s.style === 4 ? 'cubic-bezier(.3,1.4,.5,1)' : 'cubic-bezier(.1,.6,.2,1)' });
     }
     function unlock() {
-      if (reduce || !home.animate) return;
+      if (!home.animate) return;
       lock.getAnimations().forEach(function (a) { a.cancel(); });
       home.style.transformOrigin = '50% ' + (s.uPivot * 100) + '%';
       lock.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(-12%)', opacity: 0 }], { duration: 220, fill: 'forwards', easing: 'ease-in' });
@@ -461,7 +477,7 @@
     }
     function run() {
       reset(); clearTimeout(busy);
-      if (reduce || !a.animate || s.style === 'off') return;
+      if (!a.animate || s.style === 'off') return;
       var d = s.dur, o = { duration: d, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' };
       var under = [{ transform: 'scale(.94)', opacity: .7 }, { transform: 'none', opacity: 1 }];
       stg.style.perspective = '900px';
@@ -558,16 +574,17 @@
     var gsel = h('select', { 'aria-label': 'Filter by group' });
     gsel.appendChild(h('option', { value: '', text: 'all groups' }));
     groups.forEach(function (g) { gsel.appendChild(h('option', { value: g, text: g })); });
-    var count = h('span', { class: 'kn-count' });
+    var count = h('span', { class: 'kn-count', 'aria-live': 'polite' });
     var tbody = h('tbody');
     var table = h('table', null, [h('thead', null, [h('tr', null, ['resource', 'kind', 'default', 'what'].map(function (t) { return h('th', { text: t }); }))]), tbody]);
     root.appendChild(h('div', { class: 'dh' }, [h('b', { text: 'every knob' }), h('span', { text: rows.length + ' resources a module can set' }), h('i', { text: 'click a name to copy it' })]));
     root.appendChild(h('div', { class: 'kn' }, [h('div', { class: 'kn-bar' }, [inp, tsel, gsel, count]), h('div', { class: 'tw' }, [table])]));
     var built = rows.map(function (r) {
       var tr = h('tr');
-      var code = h('code', { text: r[1], title: r[0] });
-      code.addEventListener('click', function () { if (navigator.clipboard) navigator.clipboard.writeText(r[1]); code.style.background = 'rgba(154,134,255,.4)'; setTimeout(function () { code.style.background = ''; }, 500); });
-      tr.appendChild(h('td', null, [code, h('small', { class: 'tg', html: short[r[0]] + ' · ' + r[3] + (r[7] ? ' · <span class="ut">untested</span>' : '') })]));
+      var code = h('code', { text: r[1] });
+      var cb = h('button', { type: 'button', class: 'kcopy', title: 'copy ' + r[1] + ' (' + r[0] + ')' }, [code]);
+      cb.addEventListener('click', function () { if (navigator.clipboard) navigator.clipboard.writeText(r[1]); code.style.background = 'rgba(154,134,255,.4)'; count.textContent = 'copied ' + r[1]; setTimeout(function () { code.style.background = ''; filter(); }, 900); });
+      tr.appendChild(h('td', null, [cb, h('small', { class: 'tg', html: short[r[0]] + ' · ' + r[3] + (r[7] ? ' · <span class="ut">untested</span>' : '') })]));
       tr.appendChild(h('td', { text: r[2] }));
       tr.appendChild(h('td', null, [h('code', { text: r[6] })]));
       tr.appendChild(h('td', null, [h('b', { text: r[4], style: 'font-weight:400;color:var(--fg)' }), h('small', { text: r[5] })]));
@@ -584,6 +601,7 @@
       count.textContent = n + ' of ' + built.length;
     }
     inp.addEventListener('input', filter); tsel.addEventListener('change', filter); gsel.addEventListener('change', filter);
+    window.guideKnobs = { find: function (term) { inp.value = term; tsel.value = ''; gsel.value = ''; filter(); } };
     host.appendChild(root);
     filter();
   };
