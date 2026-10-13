@@ -462,11 +462,12 @@ The clock and the date above the quick settings. A size of 0 and a fully transpa
 
 | Resource | Kind | Default | What |
 |---|---|---|---|
-| `dimen/kami_shade_clock_size`, `dimen/kami_shade_date_size` | dimension | 0sp | Text size of the clock and of the date |
+| `dimen/kami_shade_clock_size` | dimension | 0sp | Size of the big clock above the quick settings when they are open (stock 36sp, 14 to 90). The small clock in the top bar keeps its size |
+| `dimen/kami_shade_date_size` | dimension | 0sp | Text size of the date |
 | `color/kami_shade_clock_color`, `color/kami_shade_date_color` | color | transparent | Their colours |
 | `dimen/kami_shade_clock_offset_x`, `..._offset_y`, `dimen/kami_shade_date_offset_x`, `..._offset_y` | dimension | 0dp | Move them; negative is left or up |
 | `string/kami_shade_clock_digits` | string | empty | One entry for every digit from the left (hour tens, hour ones, minute tens, minute ones), separated by commas; an entry is `scale/colour/lift` and any part may be empty: `1.3/#FF5CC8/-4,1/#FFFFFF/0,,` makes the first digit bigger, pink and 4dp lower and the second white |
-| `dimen/kami_shade_clock_expanded_scale` | float | 0 | How much bigger the clock gets when the quick settings are open (1 to 4). 0 keeps the size the clock has in the stock theme, whatever size you gave it, so a big clock does not run into the date |
+| `dimen/kami_shade_clock_expanded_scale` | float | 0 | How much bigger the clock gets when the quick settings are open, from the small clock (stock 2.57, 1 to 4). Only used when `kami_shade_clock_size` is 0 |
 
 ## Volume panel and bottom sheets
 
@@ -1283,8 +1284,8 @@ A module sets it with the setting `secure/kami_shell_script`:
 
 Presets: `cube`, `wave`, `fan`, `grid-big`, `minimal`, `widgets-demo` (change the pages and icons only), `launch-gif` (an animation when an app opens), `bouncy`, `snappy`,
 `depth` (change how everything moves), `you` (the system colours) and `stats` (frame time and memory in a corner, for
-tuning), and `tiling` with the palettes `pal-gruvbox`, `pal-catppuccin`, `pal-nord`, `pal-tokyo` (a whole home screen, see
-the next chapter). Presets that change different things join: `preset:depth+you`.
+tuning), and `tiling` with the palettes `pal-gruvbox`, `pal-catppuccin`, `pal-nord`, `pal-tokyo`, `pal-frost` and the look `glass` (a whole
+home screen, see the next chapter). Presets that change different things join: `preset:depth+you`.
 
 A script that starts with `--@extend` runs on top of the built-in one and only has to change `cfg`, `fx` and add widgets. Any
 other script replaces the built-in one entirely. If a script does not load, or `frame` fails twice in a row, the built-in
@@ -1553,6 +1554,13 @@ freeform windows are off, the system's own overview is used.
 - *The animations*: `fx.page(o)` (the workspace that slides), `fx.icon(o, col, row, cols, rows)` (a tile while the page moves),
   `fx.app_duration(closing)` and `fx.app(t, a)` (the app window), for example
   `function fx.app_duration(closing) return 0.1 end`.
+- *Glass*: the preset `glass` (join it after the palette: `preset:tiling+pal-frost+glass`) turns tiles, windows, the bar, the
+  launcher prompt and the overview into translucent panes. The numbers it sets are the table `wm` too: `wm.glass` (on or off),
+  `wm.pane` (`top` and `bottom` opacity of a pane, `shine` the light on its top half, `edge` its thin lit edge), `wm.alpha`
+  (`tile`, `bar`, `window`, `scrim`, `overview`: the opacities of the flat look and of the layers behind the launcher and the
+  overview), `wm.overview` (`"cards"` the flat grid, `"glass"` rounded glass cards with the picture rounded and the name under it)
+  and `wm.ov_cols` (cards in a row, 2 or 3). The glass looks best over a soft wallpaper, because what shows through a pane is the
+  wallpaper. `frost-wm.zip` is an example.
 - *Other parts* like in any module: the font files, the wallpapers, the numbers under `targets`.
 - A person using the module changes layout, gaps and corners from the wm menu; that choice wins over the module until the
   app's data is cleared.
@@ -1616,6 +1624,8 @@ These ship in the ROM repository, in `vendor/kami/modules/examples`. Import one 
 | `back-lab.zip`, `pill-lab.zip`, `closing-lab.zip` | The looks of the back swipe, opening and leaving a page; the gesture pill and the speed; an app closing into its icon (speed and bounce) |
 | `aurora.zip`, `deep-sea.zip`, `lava-lamp.zip` | Moving pictures everywhere: tiles, shade, panel, sliders, the card of Settings |
 | `neon-dusk.zip`, `synthwave.zip` | Whole looks: font, colours, shapes, icons, a neon battery |
+| `night-snow.zip` | A minimal night theme in frosted glass and ice blue that uses nearly every part: wallpaper and lock screen, a thin font, snow that falls in the shade, glass sheets and pages, calm animations, and four ways for a switch to turn (a moon that becomes a snowflake, jelly, spin, drop). Built by `make-night-snow.py` with `glasslib.py` |
+| `frost-wm.zip` | A tiling window manager in frosted glass (needs the Kami Shell module, 1.1 or newer): translucent tiles, a glass bar, an overview of glass cards, a monospace font, and the system dressed to match. Built by `make-frost-wm.py` |
 | `make-kami-shell.py`, `make-app-module.py`, `tiling-larp.zip` | Kami Shell as an app module (build it with the APK), any APK as a module, and the tiling window manager look (needs the Kami Shell module). These are not in the ROM, they are for the module store |
 
 ### A complete module
