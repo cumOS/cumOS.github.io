@@ -949,6 +949,8 @@ The most you can do with a switch is draw all of it yourself. A **strip** is one
 
 - The switch is 32 dp high. Draw at 3 times: **96 px high**, and about 156 px wide for one frame. The strip may be up to 2560 px wide.
 - Corners and shape are part of the picture. Give the corners some transparency to make a pill.
+- **Let the track fill the frame.** The stock switch is a track of 32 dp, the whole height. A track that only uses the middle of the frame (a common mistake is 56 of 96 px) looks small next to the other switches of the phone. Draw it from about y 4 to y 92 and from edge to edge; the knob may be as high as the track or a little higher.
+- **See-through colours need a layer.** If you make the strip with a program, do not draw a see-through colour (a highlight, a glow, a shadow) straight onto the picture: in Pillow, `ImageDraw` on an RGBA image *replaces* the pixels with that see-through colour instead of mixing it, so the track under the highlight is gone and the spot shows as a dark or black bar in dark mode. Paint such things on their own empty layer and put the layer over the strip (`Image.alpha_composite(strip, layer)`), or use opaque colours. `examples/glasslib.py` has `over()` for it. A quick test: put the finished strip on a black and on a white background; the switch must look the same on both.
 - The switch plays the strip forward when it is turned on and backward when it is turned off, and it cross-fades between two neighbouring frames, so even 8 frames look smooth.
 - The animation only plays when you touch the switch. A page that opens, or a list that scrolls, shows the right frame at once.
 
