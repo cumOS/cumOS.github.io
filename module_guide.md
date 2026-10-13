@@ -1395,6 +1395,31 @@ Helpers: `ui.dp(v)`, `ui.text(...)`, `ui.card(x, y, w, h)`, `ui.accent(alpha)`, 
 tables `cfg`, `fx`. A widget that changes slowly (a clock, a countdown) should call `kami.wake(seconds)` for its next change
 instead of returning `true` from `draw`, which draws every display frame and costs battery.
 
+### A whole home screen of your own
+
+A script that does not start with `--@extend` replaces the built-in home screen completely: no pages, no grid, no dock unless you
+draw them. The preset `orbit` (`apps/KamiShell/assets/presets/orbit.lua`, 22 KB, the home screen of `frost-orbit.zip`) is an example of how far that goes: the apps sit on a wheel at
+the edge of the screen. What a script of this kind has to bring:
+
+- `frame(dt)` draws everything (`kami.rect`, `ring`, `line`, `icon`, `text`, ...) and returns `true` while something moves. Nothing
+  else needs frames: the clock is redrawn by the shell at the turn of a minute.
+- `app_fx_duration(closing)`, `app_fx(t, a)` and `app_fx_target(key)` as globals, the same as `fx.app` of the built-in script
+  (the window of an app grows out of the icon it was started from; remember that icon in `kami.launch`). While an app opens,
+  `kami.launched()` is the time since it was started and `kami.resumed()` the time since the home screen came back: let the screen
+  move away and return with them, and hide the icon that is on its way into the window.
+- the touch hooks. For a list that scrolls, `kami.vscroll_config(max, true)` gives you the finger, the fling and the bounce at the
+  ends for free (`kami.vscroll()` is the position); the wheel turns that position into angles, takes over when the finger lifts and
+  drives it to the nearest app with its own spring (`kami.vscroll_set`). A touch that starts somewhere special (the rail at the edge)
+  is taken in `on_down` by returning `true`.
+- `kami.save` / `kami.load` for what the person arranged (the dock, which side the dial is on).
+
+A module that is only JSON can carry such a script as the value of the setting `secure/kami_shell_script` (up to 32000 characters;
+every other setting of a module is limited to 200). A script that comes with the Kami Shell app is a preset instead, and the module
+names it, `preset:orbit`, and may add lines of Lua after that line: `frost-orbit.zip` sets the colour of the dial with a second line,
+`ACC = { 0.62, 0.83, 1.0 }`.
+For writing it without a phone: `lua5.4 tools/check.lua my.lua` and the simulator `tools/sim`, which draws the real renderer into
+PNG files (see "Trying a script" below).
+
 ### The script language
 
 Only `base` (without `load`, `dofile`, `require`, `collectgarbage`), `table`, `string`, `math` and `utf8` exist: no files, no
@@ -1560,7 +1585,7 @@ freeform windows are off, the system's own overview is used.
   (`tile`, `bar`, `window`, `scrim`, `overview`: the opacities of the flat look and of the layers behind the launcher and the
   overview), `wm.overview` (`"cards"` the flat grid, `"glass"` rounded glass cards with the picture rounded and the name under it)
   and `wm.ov_cols` (cards in a row, 2 or 3). The glass looks best over a soft wallpaper, because what shows through a pane is the
-  wallpaper. `frost-wm.zip` is an example.
+  wallpaper.
 - *Other parts* like in any module: the font files, the wallpapers, the numbers under `targets`.
 - A person using the module changes layout, gaps and corners from the wm menu; that choice wins over the module until the
   app's data is cleared.
@@ -1625,7 +1650,7 @@ These ship in the ROM repository, in `vendor/kami/modules/examples`. Import one 
 | `aurora.zip`, `deep-sea.zip`, `lava-lamp.zip` | Moving pictures everywhere: tiles, shade, panel, sliders, the card of Settings |
 | `neon-dusk.zip`, `synthwave.zip` | Whole looks: font, colours, shapes, icons, a neon battery |
 | `night-snow.zip` | A minimal night theme in frosted glass and ice blue that uses nearly every part: wallpaper and lock screen, a thin font, snow that falls in the shade, glass sheets and pages, calm animations, and four ways for a switch to turn (a moon that becomes a snowflake, jelly, spin, drop). Built by `make-night-snow.py` with `glasslib.py` |
-| `frost-wm.zip` | A tiling window manager in frosted glass (needs the Kami Shell module, 1.1 or newer): translucent tiles, a glass bar, an overview of glass cards, a monospace font, and the system dressed to match. Built by `make-frost-wm.py` |
+| `frost-orbit.zip` | A whole home screen written as one script (needs the Kami Shell module, 1.2 or newer): the apps sit on a glass dial at the edge of the screen and are turned with the thumb, with a letter rail, search, a dock and its own app animation; the system around it is glass, with a monospace font. Built by `make-frost-orbit.py` with `glasslib.py`; the script is the preset `orbit` of Kami Shell |
 | `make-kami-shell.py`, `make-app-module.py`, `tiling-larp.zip` | Kami Shell as an app module (build it with the APK), any APK as a module, and the tiling window manager look (needs the Kami Shell module). These are not in the ROM, they are for the module store |
 
 ### A complete module
