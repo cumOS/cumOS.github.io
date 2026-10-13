@@ -552,6 +552,20 @@ The bar at the bottom that you swipe up from. These are resources of `com.androi
 | `bool/kami_pill_image_clip` | true cuts the picture to the rounded pill (default), false lets it keep its own shape |
 | `color/taskbar_stashed_handle_light_color`, `..._dark_color` | the colour of the pill on a dark / on a light background |
 
+### An app closing into its icon
+
+Swiping up from an app, the home button and back to the home screen make the app shrink into its icon. These are resources of
+`com.android.launcher3`.
+
+| Resource | What it does |
+|---|---|
+| `dimen/kami_close_speed` | how fast the app closes: 1 stock, 2 twice as fast, 0.5 half as fast (0.3 to 3) |
+| `dimen/swipe_up_rect_x_damping_ratio`, `..._y_damping_ratio` | how much the window bounces into the icon after you let go: 1 none, stock about 0.96, 0.5 a clear wobble |
+
+Speed changes the spring of the swipe and the length of the fade of the home button. The wobble belongs to the swipe; the home button
+only fades. These knobs do not depend on the gesture pill. The example `closing-lab.zip` (`examples/make-closing-lab.py`) has two
+separate choices, the speed (fast, stock, slow) and the bounce (none, stock, bouncy, jelly), that can be mixed freely.
+
 ### Recents
 
 These tune the stack of cards. They only act while "Stacked cards" is on in the
@@ -676,6 +690,9 @@ A module that gives every app a dark red window with a spinner and keeps it for 
   "android": { "dimen/starting_surface_icon_size": "220dp" }
 }
 ```
+
+The `kami_splash_exit_*` knobs only change how this window leaves again once the app has drawn, not how an app closes. A window
+without a visible colour (clear) has nothing to show while it leaves, so give it a colour with alpha to see them.
 
 The example `splash-lab.zip` (`examples/make-splash-lab.py`) has the colour, the icon size, how long the window stays and a spinner
 or a colour wash as choices. Opening an app from Kami Shell, and the way home from it, can be scripted as well, see
@@ -1532,7 +1549,7 @@ These ship in the ROM repository, in `vendor/kami/modules/examples`. Import one 
 | `purple-shade.json`, `deck-tight.json`, `motion.json` | One small thing each: a flat shade, a tight recents deck, the easing curves |
 | `metro-tiles.zip`, `flat-settings.zip`, `plain-list.zip`, `stock-pages.zip` | Settings layouts: flat tiles, square tiles, a list, stock pages |
 | `dock.zip` | The pages of Settings as a floating dock |
-| `back-lab.zip`, `pill-lab.zip` | The looks of the back swipe, opening and leaving a page; the gesture pill and the speed |
+| `back-lab.zip`, `pill-lab.zip`, `closing-lab.zip` | The looks of the back swipe, opening and leaving a page; the gesture pill and the speed; an app closing into its icon (speed and bounce) |
 | `aurora.zip`, `deep-sea.zip`, `lava-lamp.zip` | Moving pictures everywhere: tiles, shade, panel, sliders, the card of Settings |
 | `neon-dusk.zip`, `synthwave.zip` | Whole looks: font, colours, shapes, icons, a neon battery |
 | `kami-shell.zip`, `tiling-larp.zip` | A home screen in Lua, and the tiling window manager look |
