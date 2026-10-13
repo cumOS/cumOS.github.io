@@ -109,13 +109,14 @@ A module is one file, `module.json`, or a zip that has it at the top. The file s
 | `id` | `a-z`, `0-9`, `-` and `_`. Importing a file with the id of a module you already have replaces it. The ids of the modules that ship with the ROM cannot be used. |
 | `name`, `author`, `description` | shown in the list |
 | `module_version` | optional, like `1.2` or `2.0-beta`. Shown in the lists, and compared with the version in the module store to offer an update. `version` above is the version of the file format, not of your module. |
-| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `bootanimation`, `emoji`, `fonts`, `wallpaper` or `icons`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only a boot animation, emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds, boot animation) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
+| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `bootanimation`, `emoji`, `fonts`, `wallpaper`, `icons` or `apps`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only a boot animation, emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds, boot animation) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
 | `group` | optional. Modules of the same group switch each other off. Use it for separate modules that exclude each other; for the choices inside one module use `options`. |
 | `restart` | optional, `true`. System UI is started again when the module is switched, for resources that are only read at start. |
 | `targets` | knob resources, per package, see below |
 | `options` | choices for the user |
 | `overlays` | resources of any app |
 | `bootanimation`, `shutdownanimation`, `fonts`, `wallpaper`, `home_app`, `accent`, `accent_style`, `launcher_icons` | see the sections below |
+| `apps` | apps (APKs in the zip) that are installed while the module is on, see [Apps that come with a module](#apps-that-come-with-a-module) |
 | `settings` | options of the phone to write while the module is on |
 
 ### Values
@@ -295,6 +296,65 @@ third-party app, the framework `android`), with resources you name yourself:
   change. It replaces resource values, nothing more.
 - Settings can be overlaid too. If a module makes the phone unusable, see [Safety and recovery](#safety-recovery-and-limits).
 - Nobody reviews modules. Switching one on shows the apps it changes and a warning, every time.
+
+### Apps that come with a module
+
+A module can carry apps: a launcher, a tool, anything that is a normal app. Settings installs them while the module is on and
+removes them when it is switched off, so an app can be shipped and updated through the module store without a new ROM.
+
+```json
+{
+  "format": "kamios-module", "version": 1,
+  "id": "metro-launcher", "name": "Metro Launcher",
+  "home_app": "com.metro.launcher",
+  "apps": [
+    { "package": "com.metro.launcher", "apk": "apk/app.apk", "cert": "06da3f36...64 hex digits...eae3" }
+  ]
+}
+```
+
+| Field | |
+|---|---|
+| `package` | the package name of the app, it has to be the one in the APK |
+| `apk` | the path of the APK in the zip |
+| `cert` | the SHA-256 of the certificate the APK is signed with (64 hex digits, `apksigner verify --print-certs`). Required: the APK is installed only when it is signed with this certificate, and an update of an app that is there has to have the same one (the system sees to that). |
+
+- At most four apps per module, 128 MB for each APK. The APK has to carry its native libraries (`use_embedded_native_libs`).
+- The install is silent (Settings is a system app), the module does not ask. An app that was there before (an app of the ROM) is
+  left alone and is not removed when the module is switched off; only apps that Settings installed are removed again.
+- `home_app` can name one of the apps: it becomes the home app while the module is on, and the old one comes back when it is off.
+  The same module can carry a look (`targets`, `settings` ...) for it.
+- An app of a module is a normal app: it has no privileged permissions and no hidden API. A launcher that needs more
+  (Kami Shell moves the windows of other apps while they open) asks Quickstep, which does it for the app and lets only the apps
+  it trusts use this (the certificate of the module, see below).
+- `make-app-module.py` (in `examples/`) packs an APK into such a zip and reads the certificate; with `--keystore` it signs the
+  APK with your own key first. **Use your own key for anything you publish**: an APK signed with the public test key of AOSP says
+  nothing about who made it.
+- Trust is in the module: a module names the certificate its app is signed with, and switching it on is the decision to trust
+  that. The list is kept for Quickstep in the secure setting `kami_trusted_apps`, which only Settings can write.
+
+The examples `examples/make-kami-shell.py` (Kami Shell, with its looks), `make-metro-launcher.py` (Metro Launcher) and
+`make-app-module.py --home-app` build such modules. The ready zips of the ROM post are in `vendor/kami/zips/` (`kami-shell.zip`,
+`metro-launcher.zip`, `tiling-larp.zip`); `vendor/kami/zips/build.sh` makes them again, signed with your own key.
+
+**Metro Launcher** has three looks, chosen in its own settings (the Metro settings tile): *Windows Phone 8* (flat tiles on black), *Windows 10 Mobile*
+(tiles close together, no title, an app list in two columns with an outlined search box at the top and the icons on dark squares) and
+*Windows 11* (the same, with rounded acrylic tiles, a round search field and rounded icon squares). Each look has its own launcher
+icon and its own recents screen: Windows Phone 8 has the cards with a coloured title bar (one colour per card when the tile colours are
+subtle or colourful), Windows 10 Mobile the names above outlined screenshots, Windows 11 rounded cards on a grey screen.
+
+Each look has its **own start screen**: the layout of Windows Phone 8 is the one it always had, Windows 10 Mobile starts with more small
+tiles in blocks of four between the bigger ones, Windows 11 with fewer small tiles and a wide clock tile. Switching the look switches the
+layout, and each one is kept. The app list has icons in the style of the look too: Windows Phone 8 and Windows 10 Mobile show the white
+glyph of the app on a square (accent coloured in Windows Phone 8, dark grey in Windows 10 Mobile), Windows 11 draws every app as an
+adaptive icon in the same rounded square.
+
+In the two newer looks the **wallpaper is on the tiles** (Metro settings, "tiles"): each tile has the part of the wallpaper that lies under
+it and turns and moves with the tile; between the tiles the screen is black or white like the other screens. Three choices: the wallpaper a
+little darker (the default, like Windows 10 Mobile with a background picture), the wallpaper with the accent colour as a tint over it, or plain
+colours without any wallpaper (not see-through at all). The picture is one of your own (Metro settings, "wallpaper") or the wallpaper of the
+phone. Android lets an app read the wallpaper of the phone only with "All files access", so the settings have a row that opens that page;
+without it, and without a picture, the tiles are plain colours.
 
 <!-- group: System look -->
 
@@ -567,6 +627,9 @@ only fades. These knobs do not depend on the gesture pill. The example `closing-
 separate choices, the speed (fast, stock, slow) and the bounce (none, stock, bouncy, jelly), that can be mixed freely.
 
 ### Recents
+
+The module **Recents style** (one module, one choice: carousel, fan, soft overlap or tight deck) sets the numbers below for you. To make
+your own look, set them yourself.
 
 These tune the stack of cards. They only act while "Stacked cards" is on in the
 launcher settings.
@@ -1179,9 +1242,10 @@ Tiling WM module uses this, see below.
 ## Kami Shell: a home screen in Lua
 
 Kami Shell is an optional home screen for KamiOS. It is drawn by a small renderer and the look, the arrangement of the icons
-and every animation are a Lua script that a module can replace. You can switch it on as a module (home app
-`com.kami.shell`) or choose it under Settings > Apps > Default apps > Home app. It keeps the gestures and the recents screen
-of the system launcher.
+and every animation are a Lua script that a module can replace. It is not part of the ROM: it comes as an app module (see
+[Apps that come with a module](#apps-that-come-with-a-module)), which installs it, makes it the home app and offers its looks.
+It keeps the gestures and the recents screen of the system launcher. It is a normal app; the opening and closing of other apps
+in its animation is played by Quickstep with the curve the script gives.
 
 The built-in script is a normal home screen: pages you arrange by long press and drag, folders that open into a large panel,
 widgets (clock, analog clock, date, battery, battery ring, search bar, note, stopwatch, counter, year progress, picture),
@@ -1552,7 +1616,7 @@ These ship in the ROM repository, in `vendor/kami/modules/examples`. Import one 
 | `back-lab.zip`, `pill-lab.zip`, `closing-lab.zip` | The looks of the back swipe, opening and leaving a page; the gesture pill and the speed; an app closing into its icon (speed and bounce) |
 | `aurora.zip`, `deep-sea.zip`, `lava-lamp.zip` | Moving pictures everywhere: tiles, shade, panel, sliders, the card of Settings |
 | `neon-dusk.zip`, `synthwave.zip` | Whole looks: font, colours, shapes, icons, a neon battery |
-| `kami-shell.zip`, `tiling-larp.zip` | A home screen in Lua, and the tiling window manager look |
+| `make-kami-shell.py`, `make-app-module.py`, `tiling-larp.zip` | Kami Shell as an app module (build it with the APK), any APK as a module, and the tiling window manager look (needs the Kami Shell module). These are not in the ROM, they are for the module store |
 
 ### A complete module
 
