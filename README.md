@@ -7,7 +7,9 @@ The site of KamiOS, served by GitHub Pages: static files, no framework, no build
 | `index.html`, `style.css`, `main.js` | the front page (the mask, the glitches, the three fragments) |
 | `module_guide.md` | **the module guide**, the only source of the guide. Edit this one. |
 | `modules.html` | the guide as a page, generated from `module_guide.md`. Do not edit by hand. |
-| `doc.css`, `doc.js` | the look of the guide page (on top of `style.css`) |
+| `doc.css`, `doc.js` | the look and behaviour of the guide page (tabs, sidebar, search, on-this-page list) on top of `style.css` |
+| `demos.css`, `demos.js` | the live examples in the guide (phone, glass, switch, curve, wake, back, sounds, knob search) |
+| `knobs.json` | a copy of the ROM's knob list, for the knob search and the demos |
 | `counter.js` | the visit count in the footer, from Tally API (free, no account) |
 | `build.py` | turns `module_guide.md` into `modules.html` (Python 3, no packages) |
 
@@ -17,6 +19,17 @@ The site of KamiOS, served by GitHub Pages: static files, no framework, no build
 $EDITOR module_guide.md
 python3 build.py
 git add module_guide.md modules.html && git commit && git push
+```
+
+The guide is one tab per `## ` heading. `<!-- group: Name -->` above a heading puts the tab in a group of the sidebar,
+`<!-- lead -->` marks the paragraph shown big under the title, `<!-- demo: name -->` puts a live example there (the names are
+the ones in `demos.js`), and `> [!warn]` starts a callout. The ROM keeps the same file at `vendor/kami/modules/module_guide.md`:
+change both together. Keep the file name `modules.html`, the ROM links to it.
+
+When the knob list in the ROM changes, refresh the copy:
+
+```
+cp <rom>/packages/apps/KamiSettings/res/raw/kami_knobs.json knobs.json
 ```
 
 `build.py` understands the Markdown the guide uses: headings (they get anchors, the contents list links to them), paragraphs,

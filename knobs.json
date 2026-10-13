@@ -1,0 +1,2326 @@
+{
+ "knobs": [
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/common_tile_default_active_tile_corner_radius",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Active tile rounding",
+   "description": "Corner radius of a tile that is on.",
+   "default": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/common_tile_default_inactive_tile_corner_radius",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Inactive tile rounding",
+   "description": "Corner radius of a tile that is off.",
+   "default": "50dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/common_tile_default_active_icon_corner_radius",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Active icon rounding",
+   "description": "Corner radius of the icon background of a tile that is on.",
+   "default": "16dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/common_tile_default_inactive_icon_corner_radius",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Inactive icon rounding",
+   "description": "Corner radius of the icon background of a tile that is off.",
+   "default": "50dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/qs_corner_radius",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Panel rounding",
+   "description": "Rounding of the quick settings panel and the footer.",
+   "default": "28dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_slider_shape",
+   "kind": "int",
+   "group": "Quick settings",
+   "title": "Brightness slider shape",
+   "description": "-1 is the shape chosen in the settings, 1 circle, 2 rounded square, 3 square.",
+   "default": "-1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_footer_button_shape",
+   "kind": "int",
+   "group": "Quick settings",
+   "title": "Footer buttons",
+   "description": "Shape of the settings and power buttons: 0 circle, 1 square, 2 rounded.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "bool/kami_blur_enabled",
+   "kind": "bool",
+   "group": "Shade",
+   "title": "Blur",
+   "description": "False turns off the blur behind the shade, the lock screen and the other SystemUI windows; the shade becomes an opaque surface.",
+   "default": "true"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/shade_panel_fallback_fg",
+   "kind": "color",
+   "group": "Shade",
+   "title": "Shade colour, top layer",
+   "description": "With no blur the shade is a mix of two colours, this is the first.",
+   "default": "accent"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/shade_panel_fallback_bg",
+   "kind": "color",
+   "group": "Shade",
+   "title": "Shade colour, bottom layer",
+   "description": "The second colour of the shade without blur.",
+   "default": "neutral"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/shade_panel_fallback",
+   "kind": "color",
+   "group": "Shade",
+   "title": "Shade colour, dialogs",
+   "description": "The colour of the volume dialog background and similar surfaces.",
+   "default": "accent"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/notification_scrim_base",
+   "kind": "color",
+   "group": "Shade",
+   "title": "Notification area colour",
+   "description": "Base colour behind the notifications.",
+   "default": "neutral"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/shade_scrim_background_dark",
+   "kind": "color",
+   "group": "Shade",
+   "title": "Dimmed background",
+   "description": "Colour of the scrim behind the shade.",
+   "default": "black"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/notification_corner_radius",
+   "kind": "dimension",
+   "group": "Shade",
+   "title": "Notification rounding",
+   "description": "Corner radius of a notification.",
+   "default": "28dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/notification_corner_radius_small",
+   "kind": "dimension",
+   "group": "Shade",
+   "title": "Notification rounding, inner",
+   "description": "Corner radius of notifications that touch another one.",
+   "default": "4dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/notification_scrim_corner_radius",
+   "kind": "dimension",
+   "group": "Shade",
+   "title": "Notification area rounding",
+   "description": "Corner radius of the area behind the notifications.",
+   "default": "32dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_notification_bg",
+   "kind": "color",
+   "group": "Notifications",
+   "title": "Notification card colour",
+   "description": "Background of every notification card and of the heads-up pop-up. Cards that an app colours (a call, a music player) keep the colour of the app. Leave it out to keep the theme colour (Material You). Give it some alpha to see the shade through the cards.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_notification_image",
+   "kind": "drawable",
+   "group": "Notifications",
+   "title": "Notification card picture",
+   "description": "A picture over the background of every notification card and of the heads-up pop-up, cut to the corners of the card. Cards that an app colours do not get it. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves while it is shown. It covers the card (centred, cropped), so give it some alpha to let the colour through, the text stays on top of it.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_back_arrow",
+   "kind": "color",
+   "group": "Back gesture",
+   "title": "Back arrow colour",
+   "description": "Colour of the arrow that follows your finger when you swipe back from the edge. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_back_arrow_bg",
+   "kind": "color",
+   "group": "Back gesture",
+   "title": "Back arrow background colour",
+   "description": "Colour of the round shape behind the back arrow. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/config_backGestureArrowMode",
+   "kind": "int",
+   "group": "Back gesture",
+   "title": "Back arrow style",
+   "description": "0 is the stock arrow drawn with a line, 1 a filled arrow, 2 your own shape from the arrow shape.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/config_backGestureArrowPathData",
+   "kind": "string",
+   "group": "Back gesture",
+   "title": "Back arrow shape",
+   "description": "The shape of the arrow for style 2, as SVG path data in a box where x runs from 0 (the tip) towards the screen edge, and y from -1 to 1 (up and down). The stock chevron is 'M 1,-1 L 0,0 L 1,1'; add a tail with 'M 0,0 L 2,0'. It is drawn as a line and scaled to the size of the arrow, and the same shape is mirrored for the other edge.",
+   "default": "M 1,-1 L 0,0 L 1,1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/navigation_edge_arrow_thickness",
+   "kind": "dimension",
+   "group": "Back gesture",
+   "title": "Back arrow line thickness",
+   "description": "How thick the line of the back arrow is.",
+   "default": "4dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_back_style",
+   "kind": "string",
+   "group": "Back gesture",
+   "title": "How the back swipe changes the screen",
+   "description": "What you see when you swipe back from the edge, between two apps or two screens of an app that supports the back preview. stock is the shrinking card with the screen below it. off shows nothing, the screen changes as soon as you let go. fade, zoom (the old screen flies at you), flip (like a card, the new screen is its back), book (a page that turns, the new screen is under it), spin (the old screen is thrown away) and glitch (stutters, jumps and flickers into the new screen) are the others. Going back to the home screen and the previews that an app draws itself keep their own animation.",
+   "default": "stock"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_back_duration",
+   "kind": "int",
+   "group": "Back gesture",
+   "title": "Length of the change",
+   "description": "How long the second part takes, after you let go of the swipe, in milliseconds. 0 takes the length of the look (300 to 520). Only for the looks of the setting above, not for stock.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_open_style",
+   "kind": "string",
+   "group": "Back gesture",
+   "title": "Going into a screen",
+   "description": "How a screen of an app comes in when you open it, for example a sub page of Settings. stock keeps the animation of the system. off cuts at once. fade, zoom, flip (the screen turns like a card), book (a page that lands from the right edge or turns away), spin (the screen is thrown in or away) and glitch (stutters and flickers) are the others. Screens that an app animates itself, dialogs and tasks (opening an app) keep their own animation.",
+   "default": "stock"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_close_style",
+   "kind": "string",
+   "group": "Back gesture",
+   "title": "Leaving a screen",
+   "description": "How a screen goes away when the app finishes it (the arrow in the top bar, the back button). It plays the same looks as the back swipe. stock keeps the animation of the system. off cuts at once. fade, zoom, flip (the screen turns like a card), book (a page that lands from the right edge or turns away), spin (the screen is thrown in or away) and glitch (stutters and flickers) are the others. The swipe from the edge has its own setting.",
+   "default": "stock"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_transition_duration",
+   "kind": "int",
+   "group": "Back gesture",
+   "title": "Length of going in and out",
+   "description": "How long going into or out of a screen takes, in milliseconds. 0 takes the length of the look (300 to 520).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_back_overlay",
+   "kind": "drawable",
+   "group": "Back gesture",
+   "title": "Picture over the change",
+   "description": "A picture over both screens while the back swipe plays, centred and cropped to the display. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves, so a glitch, static or light leak GIF makes a new look. Give it some alpha to see the screens through it. It works with every look of the setting above except stock.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_back_overlay_alpha",
+   "kind": "int",
+   "group": "Back gesture",
+   "title": "Strength of the picture",
+   "description": "How much of the picture shows, in percent (0 to 100).",
+   "default": "100"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_back_overlay_mode",
+   "kind": "int",
+   "group": "Back gesture",
+   "title": "When the picture shows",
+   "description": "0 shows it the whole time, 1 fades it in and out so it is strongest in the middle of the change.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_reach",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Stack reach",
+   "description": "Where the cards behind the middle one pile up, in card steps.",
+   "default": "0.70"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_flat",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Stack flat part",
+   "description": "A card follows the finger one to one up to here, in card steps.",
+   "default": "0.45"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_shrink",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Stack shrink",
+   "description": "Scale a card loses per card step away from the middle.",
+   "default": "0.075"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_min_scale",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Smallest card",
+   "description": "The smallest scale of a card in the stack.",
+   "default": "0.8"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_lift",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Stack lift",
+   "description": "How far the middle card lifts over the others, in dp.",
+   "default": "6"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_rotate_y",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Carousel turn",
+   "description": "Degrees a card turns about the vertical axis per card step away from the middle (0 keeps it flat).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_rotate_z",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Fan tilt",
+   "description": "Degrees a card tilts per card step away from the middle.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_drop",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Card sink",
+   "description": "How far a card sinks per card step, in dp.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_fade",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Card fade",
+   "description": "Opacity a card loses per card step (0 keeps all opaque).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_recents_stack_min_alpha",
+   "kind": "float",
+   "group": "Recents",
+   "title": "Faintest card",
+   "description": "The least opacity a faded card keeps.",
+   "default": "0.3"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "integer/kami_recents_stack_order",
+   "kind": "int",
+   "group": "Recents",
+   "title": "Card order",
+   "description": "0: the middle card is on top, 1: cards further right are over the ones to their left.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_pill_width_scale",
+   "kind": "float",
+   "group": "Gesture pill",
+   "title": "Length",
+   "description": "How long the gesture pill is, as a multiple of what the navigation settings chose (2 is twice as long, 0.5 half).",
+   "default": "1.0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_pill_height_scale",
+   "kind": "float",
+   "group": "Gesture pill",
+   "title": "Thickness",
+   "description": "How thick the gesture pill is, as a multiple of the setting (it cannot be thicker than its window, about 25dp).",
+   "default": "1.0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_pill_follow",
+   "kind": "float",
+   "group": "Gesture pill",
+   "title": "Movement",
+   "description": "How far the pill moves with the finger when you touch the bottom edge: 0 keeps it still, 1 is the default, 2 moves it twice as far (up and down it stops at 9dp, the size of its window).",
+   "default": "1.0"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_pill_stiffness",
+   "kind": "float",
+   "group": "Gesture pill",
+   "title": "Spring stiffness",
+   "description": "How hard the spring is that brings the pill back after you let go. Higher snaps back faster.",
+   "default": "380"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_pill_damping",
+   "kind": "float",
+   "group": "Gesture pill",
+   "title": "Wobble",
+   "description": "How much the pill wobbles on its way back: 1 settles without a wobble, 0.62 is the default, 0.2 wobbles a lot.",
+   "default": "0.62"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "drawable/kami_pill_image",
+   "kind": "drawable",
+   "group": "Gesture pill",
+   "title": "Pill picture",
+   "description": "A picture in place of the pill, drawn in the size of the pill and cut to its rounded shape (see Keep the pill shape). PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves. The colour of the pill is not drawn behind it.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "bool/kami_pill_image_clip",
+   "kind": "bool",
+   "group": "Gesture pill",
+   "title": "Keep the pill shape",
+   "description": "True cuts the picture to the rounded pill, false lets the picture keep its own shape inside the pill area.",
+   "default": "true"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "color/taskbar_stashed_handle_light_color",
+   "kind": "color",
+   "group": "Gesture pill",
+   "title": "Pill colour on dark",
+   "description": "The colour of the pill when what is behind it is dark.",
+   "default": "#EBFFFFFF"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "color/taskbar_stashed_handle_dark_color",
+   "kind": "color",
+   "group": "Gesture pill",
+   "title": "Pill colour on light",
+   "description": "The colour of the pill when what is behind it is light.",
+   "default": "#99000000"
+  },
+  {
+   "target": "com.android.launcher3",
+   "resource": "dimen/kami_launch_duration_scale",
+   "kind": "float",
+   "group": "Launcher motion",
+   "title": "App opening speed",
+   "description": "How long an app takes to open from the launcher (and from Recents), as a multiple of the stock length: 1 is stock, 0.6 is faster, 1.5 is slower. The curves keep their shape, only the length changes. For every animation of the whole system use the animation scale options of a module's settings (global/window_animation_scale, transition_animation_scale, animator_duration_scale).",
+   "default": "1.0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_airplane_mode",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Airplane mode icon",
+   "description": "Shown while airplane mode is on. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_alarm",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Alarm icon",
+   "description": "Shown while an alarm is set. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_ringer_vibrate",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Vibrate icon",
+   "description": "Shown while the ringer is on vibrate. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_ringer_silent",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Silent icon",
+   "description": "Shown while the ringer is silent. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_qs_tile_active_bg",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Active tile background",
+   "description": "Background of a tile that is on (and the icon background of a tile with two targets). Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_qs_tile_active_fg",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Active tile text and icon",
+   "description": "Text and icon colour on a tile that is on. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_qs_tile_inactive_bg",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Inactive tile background",
+   "description": "Background of a tile that is off. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_qs_tile_inactive_fg",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Inactive tile text and icon",
+   "description": "Text and icon colour on a tile that is off. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_airplane_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Airplane mode tile icon (on)",
+   "description": "Symbol of the airplane mode tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_airplane_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Airplane mode tile icon (off)",
+   "description": "Symbol of the airplane mode tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_flashlight_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Flashlight tile icon (on)",
+   "description": "Symbol of the flashlight tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_flashlight_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Flashlight tile icon (off)",
+   "description": "Symbol of the flashlight tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_dnd_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Do not disturb tile icon (on)",
+   "description": "Symbol of the do not disturb tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_dnd_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Do not disturb tile icon (off)",
+   "description": "Symbol of the do not disturb tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_bluetooth_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Bluetooth tile icon (on)",
+   "description": "Symbol of the bluetooth tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_bluetooth_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Bluetooth tile icon (off)",
+   "description": "Symbol of the bluetooth tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_location_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Location tile icon (on)",
+   "description": "Symbol of the location tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_location_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Location tile icon (off)",
+   "description": "Symbol of the location tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_auto_rotate_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Auto rotate tile icon (on)",
+   "description": "Symbol of the auto rotate tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_auto_rotate_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Auto rotate tile icon (off)",
+   "description": "Symbol of the auto rotate tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_battery_saver_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Battery saver tile icon (on)",
+   "description": "Symbol of the battery saver tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_battery_saver_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Battery saver tile icon (off)",
+   "description": "Symbol of the battery saver tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_hotspot_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Hotspot tile icon (on)",
+   "description": "Symbol of the hotspot tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_hotspot_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Hotspot tile icon (off)",
+   "description": "Symbol of the hotspot tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_nightlight_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Night light tile icon (on)",
+   "description": "Symbol of the night light tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_nightlight_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Night light tile icon (off)",
+   "description": "Symbol of the night light tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_invert_colors_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Colour inversion tile icon (on)",
+   "description": "Symbol of the colour inversion tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_invert_colors_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Colour inversion tile icon (off)",
+   "description": "Symbol of the colour inversion tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_light_dark_theme_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Dark theme tile icon (on)",
+   "description": "Symbol of the dark theme tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_light_dark_theme_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Dark theme tile icon (off)",
+   "description": "Symbol of the dark theme tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_data_saver_icon_on",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Data saver tile icon (on)",
+   "description": "Symbol of the data saver tile while it is on. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/qs_data_saver_icon_off",
+   "kind": "drawable",
+   "group": "Quick settings icons",
+   "title": "Data saver tile icon (off)",
+   "description": "Symbol of the data saver tile while it is off. A white PNG with transparency, any size, tinted by the tile.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_data_saver",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Data saver icon",
+   "description": "Shown while data saver is on. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_nfc",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "NFC icon",
+   "description": "Shown while NFC is on. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_hotspot",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Hotspot icon",
+   "description": "Shown while the hotspot is on. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_data_bluetooth_connected",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Bluetooth connected icon",
+   "description": "Shown while a Bluetooth device is connected (not for devices that report a battery level). A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_cast",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Cast icon",
+   "description": "Shown while the screen is cast. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_headset",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Headset icon",
+   "description": "Shown while a wired headset is plugged in. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_vpn_ic",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "VPN icon",
+   "description": "Shown while a VPN is connected. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/stat_sys_rotate_portrait",
+   "kind": "drawable",
+   "group": "Status bar icons",
+   "title": "Rotation lock icon",
+   "description": "Shown while the screen is locked in portrait. A white PNG with transparency, any size: it is scaled to 17dp high and tinted by the status bar. A GIF or animated WebP moves: it is tinted like any icon (a moving silhouette) and the status bar fits it to the row.",
+   "default": "the ROM icon",
+   "height": "17dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_width",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Panel width",
+   "description": "Width of the volume panel's background.",
+   "default": "60dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_background_corner_radius",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Panel rounding",
+   "description": "Corner radius of the volume panel.",
+   "default": "30dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_slider_height",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Slider length",
+   "description": "The longest the volume slider gets (it is shorter on a small screen).",
+   "default": "254dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_components_spacing",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Gap between parts",
+   "description": "Space between the ringer button, the slider and the buttons below it.",
+   "default": "4dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_window_margin",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Side margin",
+   "description": "How far the volume panel sits from the edge of the screen.",
+   "default": "12dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_background_surface_blur_radius",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Blur behind the panel",
+   "description": "Blur radius behind the volume panel.",
+   "default": "23dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_dialog_background",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Panel colour",
+   "description": "Colour of the volume panel, the ringer drawer and the floating sliders. Leave it out to keep the theme colour (Material You).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_page_bg",
+   "kind": "color",
+   "group": "Settings",
+   "title": "Page colour",
+   "description": "Colour behind the pages of Settings (the KamiOS look). Leave it out to keep the Material You colour.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_page_background",
+   "kind": "drawable",
+   "group": "Settings",
+   "title": "Page image",
+   "description": "An image behind the pages of Settings (KamiOS look), stretched to the screen; it replaces the page colour. PNG, WebP, JPG or GIF up to 2560px, a night version can be given. An animated GIF or WebP plays while the page is in front. With some alpha in it the page can be see-through, see the next knobs.",
+   "default": "the page colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_bento_tile",
+   "kind": "color",
+   "group": "Settings",
+   "title": "Main screen tile colour",
+   "description": "Colour of the tiles on the main screen of Settings (the KamiOS look). Leave it out to keep the Material You colour.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_bento_hero",
+   "kind": "color",
+   "group": "Settings",
+   "title": "Main screen card colour",
+   "description": "Colour of the card at the top of the main screen of Settings (the KamiOS look). Leave it out to keep the Material You colour.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_hero_image",
+   "kind": "drawable",
+   "group": "Settings",
+   "title": "Main screen card picture",
+   "description": "A picture over the card at the top of the main screen of Settings, cut to the card (centred, cropped). PNG, WebP, JPG or GIF up to 2560px; an animated GIF or WebP plays while the screen is shown. With some alpha in it the card colour shows through.",
+   "default": "none"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_brightness_slider_active",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Brightness bar, filled part",
+   "description": "Colour of the filled part of the brightness bar and its thumb. Leave it out to keep the theme colour. A gradient (KamiOS > Quick settings gradient settings) replaces it while it is on.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_brightness_slider_inactive",
+   "kind": "color",
+   "group": "Quick settings colours",
+   "title": "Brightness bar, empty part",
+   "description": "Colour of the empty part of the brightness bar. Leave it out to keep the theme colour.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_slider_active",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Volume slider, filled part",
+   "description": "Colour of the filled part of the volume sliders (the panel and the volume slider in quick settings) and their thumb. Leave it out to keep the theme colour. A gradient replaces it while it is on.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_slider_inactive",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Volume slider, empty part",
+   "description": "Colour of the empty part of the volume sliders. Leave it out to keep the theme colour.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_volume_slider_corner",
+   "kind": "int",
+   "group": "Volume panel",
+   "title": "Slider rounding",
+   "description": "Corner radius of the volume slider in the panel, in dp. -1 keeps the stock 12.",
+   "default": "-1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_volume_slider_thickness",
+   "kind": "int",
+   "group": "Volume panel",
+   "title": "Slider thickness",
+   "description": "How thick the volume slider in the panel is, in dp. -1 keeps the stock 40.",
+   "default": "-1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_music_note",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Mixer media icon",
+   "description": "The media icon on the full volume mixer page (the slider opened from the panel's mixer button). A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_ringer_vibrate",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Ring slider vibrate icon",
+   "description": "The ring volume slider while the ringer is on vibrate. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_media",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Media volume icon",
+   "description": "The icon of the media slider in the volume panel (level high). A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_media_low",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Media volume low icon",
+   "description": "Media volume, level low. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_media_mute",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Media muted icon",
+   "description": "Media volume muted. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_ringer",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Notification volume icon",
+   "description": "The notification volume slider. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_ringer_mute",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Notifications muted icon",
+   "description": "The notification volume muted. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_ring_volume",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Ring volume icon",
+   "description": "The ring volume slider. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_ring_volume_off",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Ringer silent icon",
+   "description": "The ringer is silent. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_alarm_mute",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Alarm muted icon",
+   "description": "The alarm volume muted. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_alarm",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Alarm volume icon",
+   "description": "The alarm volume slider. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_system",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "System volume icon",
+   "description": "The system sounds volume slider. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_system_mute",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "System sounds muted icon",
+   "description": "The system sounds volume muted. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_notifications_active",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Sound on icon",
+   "description": "Sound on, in the ringer drawer. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_notifications_off",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Sound off icon",
+   "description": "Sound off, in the ringer drawer. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_tuner",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Mixer button icon",
+   "description": "The button at the bottom of the panel that opens all volumes. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_volume_odi_captions",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Captions icon",
+   "description": "The live caption button. A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_mobile_vibrate",
+   "kind": "drawable",
+   "group": "Volume panel icons",
+   "title": "Vibrate button icon",
+   "description": "The ringer button of the volume panel while the ringer is on vibrate (and the vibrate choice in its drawer). A PNG with transparency, any size: it is scaled to 24dp high and the panel may tint it, so draw a simple white shape (where it is tinted, only the shape counts).",
+   "default": "the ROM icon",
+   "height": "24dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "bool/kami_page_translucent",
+   "kind": "bool",
+   "group": "Settings",
+   "title": "Page see-through",
+   "description": "True makes the Settings windows see-through: what is below shows where the page colour or image has alpha. Needs a colour or image with some transparency.",
+   "default": "false"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "bool/kami_page_show_wallpaper",
+   "kind": "bool",
+   "group": "Settings",
+   "title": "Page shows the wallpaper",
+   "description": "True shows the wallpaper behind the Settings windows where the page colour or image has alpha (also see-through).",
+   "default": "false"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_page_blur",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Blur behind the page",
+   "description": "Blurs what is behind a see-through Settings window, like frosted glass. 0dp is off, 20dp to 40dp looks good.",
+   "default": "0dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_bento_radius",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Tile rounding",
+   "description": "The rounding of the tiles of the main screen of Settings (the KamiOS look). 0dp makes them square.",
+   "default": "28dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_hero_radius",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Top card rounding",
+   "description": "The rounding of the card at the top of the main screen of Settings.",
+   "default": "32dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_bento_icon_radius",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Symbol round rounding",
+   "description": "The rounding of the round behind the symbol in the card at the top: 24dp is a circle, 0dp a square.",
+   "default": "24dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_bento_gap",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Tile gap",
+   "description": "Half the space between two tiles of the main screen of Settings.",
+   "default": "4dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_bento_tile_height",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Tile height",
+   "description": "The least height of a square tile of the main screen of Settings.",
+   "default": "136dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "integer/kami_bento_columns",
+   "kind": "int",
+   "group": "Settings",
+   "title": "Tiles per row",
+   "description": "How many tiles are in a row on the main screen of Settings (the KamiOS look): 1 makes a list of wide tiles, 2 is the default, 3 a dense grid.",
+   "default": "2"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture",
+   "description": "A picture behind the icon and text of every quick settings tile that is on, over its colour. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves while it is shown. It covers the area (centred, cropped), so give it some alpha to let the colour through.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture",
+   "description": "A picture behind the icon and text of every quick settings tile that is off, over its colour. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves while it is shown. It covers the area (centred, cropped), so give it some alpha to let the colour through.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_qs_tile_picture_map",
+   "kind": "string",
+   "group": "Quick settings pictures",
+   "title": "Tiles with a picture of their own",
+   "description": "Which tile uses which of the eight picture slots below, like 'internet:1,bt:2,flashlight:3': the name of the tile, a colon and the slot number. Names: internet, bt, cell, airplane, flashlight, nfc, cast, hotspot, location, rotation, dnd, battery, saver, inversion, night and the other tiles of the list (custom tiles of apps are 'custom(package/Class)'). A tile that is not named, or whose slot has no picture, keeps the picture of all tiles.",
+   "default": "none"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_1",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 1",
+   "description": "The picture of the tiles that the map gives slot 1, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_2",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 2",
+   "description": "The picture of the tiles that the map gives slot 2, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_3",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 3",
+   "description": "The picture of the tiles that the map gives slot 3, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_4",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 4",
+   "description": "The picture of the tiles that the map gives slot 4, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_5",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 5",
+   "description": "The picture of the tiles that the map gives slot 5, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_6",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 6",
+   "description": "The picture of the tiles that the map gives slot 6, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_7",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 7",
+   "description": "The picture of the tiles that the map gives slot 7, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_active_image_8",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is on, picture 8",
+   "description": "The picture of the tiles that the map gives slot 8, while they are on. Same as the picture of all tiles that are on: PNG, WebP, JPG or GIF up to 2560px and 3 MB, an animated GIF or WebP moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_1",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 1",
+   "description": "The picture of the tiles that the map gives slot 1, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_2",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 2",
+   "description": "The picture of the tiles that the map gives slot 2, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_3",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 3",
+   "description": "The picture of the tiles that the map gives slot 3, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_4",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 4",
+   "description": "The picture of the tiles that the map gives slot 4, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_5",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 5",
+   "description": "The picture of the tiles that the map gives slot 5, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_6",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 6",
+   "description": "The picture of the tiles that the map gives slot 6, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_7",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 7",
+   "description": "The picture of the tiles that the map gives slot 7, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_qs_tile_inactive_image_8",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Tile that is off, picture 8",
+   "description": "The picture of the tiles that the map gives slot 8, while they are off.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_shade_background",
+   "kind": "drawable",
+   "group": "Shade",
+   "title": "Shade picture",
+   "description": "A picture over the dim layer behind the whole shade (quick settings and notifications). It fades in and out with the shade like the dim layer does, so it is as strong as the dim layer is. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves while it is shown. It covers the area (centred, cropped), so give it some alpha to let the colour through.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_volume_dialog_image",
+   "kind": "drawable",
+   "group": "Volume panel",
+   "title": "Panel picture",
+   "description": "A picture over the background of the volume panel, cut to its rounded corners. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves while it is shown. It covers the area (centred, cropped), so give it some alpha to let the colour through.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_brightness_slider_image",
+   "kind": "drawable",
+   "group": "Quick settings pictures",
+   "title": "Brightness bar fill picture",
+   "description": "A picture in the filled part of the brightness bar, instead of its colour. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves. It covers the slider (centred, cropped) and stays where it is: the fill uncovers it as the value grows.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_volume_slider_image",
+   "kind": "drawable",
+   "group": "Volume panel",
+   "title": "Volume slider fill picture",
+   "description": "A picture in the filled part of the volume sliders (the panel and the quick settings volume slider), instead of their colour. PNG, WebP, JPG or GIF up to 2560px and 3 MB; an animated GIF or WebP moves. It covers the slider (centred, cropped) and stays where it is: the fill uncovers it as the value grows.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_battery_frame",
+   "kind": "drawable",
+   "group": "Battery icon",
+   "title": "Battery frame",
+   "description": "The outline of the battery icon, always drawn. Setting a frame or a fill replaces the stock battery everywhere (status bar, lock screen, quick settings). A white picture with transparency: the status bar tints it like every icon. A GIF or animated WebP moves. It is drawn as large as fits the battery box, the shape kept.",
+   "default": "the stock battery"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_battery_fill",
+   "kind": "drawable",
+   "group": "Battery icon",
+   "title": "Battery fill",
+   "description": "The inside of the battery: shown from the empty side up to the charge level, over the frame. A white picture with transparency: the status bar tints it like every icon. A GIF or animated WebP moves. It is drawn as large as fits the battery box, the shape kept.",
+   "default": "the stock battery"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_battery_charging",
+   "kind": "drawable",
+   "group": "Battery icon",
+   "title": "Charging picture",
+   "description": "A picture over the battery while the phone charges (a bolt, for example). A white picture with transparency: the status bar tints it like every icon. A GIF or animated WebP moves. It is drawn as large as fits the battery box, the shape kept.",
+   "default": "none"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_battery_fill_direction",
+   "kind": "int",
+   "group": "Battery icon",
+   "title": "Battery fill direction",
+   "description": "0 fills from the left, 1 fills upwards (for a standing battery).",
+   "default": "0"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_fast_out_slow_in",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Standard curve",
+   "description": "The most used curve of the system: apps opening, sheets, most movement. It starts quick and settles slowly. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.4,0 0.2,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_emphasized",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Emphasized curve",
+   "description": "A strong curve with a quick start and a long calm end, used for the big movements like opening an app from the launcher. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.05,0 0.133333,0.06 0.166666,0.4 C 0.208333,0.82 0.25,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_fast_out_extra_slow_in",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Emphasized curve (long)",
+   "description": "The same shape as the emphasized curve, used by the activity and wallpaper transitions. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.05,0 0.133333,0.06 0.166666,0.4 C 0.208333,0.82 0.25,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_emphasized_decelerate",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Emphasized decelerate",
+   "description": "Things that come on to the screen. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.05,0.7 0.1,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_emphasized_accelerate",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Emphasized accelerate",
+   "description": "Things that leave the screen. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.3,0 0.8,0.15 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_standard",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Standard (Material)",
+   "description": "Movement of things that stay on the screen. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.2,0 0,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_standard_decelerate",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Standard decelerate",
+   "description": "Small things that appear. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0,0 0,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_standard_accelerate",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Standard accelerate",
+   "description": "Small things that disappear. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.3,0 1,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_linear_out_slow_in",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Decelerate curve",
+   "description": "Fades and things that enter: a straight start and a slow end. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0,0 0.2,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "string/kami_curve_fast_out_linear_in",
+   "kind": "string",
+   "group": "Animations",
+   "title": "Accelerate curve",
+   "description": "Fades and things that leave: a quick start and a straight end. It is SVG path data from 0,0 to 1,1 (x is the time, y the progress): 'M 0,0 C 0.4,0 0.2,1 1,1' is one curve with two handles. A value that is not such a curve is refused. Try 'M 0,0 C 0.3,1.4 0.5,1 1,1' for a bounce.",
+   "default": "M 0,0 C 0.4,0 1,1 1,1"
+  },
+  {
+   "target": "android",
+   "resource": "integer/config_shortAnimTime",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Short animation time",
+   "description": "Milliseconds of small movements inside the system: menus, popups, the lock screen coming in. Apps open and close with the times below.",
+   "default": "200"
+  },
+  {
+   "target": "android",
+   "resource": "integer/config_mediumAnimTime",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Medium animation time",
+   "description": "Milliseconds of the normal movements of dialogs and sheets.",
+   "default": "400"
+  },
+  {
+   "target": "android",
+   "resource": "integer/config_longAnimTime",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Long animation time",
+   "description": "Milliseconds of the slow movements of the system.",
+   "default": "500"
+  },
+  {
+   "target": "android",
+   "resource": "integer/config_activityShortDur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "App change, short",
+   "description": "Milliseconds of short window effects (a popup growing).",
+   "default": "150"
+  },
+  {
+   "target": "android",
+   "resource": "integer/config_activityDefaultDur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "App change",
+   "description": "Milliseconds of dialogs and popups opening and closing.",
+   "default": "220"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_volume_enter_style",
+   "kind": "int",
+   "group": "Volume panel",
+   "title": "How the panel comes in",
+   "description": "0 slides in from the edge (stock), 1 grows out of the edge of the screen, 2 pops up and fades in, 3 only fades in.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_volume_spring_stiffness",
+   "kind": "int",
+   "group": "Volume panel",
+   "title": "Entrance spring stiffness",
+   "description": "How hard the spring that moves the panel pulls. Stock 700; higher is faster and snappier (50 to 5000).",
+   "default": "700"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_volume_spring_damping",
+   "kind": "float",
+   "group": "Volume panel",
+   "title": "Entrance spring damping",
+   "description": "How quickly the swing of the spring dies out. Stock 0.9; lower swings more and wobbles, 1 stops without overshoot (0.2 to 1.5).",
+   "default": "0.9"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "bool/kami_volume_all_sliders",
+   "kind": "bool",
+   "group": "Volume panel",
+   "title": "Show all sliders",
+   "description": "Shows the sliders of ring, notification, alarm, call and system beside the media one, not only the ones that are playing.",
+   "default": "false"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_fixed_width",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut width",
+   "description": "Width of the round buttons at the bottom corners of the lock screen.",
+   "default": "48dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_fixed_height",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut height",
+   "description": "Height of those buttons. With a different width and a rounding below half of it they are not circles any more.",
+   "default": "48dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_fixed_radius",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut rounding",
+   "description": "Corner radius of those buttons: 24dp makes a circle of the stock size, 12dp a rounded square.",
+   "default": "24dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_fixed_padding",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut symbol padding",
+   "description": "Space between the edge of the button and its symbol; more padding makes the symbol smaller.",
+   "default": "12dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_horizontal_offset",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut distance from the side",
+   "description": "How far the buttons sit from the left and right edge of the screen.",
+   "default": "16dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/keyguard_affordance_vertical_offset",
+   "kind": "dimension",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut distance from the bottom",
+   "description": "How far the buttons sit above the bottom edge of the screen.",
+   "default": "32dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_lockscreen_shortcut_active_bg",
+   "kind": "color",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut colour, on",
+   "description": "The filled button of a shortcut that is on (the flashlight lit). Fully transparent keeps the colour of the theme.",
+   "default": "theme"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_lockscreen_shortcut_active_fg",
+   "kind": "color",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut symbol colour, on",
+   "description": "The symbol of a shortcut that is on. Fully transparent keeps the colour of the theme.",
+   "default": "theme"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_lockscreen_shortcut_inactive_bg",
+   "kind": "color",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut colour, off",
+   "description": "The filled button of a shortcut that is off. Fully transparent keeps the colour of the theme.",
+   "default": "theme"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_lockscreen_shortcut_inactive_fg",
+   "kind": "color",
+   "group": "Lock screen shortcuts",
+   "title": "Shortcut symbol colour, off",
+   "description": "The symbol of a shortcut that is off. Fully transparent keeps the colour of the theme.",
+   "default": "theme"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_camera",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Camera shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_videocam",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Video camera shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_wallet_lockscreen",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Wallet shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_qr_code_scanner",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "QR scanner shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_assistant",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Assistant shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_notifications_silence",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Mute shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/ic_do_not_disturb",
+   "kind": "drawable",
+   "group": "Lock screen shortcut symbols",
+   "title": "Do not disturb shortcut symbol",
+   "description": "The symbol of this lock screen shortcut (also in the list where shortcuts are chosen). A PNG with transparency, any size: it is scaled to 24dp high and tinted, so draw a simple white shape.",
+   "default": "the ROM icon",
+   "height": "24dp",
+   "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_qs_tile_layout",
+   "kind": "string",
+   "group": "Quick settings",
+   "title": "Tile sizes",
+   "description": "Gives tiles a size of their own, like 'internet:2x1,flashlight:1x2,dnd:2x2': the name of the tile, a colon, the columns it covers, an x and the rows it covers (1 to 3). A tile of one column shows only its symbol, wider ones also the label, and a tile that covers several rows is centred in all of them. Join tiles with a plus to put several in one cell, like 'dnd+flashlight:2x2': in a tall cell they sit one above the other, in a one row cell side by side. The tiles keep their order and each cell goes to the first free place from the top left, so a tall tile leaves a gap beside it that the next small tiles fill. Names are the same as for the tile pictures: internet, bt, cell, airplane, flashlight, nfc, cast, hotspot, location, rotation, dnd, battery, saver, inversion, night. A tile that is not named keeps its size. Empty keeps the stock grid. Only the panel itself changes: the edit screen still shows the stock grid.",
+   "default": ""
+  },
+  {
+   "target": "android",
+   "resource": "integer/kami_activity_dur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Screen change time",
+   "description": "Milliseconds of the movement when one screen of an app opens or closes over another (the swipe of a back gesture too).",
+   "default": "450"
+  },
+  {
+   "target": "android",
+   "resource": "integer/kami_task_dur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "App change time",
+   "description": "Milliseconds of the movement between two apps, when an app starts another one.",
+   "default": "500"
+  },
+  {
+   "target": "android",
+   "resource": "integer/kami_fragment_open_dur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Split opening time",
+   "description": "Milliseconds of a screen opening beside another in a split layout.",
+   "default": "400"
+  },
+  {
+   "target": "android",
+   "resource": "integer/kami_fragment_close_dur",
+   "kind": "int",
+   "group": "Animations",
+   "title": "Split closing time",
+   "description": "Milliseconds of a screen of a split layout closing.",
+   "default": "200"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_unlock_duration",
+   "kind": "int",
+   "group": "Lock screen",
+   "title": "Unlock animation length",
+   "description": "How long the screen behind the lock screen takes to arrive after unlocking, in milliseconds. 0 keeps the stock 300 (100 to 1500).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_unlock_start_scale",
+   "kind": "float",
+   "group": "Lock screen",
+   "title": "Unlock: start size",
+   "description": "How big the screen behind is when unlocking starts, 1 is full size. Stock 0.95; 1.3 starts big and shrinks into place, 0.5 grows from half (0.3 to 2).",
+   "default": "0.95"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_unlock_translation_y",
+   "kind": "float",
+   "group": "Lock screen",
+   "title": "Unlock: start height offset",
+   "description": "Where the screen behind starts, as a part of the screen height below its place (negative starts above). Stock 0.05 (-1 to 1).",
+   "default": "0.05"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_unlock_translation_x",
+   "kind": "float",
+   "group": "Lock screen",
+   "title": "Unlock: start side offset",
+   "description": "Where the screen behind starts, as a part of the screen width to the right of its place (negative starts at the left). Stock 0 (-1 to 1).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_unlock_rotation",
+   "kind": "float",
+   "group": "Lock screen",
+   "title": "Unlock: start turn",
+   "description": "How far the screen behind is turned when unlocking starts, in degrees; it turns back to 0 while arriving. Stock 0 (-90 to 90).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_unlock_pivot_y",
+   "kind": "float",
+   "group": "Lock screen",
+   "title": "Unlock: turning point height",
+   "description": "The height the screen behind grows and turns around, as a part of the screen height from the top. Stock 0.66 (0 to 1).",
+   "default": "0.66"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_clock_size",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Clock size",
+   "description": "The size of the clock above the quick settings. 0 keeps the size of the theme (14sp to 90sp).",
+   "default": "0sp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_shade_clock_color",
+   "kind": "color",
+   "group": "Shade clock",
+   "title": "Clock colour",
+   "description": "The colour of the clock above the quick settings. Fully transparent keeps the theme's colour.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_clock_offset_x",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Clock: move sideways",
+   "description": "Moves the clock to the right (negative: to the left), in dp.",
+   "default": "0dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_clock_offset_y",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Clock: move down",
+   "description": "Moves the clock down (negative: up), in dp.",
+   "default": "0dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "string/kami_shade_clock_digits",
+   "kind": "string",
+   "group": "Shade clock",
+   "title": "Clock: single digits",
+   "description": "One entry for every digit from the left (hour tens, hour ones, minute tens, minute ones), separated by commas. An entry is scale/colour/lift and any part may be empty: 1.3/#FF5CC8/-4,1/#FFFFFF/0,, makes the first digit bigger, pink and 4dp lower and the second white.",
+   "default": ""
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_date_size",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Date size",
+   "description": "The size of the date above the quick settings. 0 keeps the size of the theme (10sp to 40sp).",
+   "default": "0sp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_shade_date_color",
+   "kind": "color",
+   "group": "Shade clock",
+   "title": "Date colour",
+   "description": "The colour of the date above the quick settings. Fully transparent keeps the theme's colour.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_date_offset_x",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Date: move sideways",
+   "description": "Moves the date to the right (negative: to the left), in dp.",
+   "default": "0dp"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_date_offset_y",
+   "kind": "dimension",
+   "group": "Shade clock",
+   "title": "Date: move down",
+   "description": "Moves the date down (negative: up), in dp.",
+   "default": "0dp"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_switch_track_on",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Switch track, on",
+   "description": "The track of a switch in Settings that is on. Fully transparent keeps the theme's colour.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_switch_track_off",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Switch track, off",
+   "description": "The track of a switch in Settings that is off.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_switch_thumb_on",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Switch knob, on",
+   "description": "The round knob of a switch that is on.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_switch_thumb_off",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Switch knob, off",
+   "description": "The round knob of a switch that is off.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_switch_track_image",
+   "kind": "drawable",
+   "group": "Settings switches and sliders",
+   "title": "Switch track picture",
+   "description": "A picture for the track of a switch that is on; a moving WebP or GIF moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_slider_active",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Slider, filled part",
+   "description": "The filled part and the knob of the sliders in Settings.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "color/kami_slider_inactive",
+   "kind": "color",
+   "group": "Settings switches and sliders",
+   "title": "Slider, empty part",
+   "description": "The empty part of the sliders in Settings.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_slider_image",
+   "kind": "drawable",
+   "group": "Settings switches and sliders",
+   "title": "Slider fill picture",
+   "description": "A picture for the filled part of the sliders, bar-shaped and round; it may move (on the round ones it is as wide as the track and cut off at the knob).",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_wake_style",
+   "kind": "int",
+   "group": "Lock screen",
+   "title": "Screen on animation",
+   "description": "How the lock screen arrives when the screen turns on: 0 stock, 1 starts big and settles, 2 starts small and grows, 3 rises from below, 4 falls in with a bounce, 5 turns in, 6 flips like a card.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_wake_duration",
+   "kind": "int",
+   "group": "Lock screen",
+   "title": "Screen on animation length",
+   "description": "How long it takes, in milliseconds (80 to 2000).",
+   "default": "350"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_sheet_tint",
+   "kind": "color",
+   "group": "Bottom sheets",
+   "title": "Sheet colour",
+   "description": "The colour of the bottom sheets (the expanded volume panel and others). A see-through colour lets the blur behind show. Fully transparent keeps the theme.",
+   "default": "#00000000"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_sheet_image",
+   "kind": "drawable",
+   "group": "Bottom sheets",
+   "title": "Sheet picture",
+   "description": "A picture behind the content of the sheets; a moving WebP or GIF moves.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_corner",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet corner radius",
+   "description": "The rounding of the top corners in dp. -1 keeps the theme (0 to 60).",
+   "default": "-1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_blur",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet blur",
+   "description": "How much the sheets blur what is behind them, in dp. 0 is none, -1 keeps the theme (0 to 120).",
+   "default": "-1"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_frost",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet frost",
+   "description": "A milky veil over the sheet, 0 to 100.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_shine",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet shine",
+   "description": "Light on the top edge of the sheet, 0 to 100.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_gloss",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet gloss",
+   "description": "A bright diagonal band across the sheet like a reflection, 0 to 100.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_sheet_rim",
+   "kind": "int",
+   "group": "Bottom sheets",
+   "title": "Sheet rim light",
+   "description": "A bright edge round the sheet, stronger at the top left, 0 to 100.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_switch_icon_on",
+   "kind": "drawable",
+   "group": "Settings switches and sliders",
+   "title": "Switch knob picture, on",
+   "description": "A picture in the knob of a switch that is on, in place of the check mark. A moving WebP or GIF moves. Keep it simple: it is small (about 16dp).",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_switch_icon_off",
+   "kind": "drawable",
+   "group": "Settings switches and sliders",
+   "title": "Switch knob picture, off",
+   "description": "A picture in the knob of a switch that is off, in place of the cross.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "bool/kami_switch_icons_hidden",
+   "kind": "bool",
+   "group": "Settings switches and sliders",
+   "title": "Switch knob without picture",
+   "description": "True removes the check mark and the cross.",
+   "default": "false"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "integer/kami_switch_toggle_animation",
+   "kind": "int",
+   "group": "Settings switches and sliders",
+   "title": "Switch toggle animation",
+   "description": "How a switch moves when you turn it: 0 not, 1 pop, 2 spin, 3 jelly, 4 drop from above with a bounce.",
+   "default": "0"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "integer/kami_switch_duration",
+   "kind": "int",
+   "group": "Settings switches and sliders",
+   "title": "Switch turning time",
+   "description": "How long a picture-strip switch and the toggle animation take, in milliseconds (0 is the speed of the stock switch, about 250; 700 shows every picture of a longer strip).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "drawable/kami_switch_sheet",
+   "kind": "drawable",
+   "group": "Settings switches and sliders",
+   "title": "Switch picture strip",
+   "description": "One picture for the whole switch, track and knob together: a strip of frames side by side, from off (left) to on (right). The switch plays it forward when it is turned on and backward when it is turned off, so a moon can become a sun. The height of the strip is the height of the switch (about 32dp at 3 times: 96 px), up to 2560 px wide.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "integer/kami_switch_sheet_frames",
+   "kind": "int",
+   "group": "Settings switches and sliders",
+   "title": "Switch picture strip: frames",
+   "description": "How many frames the strip has (2 to 60).",
+   "default": "0"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/kami_shade_clock_expanded_scale",
+   "kind": "float",
+   "group": "Shade clock",
+   "title": "Clock: size when open",
+   "description": "How much bigger the clock gets when the quick settings are open. 0 keeps the size the clock has in the stock theme, whatever size you gave it (1 to 4).",
+   "default": "0"
+  }
+ ]
+}
