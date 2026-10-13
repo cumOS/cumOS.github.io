@@ -14,7 +14,7 @@ This guide is the whole manual for people who want to write their own. The modul
 A module is a set of values and files. Nearly everything you can see, hear or feel on the phone has a place in it:
 
 - **Look.** Colours, corner radii and shapes of the quick settings, the shade, notifications, the volume panel, the lock screen shortcuts, the gesture pill, Settings and the launcher. Pictures and animations (GIF, animated WebP) in tiles, sliders, switches, the battery and the status bar. [Quick settings](#quick-settings-and-shade), [volume panel](#volume-panel-and-bottom-sheets), [Settings itself](#settings-layout-and-glass), [switches and sliders](#switches-and-sliders).
-- **Motion.** The speed and easing of every animation, how the back swipe looks, how a screen opens and closes, how the phone unlocks, wakes and turns its screen off, the stack of recent apps. [Animation](#animation-speed-and-curves), [back swipe](#back-swipe-and-transitions), [lock screen](#lock-screen-unlock-and-screen-off).
+- **Motion.** The speed and easing of every animation, how the back swipe looks, how a screen opens and closes, the window an app opens in from a cold start (its colour, a GIF, how long it stays), how the phone unlocks, wakes and turns its screen off, the stack of recent apps. [Animation](#animation-speed-and-curves), [back swipe](#back-swipe-and-transitions), [opening an app](#opening-an-app), [lock screen](#lock-screen-unlock-and-screen-off).
 - **Sound.** The ringtone, the notification and the alarm sound, tap and keyboard clicks, locking and unlocking, charging, the low battery warning, docking, the screenshot. A module can be nothing but a sound pack. [Sounds](#sounds).
 - **Identity.** The system font and the emoji, the boot and shutdown animation, the wallpaper and lock screen, the Material You accent, the icons of apps in the launcher, the home app. [Fonts and emoji](#fonts-and-emoji), [boot animation](#boot-and-shutdown-animation), [wallpaper, accent, icons](#wallpaper-accent-and-icons).
 - **Behaviour.** Options of the phone that the module writes while it is on (quick settings layout, blur, gradients, animation scale, freeform windows), and a Lua script for a different home screen, even a tiling window manager. [Phone settings](#phone-settings), [Kami Shell](#kami-shell-a-home-screen-in-lua).
@@ -59,6 +59,10 @@ A module cannot run code of its own. The only code it can bring is a Lua script 
 
 ### Try it in five minutes
 
+No text editor? **Module Studio** (Settings > KamiOS > Darkmoon Theme Engine > Module Studio) makes a module on the phone, knob by knob, with a
+picture of what each knob changes and a preview on the real screen; see [Module Studio](#module-studio-and-overrides). The steps below
+are the same thing by hand.
+
 1. Open **Settings > KamiOS > Darkmoon Theme Engine > Modules** and choose **Export a template and the knobs**. You get one
    file: a small module to start from, and under `_knobs` the complete list of what a module may set on your build.
 2. Change `id`, `name`, `description` and the values under `targets`. Delete `_knobs`.
@@ -89,6 +93,7 @@ A small module:
 - Want to see what the knobs do? Several pages have a live example you can play with next to the knobs it uses.
 - Want the complete list? [Knob reference](#knob-reference) is searchable and is generated from the list that ships with the ROM.
 - Want to start from something that works? [Examples](#examples-and-a-complete-module).
+- Want to make one without a file? [Module Studio](#module-studio-and-overrides), and [Overrides](#overrides) to see which module wins.
 - Want to share a module? [The module store](#the-module-store).
 
 ## The module file
@@ -170,6 +175,55 @@ import, not only the default. The choice is kept when the module is switched off
 
 A choice can also write `settings`, which is how one choice can switch a whole colour palette of a Kami Shell script.
 
+## Module Studio and Overrides
+
+You do not need a text editor to make a module. **Module Studio** builds one on the phone, knob by knob, and **Overrides** shows what
+happens when two modules that are on set the same thing. Both are under **Settings > KamiOS > Darkmoon Theme Engine**.
+
+### Module Studio
+
+Open **Module Studio** and choose **New module** (nothing set) or **Start from a module of KamiOS** (a copy of one that comes with the
+system, under a name of its own). A module of your own, under **Your modules**, has an **Edit in Studio** row.
+
+- **Knobs.** The same list as the knob reference, by group. Each knob shows its stock value; a knob you set shows what you set.
+  A number is typed with its range (the field says "From 0 to 100" and refuses a value outside it); knobs with a short list of
+  choices show the choices; a colour opens a picker with sliders for hue, saturation, brightness and opacity and a field for
+  `#AARRGGBB`; a picture opens the picture chooser and checks the size. **Different at night** adds a second value for the dark
+  theme. **Reset this group** takes every knob of a group back to stock.
+- **Find a knob.** Type a word like `corner`, `clock` or `pill`; every knob with it in its name or description comes up.
+- **A picture of what the knob changes.** For many knobs a small picture of the screen (quick settings, volume panel,
+  notifications, the clock in the shade, lock screen shortcuts, the gesture pill, switches, the Settings main screen, bottom
+  sheets) is redrawn as you change the value. It is a picture, not the real thing: shapes, sizes and colours are close, blur and
+  movement are not shown.
+- **Show it on the phone while I edit.** Your values are put over the modules that are on until you leave the module, so you see
+  the real thing. Nothing is kept until you **Save**; leaving Studio, closing Settings or restarting the phone ends the preview.
+- **Save** puts the module under **Your modules**, where you switch it on like any other. **Export as zip** writes the module as
+  it is now, to share it or to put in the module store. Parts of a module that Studio does not change (settings, fonts, scripts,
+  a layout) are kept as they are, and the page says which; change them in the module file.
+- **Restart system UI.** Studio restarts it by itself after a picture or a knob that needs it, and so does switching on any module
+  that sets a knob of the system UI. The row is there for the case that a change does not show.
+
+If a knob of your module does not exist on this phone (a module from another version), Studio says so and offers to take it out,
+because the module cannot be saved with it.
+
+### Overrides
+
+Two modules that are on can set the same thing: the corner of the tiles, the wallpaper, a sound. The later one in the list wins,
+the earlier one is hidden for that thing. **Overrides** lists it: for everything the modules that are on set, the module that wins
+and the modules it hides, with the values (and the value at night where it differs). It covers knobs and overlays, settings,
+wallpapers, the accent colour, fonts, emoji, sounds, boot and shutdown animations, the Settings layout, the home app and launcher
+icons. Modules that are on but cannot be used (a check refused them) are listed apart with the reason. The summary under the row
+on the modules page says how many things are shared. Use it before you wonder why a module "does nothing": usually a later one
+sets the same knob.
+
+### Fields of a knob in the list
+
+The list of knobs (`knobs.json`, the same file that fills the knob reference below) has, for every knob: `target` (the app),
+`resource`, `kind` (`color`, `dimension`, `int`, `float`, `bool`, `string`, `drawable`), `group`, `title`, `description` and
+`default`. Numbers also have `min`, `max` and `step`, a knob with a short list of values has `choices`, `keep` is the value that
+means "leave the stock one", and `restart` is true when system UI has to restart before the knob shows. The module file does not
+need any of it; Studio, the reference and the check of a module use it.
+
 ## Zips, pictures and other apps
 
 A module that brings pictures, fonts, sounds or wallpapers is a zip. A module that wants to change an app that is not part of KamiOS uses `overlays`.
@@ -239,7 +293,7 @@ third-party app, the framework `android`), with resources you name yourself:
   look into the app's resources (for example `aapt2 dump resources base.apk | grep color/`).
 - Apps that read a colour from a different resource, or that have colours compiled in (Compose, code shrinking), do not
   change. It replaces resource values, nothing more.
-- Settings can be overlaid too. If a module makes the phone unusable, see [Safety and recovery](#safety-and-recovery).
+- Settings can be overlaid too. If a module makes the phone unusable, see [Safety and recovery](#safety-recovery-and-limits).
 - Nobody reviews modules. Switching one on shows the apps it changes and a warning, every time.
 
 <!-- group: System look -->
@@ -572,6 +626,60 @@ thrown in from the side. Opening an app (a new task), dialogs and screens that b
 animation. The picture over the back swipe is not drawn here.
 `examples/make-back-lab.py` builds a module with the looks of the back swipe, of opening a page and of leaving a page as three
 separate choices, and a glitch animation over the swipe.
+
+## Opening an app
+
+What an app shows from the moment you tap it until its own screen is there.
+
+### The first window of a cold start
+
+When an app starts from nothing (a cold start), the system shows a window for it before the app has drawn anything: the **splash
+screen**, a colour with the icon of the app in the middle. The knobs below change it. They apply to everything that starts an
+app: the launcher, a notification, a link. They do **not** apply to an app that is still in memory (a warm start, where the app
+and its last picture just animate), and an app that brings its own splash screen is painted over as well. They need system UI.
+
+| Knob (`com.android.systemui`) | What it does |
+|---|---|
+| `color/kami_splash_background` | The colour of the window, `#AARRGGBB`. With an alpha below full the screen behind shows through. No colour (or alpha 0) keeps the colour each app asks for. |
+| `drawable/kami_splash_background_image` | A picture over the whole window, on top of its colour, centred and cropped. A GIF or animated WebP moves while the app starts. |
+| `drawable/kami_splash_image` | A picture in the middle in place of the app icon, as big as the icon size below. A GIF or animated WebP moves, so one GIF gives every app the same loading animation. |
+| `integer/kami_splash_icon_alpha` | How strong the icon (or the picture in its place) is, 0 to 100. 0 hides it. |
+| `integer/kami_splash_min_duration` | The least time the window stays, in milliseconds counted from the start of the app (0 to 5000). |
+
+And in `android`: `dimen/starting_surface_icon_size` (default `160dp`) is how big the icon or picture is.
+
+**The window needs a background.** An app that starts fast is already drawn under the window; with a clear colour the animation
+plays over the finished app and looks like a sticker. Give the window a colour, with some alpha if you like, so it hides the app
+until it leaves. **A longer animation needs `kami_splash_min_duration`.** Normally the window goes the moment the app has drawn
+its first frame, often within half a second, which is too short for a GIF to be seen; the minimum keeps the window for longer and
+only the reveal waits (the app is ready underneath). Pictures are decoded at 512 px on the long side and share the limits of the
+other picture knobs.
+
+How the window leaves, the four `integer` knobs of `com.android.systemui`:
+
+| Knob | Default |
+|---|---|
+| `integer/starting_window_exit_animation_type` | `0` the circle opens and the window slides up, `1` it fades |
+| `integer/starting_window_app_reveal_anim_duration` | `266` ms, how long the window takes to go |
+| `integer/starting_window_app_reveal_anim_delay` | `83` ms, a pause before the reveal |
+| `integer/starting_window_app_reveal_icon_fade_out_duration` | `133` ms, the icon fading out |
+
+A module that gives every app a dark red window with a spinner and keeps it for two seconds:
+
+```json
+"targets": {
+  "com.android.systemui": {
+    "color/kami_splash_background": "#D8120508",
+    "drawable/kami_splash_image": "img/spinner.webp",
+    "integer/kami_splash_min_duration": 2000
+  },
+  "android": { "dimen/starting_surface_icon_size": "220dp" }
+}
+```
+
+The example `splash-lab.zip` (`examples/make-splash-lab.py`) has the colour, the icon size, how long the window stays and a spinner
+or a colour wash as choices. Opening an app from Kami Shell, and the way home from it, can be scripted as well, see
+[Kami Shell](#kami-shell-a-home-screen-in-lua).
 
 ## Animation speed and curves
 
@@ -1058,9 +1166,25 @@ and every animation are a Lua script that a module can replace. You can switch i
 `com.kami.shell`) or choose it under Settings > Apps > Default apps > Home app. It keeps the gestures and the recents screen
 of the system launcher.
 
-The built-in script is a normal home screen: pages you arrange by long press and drag, folders, widgets (clock, analog
-clock, date, battery, search bar, note, stopwatch, counter, year progress), an app drawer with a letter rail and search, a
-swipe down for notifications.
+The built-in script is a normal home screen: pages you arrange by long press and drag, folders that open into a large panel,
+widgets (clock, analog clock, date, battery, battery ring, search bar, note, stopwatch, counter, year progress, picture),
+an app drawer with a letter rail and search, app shortcuts in the long press menu, a swipe down for notifications, a pinch
+for the home menu. Everything that moves is a spring or a curve the script gives, and it follows the system's animation
+speed.
+
+### Folders and landscape
+
+A folder opens into a large glass panel in the look of the folder: it grows out of the folder icon and takes nearly the width
+of the screen, at least four rows tall, with the apps on the grid of the home screen. Tap an app to start it, long press one to
+drag it out, tap the title to rename, tap outside to close it. A folder can also be made bigger on the page: **long press it >
+Resize**, then drag the round handle on the faint outline. The card follows the finger and springs into the cells it will take
+when you let go, a bigger folder shows its apps as small icons on the card and opens the same panel. The size is saved with the
+folder (`w` and `h` in cells; a folder of one cell has none).
+
+Turned to landscape the page has twice the columns and as many rows as fit. **Each orientation keeps a layout of its own**
+(`home.mode`, the other one is in `home.alt`): the first time landscape is shown it is made from the portrait one, and turning
+back brings every icon back where it was. The doubling is done by the built-in script, `cfg.cols` stays the portrait number, and
+`kami.size()` tells a script the shape of the screen if it wants to lay out something itself.
 
 ### Which script runs
 
@@ -1076,8 +1200,10 @@ A module sets it with the setting `secure/kami_shell_script`:
 
 - Or the whole Lua script as the text of the setting.
 
-Presets: `cube`, `wave`, `fan`, `grid-big`, `minimal`, `widgets-demo` (change the pages and icons only), and `tiling` with the
-palettes `pal-gruvbox`, `pal-catppuccin`, `pal-nord`, `pal-tokyo` (a whole home screen, see the next chapter).
+Presets: `cube`, `wave`, `fan`, `grid-big`, `minimal`, `widgets-demo` (change the pages and icons only), `launch-gif` (an animation when an app opens), `bouncy`, `snappy`,
+`depth` (change how everything moves), `you` (the system colours) and `stats` (frame time and memory in a corner, for
+tuning), and `tiling` with the palettes `pal-gruvbox`, `pal-catppuccin`, `pal-nord`, `pal-tokyo` (a whole home screen, see
+the next chapter). Presets that change different things join: `preset:depth+you`.
 
 A script that starts with `--@extend` runs on top of the built-in one and only has to change `cfg`, `fx` and add widgets. Any
 other script replaces the built-in one entirely. If a script does not load, or `frame` fails twice in a row, the built-in
@@ -1096,8 +1222,36 @@ function fx.icon(o, col, row, cols, rows)
 end
 ```
 
-`cfg` holds the columns, icon size, label size, spring, how dark the wallpaper is dimmed, accent, glass colour, whether the
-first page starts with clock and search, the dock size and the most pages.
+`cfg` holds the columns, icon size, label size, whether there are labels, spring, how dark the wallpaper is dimmed, accent,
+glass colour (`cfg.system_colors = true` takes both from the system), whether the first page starts with clock and search,
+the dock, the most pages, the columns of the drawer, what pinching in does (`cfg.pinch`), whether app menus show
+shortcuts, and `cfg.debug`.
+
+**How things move.** The numbers are in `cfg.motion`, the curves in `fx`:
+
+```lua
+--@extend
+cfg.motion.speed = 1.3                 -- all of it faster; 0 switches the animations off
+cfg.motion.drawer = { 260, 0.95 }      -- springs: { stiffness, damping }; damping 1 stops without overshoot,
+cfg.motion.folder = { 330, 0.80 }      -- less than 1 bounces
+cfg.motion.move = { 380, 0.82 }        -- icons and widgets sliding to a new place
+cfg.motion.press = { 700, 0.62 }       -- an icon under the finger
+cfg.motion.stagger = 0.035             -- the rows of the drawer come one after the other
+
+function fx.drawer(p, h)               -- p 0 closed .. 1 open, h the screen height (px): push down (px), alpha,
+  return (1 - p) * h * 0.9, p, 1 - 0.06 * p, 1 - p, 1   -- scale and alpha of the home behind, scale of the drawer
+end
+function fx.drawer_row(p, row) return (1 - p) * 28, p, 1 end   -- one row of the drawer: extra y (dp), alpha, scale
+function fx.folder(p, a)               -- a.x a.y a.s: the folder icon; a.cx a.cy a.w a.h: the open panel (px)
+  return a.x + (a.cx - a.x) * p, a.y + (a.cy - a.y) * p, a.s / a.w + (1 - a.s / a.w) * p, p, 0.5 * p
+end                                    -- centre x, y, scale, alpha, how dark the screen behind gets
+function fx.press(p) return 1 - 0.12 * p end              -- a pressed icon (p 0..1): its scale
+function fx.lift(p) return 1 + 0.14 * p, 0.35 * p end     -- a picked up icon: scale, shadow
+function fx.launch(p) return 1 + 0.05 * p, 1 - 0.5 * p end -- the home screen while an app opens: scale, alpha
+```
+
+Springs of your own: `anim.spring(state, target, dt, { stiffness, damping })` moves `state.x` and returns `true` while it
+moves; `anim.ease` has curves (`out_cubic`, `out_back`, `out_elastic`, ...).
 
 **Opening and closing apps.** The window of an app grows out of its icon and falls back into it along a curve your script
 gives:
@@ -1115,6 +1269,26 @@ function fx.app(t, a)
     a.radius + (a.corner - a.radius) * p, math.min(1, p * 4)
 end
 ```
+
+**Carrying the icon, and your own opening animation.** While an app opens or closes, its icon is not drawn in its place on the home
+screen, the dock, the drawer or a folder; a copy swells and fades into the window instead (`cfg.carry_icon = false` for no copy).
+`fx.app` may return a seventh value, a table of **layers** drawn over the window, and the script decides where they are and how
+strong at every moment (px, alpha 0 to 1):
+
+```lua
+return x, y, w, h, radius, alpha, {
+  icon  = { x = .., y = .., w = .., h = .., alpha = .. },                                  -- the icon of the app
+  image = { x = .., y = .., w = .., h = .., alpha = .., src = "asset:img/demo.gif" },      -- a picture or animation, covers its box
+}
+```
+
+`src` takes what `kami.image` takes (`asset:`, `file:`, `content:`, `data:`); a GIF or animated WebP moves while it is on screen and
+is decoded at 512 px on the long side. The window itself (the first six values) can be the full screen with a growing alpha, which
+is what `preset:launch-gif` does: the icon swells, a GIF grows out of the icon to the full screen and blends into the app, and
+closing plays it backwards. Opening an app from the drawer, the dock, a folder or a shortcut all play it. The way home with the swipe
+up from the bottom is played by the launcher: the window falls into the icon and the home screen is there early, but it is not
+scripted; the back and home buttons are (`fx.app` with `a.closing`). `on_home(gesture)` is called when the home screen comes back,
+with `true` for the swipe up.
 
 **Your own widgets**
 
@@ -1135,12 +1309,15 @@ widget {
 }
 ```
 
-Helpers: `ui.dp(v)`, `ui.text(...)`, `ui.card(x, y, w, h)`, `ui.clamp`, `ui.save()` and the tables `cfg`, `fx`.
+Helpers: `ui.dp(v)`, `ui.text(...)`, `ui.card(x, y, w, h)`, `ui.accent(alpha)`, `ui.clamp`, `ui.save()`, `anim.*` and the
+tables `cfg`, `fx`. A widget that changes slowly (a clock, a countdown) should call `kami.wake(seconds)` for its next change
+instead of returning `true` from `draw`, which draws every display frame and costs battery.
 
 ### The script language
 
 Only `base` (without `load`, `dofile`, `require`, `collectgarbage`), `table`, `string`, `math` and `utf8` exist: no files, no
-network, no clock except the ones below. Everything is in pixels; `kami.density()` is pixels per dp. Colours are four numbers
+network, no clock except the ones below (`kami.include(name)` runs a preset that comes with the app). A script gets at most
+96 MB. Everything is in pixels; `kami.density()` is pixels per dp. Colours are four numbers
 0 to 1 (r, g, b, a). The origin is the top left corner.
 
 **Hooks** the script defines (all optional except `frame`):
@@ -1162,19 +1339,25 @@ network, no clock except the ones below. Everything is in pixels; `kami.density(
 | `on_text(str)`, `on_submit(str)` | what is typed in the text field of `kami.keyboard`, and its enter key |
 | `on_two_finger(dir)` | two fingers swiped `"left"` or `"right"` (switch on with `kami.live("twofinger", 1)`) |
 | `on_overview()` | the Overview button, or swipe up and hold, while freeform windows are on |
+| `on_pinch(dir, scale)` | two fingers came together (`"in"`) or went apart (`"out"`) |
+| `on_resume()`, `on_pause()` | the home screen came back / went out of sight |
+| `on_theme()` | the system colours, dark mode or the animation speed changed |
 
 The home screen is not restarted by the system: the script keeps running in the background and the renderer sleeps when
 nothing moves. `frame(dt)` returns `true` when it wants the next frame at once; otherwise the screen is only redrawn when
-something happens, and every 10 seconds for the clock.
+something happens, when the script asked with `kami.wake`, and at the turn of every minute for clocks.
 
 **Drawing**
 
 | Call | |
 |---|---|
 | `kami.rect(x, y, w, h, radius, r, g, b, a [, soft [, rot]])` | rounded rectangle; `soft` blurs the edge by that many pixels (glows, shadows); `rot` in degrees about the centre |
-| `kami.vrect(x, y, w, h, radius, r1,g1,b1,a1, r2,g2,b2,a2 [, soft [, rot]])` | the same with a gradient from top to bottom |
-| `kami.icon(i, cx, cy, size [, alpha [, rot [, radius]]])` | the icon of app `i` (1 based, sorted by name) centred at cx, cy; returns `false` while it is being made |
-| `kami.text(str, x, y, size, r, g, b, a [, align [, weight [, maxw]]])` | `y` is the vertical middle, `align` 0 left, 1 centre, 2 right of `x`, `weight` 100 to 900, `maxw` cuts with an ellipsis; returns the width, 0 while the label is being made. The system font, and so a font module, is used |
+| `kami.vrect(x, y, w, h, radius, r1,g1,b1,a1, r2,g2,b2,a2 [, soft [, rot]])` | the same with a gradient from top to bottom; `kami.hrect` from left to right |
+| `kami.border(x, y, w, h, radius, width, r, g, b, a [, soft [, rot]])` | only the outline, `width` thick, inside the box |
+| `kami.ring(cx, cy, radius, width, r, g, b, a [, start [, sweep [, soft]]])` | a circle outline or an arc (degrees, 0 at the top, clockwise); `width >= radius` fills it |
+| `kami.line(x1, y1, x2, y2, width, r, g, b, a [, soft])` | a line with round ends |
+| `kami.icon(i, cx, cy, size [, alpha [, rot [, radius]]])` | the icon of app `i` (1 based, sorted by name) centred at cx, cy; returns `false` while it is being made. `kami.icon_key(key, ...)` by the key of the app |
+| `kami.text(str, x, y, size, r, g, b, a [, align [, weight [, maxw]]])` | `y` is the vertical middle, `align` 0 left, 1 centre, 2 right of `x`, `weight` 100 to 900, `maxw` cuts with an ellipsis; returns the width, 0 while the label is being made. The system font, and so a font module, is used. Each different text is made once as a picture: change a running number a few times a second, not on every frame. `kami.measure(str, size [, weight [, maxw]])` gives width and height without drawing |
 | `kami.push(tx, ty, sx, sy, rot, px, py [, alpha])` / `kami.pop()` | everything drawn until `pop` is moved, scaled and turned (degrees) about the point px, py, and multiplied by alpha; they nest |
 | `kami.image(src, x, y, w, h [, alpha [, radius [, fit]]])` | a picture or an animation (GIF, animated WebP); returns `ready, animated` (`false` while it loads; keep returning `true` from `frame` while it is animated). `src` is `"asset:img/demo.gif"` (a file in the app), `"file:/path"`, `"content://..."` (what `pick_image` gives) or `"data:image/gif;base64,..."` (inside the script, for modules). `fit` 0 fills the box and crops (default), 1 fits inside, 2 stretches |
 | `kami.clip(x, y, w, h)` / `kami.clip()` | clip to a rectangle in screen pixels / switch off |
@@ -1186,14 +1369,18 @@ something happens, and every 10 seconds for the clock.
 | `kami.size()`, `kami.density()`, `kami.insets()` | width and height; pixels per dp; top and bottom system bars |
 | `kami.ime()` | height of the keyboard, 0 when it is not shown |
 | `kami.time()` | seconds since the shell started (for animations) |
-| `kami.clock()` | hour, minute, second, weekday (0 = Sunday), day, month, year, is24h |
+| `kami.clock()` | hour, minute, second, weekday (0 = Sunday), day, month, year, is24h, milliseconds |
 | `kami.battery()` | percent, charging |
-| `kami.app_count()`, `kami.app(i)` | number of apps; label, package and key of app `i` (the key is the component and names one launcher entry for good) |
+| `kami.app_count()`, `kami.app(i)`, `kami.find(key)` | number of apps; label, package and key of app `i` (the key is the component and names one launcher entry for good); the index of a key |
 | `kami.defaults()` | keys of apps that suit a first dock (phone, messages, browser, camera) |
 | `kami.scroll()` | page position (0.0 is the first page, 1.5 is half way between page 2 and 3), velocity, target page |
 | `kami.vscroll()` | position of the vertical list in pixels, velocity, maximum |
 | `kami.touch()` | down, x, y, dx, dy (from where it started), seconds held, moved too far for a tap, axis (0 not decided, 1 horizontal, 2 vertical) |
 | `kami.touch_velocity()` | vx, vy of the finger in px/s |
+| `kami.pinch()` | active, scale, centre x, y of a two finger pinch |
+| `kami.anim_scale()` | the system's animation speed: 1 normal, 0.5 twice as fast, 0 off |
+| `kami.colors()` | the system colours: `accent`, `accent2`, `accent3`, `surface`, `on_surface`, `container` (each `{ r, g, b }`) and `dark` |
+| `kami.stats()`, `kami.mem()` | what the frame before cost (`fps`, `frame_ms`, `lua_ms`, `draws`, `quads`, `textures`, `tex_kb`, `lua_kb`); KB the script holds |
 | `kami.launched()`, `kami.resumed()` | seconds since an app was started from here (-1 if none) / since the home screen came back |
 
 **Actions**
@@ -1208,19 +1395,27 @@ something happens, and every 10 seconds for the clock.
 | `kami.save(key, table)`, `kami.load(key)` | keep a table (numbers, text, booleans, tables of them) in the app's files; keys are `a-z 0-9 _`, at most 32 characters, 100 KB |
 | `kami.launch(i, x, y, w, h [, radius])` | start app `i`; the box (and its corner radius) is where its window grows from |
 | `kami.live(cmd, ...)` | real app windows, see the next chapter |
-| `kami.wake(seconds)` | call `frame` again in that time even when nothing moves (for a script that polls something slow) |
+| `kami.wake(seconds)` | call `frame` again in that time even when nothing moves (a script that polls something slow, a second hand); the earliest of several counts |
 | `kami.pick_image(tag)` | the system picture chooser; the answer comes to `on_image(tag, uri)` |
 | `kami.menu(title, {labels})` | a list dialog; the answer comes to `on_menu` |
 | `kami.keyboard(true, x, y, w, h, size, text, hint)` / `kami.keyboard(false)` | a text field with the keyboard over that box (draw the background yourself) |
 | `kami.app_info(i)`, `kami.uninstall(i)`, `kami.web_search(text)`, `kami.open("wallpaper" or "settings")`, `kami.toast(text)` | what they say |
-| `kami.notifications()`, `kami.haptic()`, `kami.log(text)` | pull down the notifications, a tick, logcat |
+| `kami.notifications()`, `kami.haptic([kind])`, `kami.log(text)` | pull down the notifications; a vibration (`"tick"`, `"click"`, `"confirm"`, `"reject"`, `"drag"`, `"drop"`, or the long press one); logcat |
+| `kami.shortcuts(i)`, `kami.shortcut(i, id)` | the shortcuts of app `i` (`{ id, label }`, while Kami Shell is the home app) / start one |
+| `kami.wallpaper(x)` | where the pages are (0..1), for wallpapers that move with them |
+| `kami.include(name)` | runs a preset of the app as part of this script |
 
 **Trying a script.** For development, put your script on the phone as `/data/data/com.kami.shell/files/shell.lua` (it is read
 again when the home screen comes back; delete it to go back), or set it directly:
 `adb shell settings put secure kami_shell_script preset:cube`. A module is the same setting, written when it is switched on.
+Errors are in `adb logcat -s KamiShell`, with the stack of the script.
 
-**Not done:** Android app widgets (the ones apps provide), work profile, icon packs and shortcuts from app menus, video, a
-wallpaper from the shell (the system wallpaper shows through).
+Without a phone: `lua5.4 apps/KamiShell/tools/check.lua my.lua` plays a few minutes of taps, drags and menus against a fake
+`kami` table and stops at the first error; `apps/KamiShell/tools/sim` runs the real renderer on a Linux desktop and writes
+screenshots (see `apps/KamiShell/README.md`).
+
+**Not done:** Android app widgets (the ones apps provide), work profile, icon packs, notification dots, video, a wallpaper
+from the shell (the system wallpaper shows through).
 
 ## Windows in tiles: the Tiling WM module
 
@@ -1429,7 +1624,11 @@ A module cannot run code, other than a Kami Shell script in its sandbox, and it 
 A module that breaks the system UI or the launcher is not permanent:
 
 - **Modules > Turn all modules off** puts everything back.
-- **Safe mode turns every module off.**
+- **Safe mode turns every module off.** Hold **volume down** after the splash screen of the phone while it starts (or, from a
+  computer, `adb root; adb shell setprop persist.sys.safemode 1; adb reboot`). The overlays of the modules are removed before
+  the phone is unlocked, so a module that makes system UI crash again and again cannot keep the lock screen away; once the
+  phone is unlocked the list of modules is cleared and the settings, wallpaper, sounds and home app are put back. A preview in
+  Module Studio ends with a restart of the phone as well.
 - If Settings is out of reach (a crash loop of the system UI): `adb shell settings delete system kami_modules_enabled`, then
   `adb shell cmd overlay list | grep com.android.settings:kami_` and `adb shell cmd overlay disable --user 0 <the names>`.
 - If a Kami Shell script misbehaves: `adb shell settings delete secure kami_shell_script`, or choose another home app.

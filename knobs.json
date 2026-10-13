@@ -51,8 +51,15 @@
    "kind": "int",
    "group": "Quick settings",
    "title": "Brightness slider shape",
-   "description": "-1 is the shape chosen in the settings, 1 circle, 2 rounded square, 3 square.",
-   "default": "-1"
+   "description": "-1 is the shape chosen in the settings, 0 the stock shape, 1 circle, 2 rounded square, 3 square.",
+   "default": "-1",
+   "choices": {
+    "-1": "The shape chosen in the settings",
+    "0": "Stock",
+    "1": "Circle",
+    "2": "Rounded square",
+    "3": "Square"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -61,7 +68,12 @@
    "group": "Quick settings",
    "title": "Footer buttons",
    "description": "Shape of the settings and power buttons: 0 circle, 1 square, 2 rounded.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "Circle",
+    "1": "Square",
+    "2": "Rounded"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -70,7 +82,8 @@
    "group": "Shade",
    "title": "Blur",
    "description": "False turns off the blur behind the shade, the lock screen and the other SystemUI windows; the shade becomes an opaque surface.",
-   "default": "true"
+   "default": "true",
+   "restart": true
   },
   {
    "target": "com.android.systemui",
@@ -115,7 +128,8 @@
    "group": "Shade",
    "title": "Dimmed background",
    "description": "Colour of the scrim behind the shade.",
-   "default": "black"
+   "default": "black",
+   "restart": true
   },
   {
    "target": "com.android.systemui",
@@ -187,7 +201,12 @@
    "group": "Back gesture",
    "title": "Back arrow style",
    "description": "0 is the stock arrow drawn with a line, 1 a filled arrow, 2 your own shape from the arrow shape.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "Stock arrow (a line)",
+    "1": "Filled arrow",
+    "2": "Your own shape"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -214,7 +233,17 @@
    "group": "Back gesture",
    "title": "How the back swipe changes the screen",
    "description": "What you see when you swipe back from the edge, between two apps or two screens of an app that supports the back preview. stock is the shrinking card with the screen below it. off shows nothing, the screen changes as soon as you let go. fade, zoom (the old screen flies at you), flip (like a card, the new screen is its back), book (a page that turns, the new screen is under it), spin (the old screen is thrown away) and glitch (stutters, jumps and flickers into the new screen) are the others. Going back to the home screen and the previews that an app draws itself keep their own animation.",
-   "default": "stock"
+   "default": "stock",
+   "choices": {
+    "stock": "Stock",
+    "off": "Off",
+    "fade": "Fade",
+    "zoom": "Zoom",
+    "flip": "Flip",
+    "book": "Book",
+    "spin": "Spin",
+    "glitch": "Glitch"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -223,7 +252,8 @@
    "group": "Back gesture",
    "title": "Length of the change",
    "description": "How long the second part takes, after you let go of the swipe, in milliseconds. 0 takes the length of the look (300 to 520). Only for the looks of the setting above, not for stock.",
-   "default": "0"
+   "default": "0",
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -232,7 +262,17 @@
    "group": "Back gesture",
    "title": "Going into a screen",
    "description": "How a screen of an app comes in when you open it, for example a sub page of Settings. stock keeps the animation of the system. off cuts at once. fade, zoom, flip (the screen turns like a card), book (a page that lands from the right edge or turns away), spin (the screen is thrown in or away) and glitch (stutters and flickers) are the others. Screens that an app animates itself, dialogs and tasks (opening an app) keep their own animation.",
-   "default": "stock"
+   "default": "stock",
+   "choices": {
+    "stock": "Stock",
+    "off": "Off",
+    "fade": "Fade",
+    "zoom": "Zoom",
+    "flip": "Flip",
+    "book": "Book",
+    "spin": "Spin",
+    "glitch": "Glitch"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -241,7 +281,17 @@
    "group": "Back gesture",
    "title": "Leaving a screen",
    "description": "How a screen goes away when the app finishes it (the arrow in the top bar, the back button). It plays the same looks as the back swipe. stock keeps the animation of the system. off cuts at once. fade, zoom, flip (the screen turns like a card), book (a page that lands from the right edge or turns away), spin (the screen is thrown in or away) and glitch (stutters and flickers) are the others. The swipe from the edge has its own setting.",
-   "default": "stock"
+   "default": "stock",
+   "choices": {
+    "stock": "Stock",
+    "off": "Off",
+    "fade": "Fade",
+    "zoom": "Zoom",
+    "flip": "Flip",
+    "book": "Book",
+    "spin": "Spin",
+    "glitch": "Glitch"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -250,7 +300,8 @@
    "group": "Back gesture",
    "title": "Length of going in and out",
    "description": "How long going into or out of a screen takes, in milliseconds. 0 takes the length of the look (300 to 520).",
-   "default": "0"
+   "default": "0",
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -268,7 +319,10 @@
    "group": "Back gesture",
    "title": "Strength of the picture",
    "description": "How much of the picture shows, in percent (0 to 100).",
-   "default": "100"
+   "default": "100",
+   "min": 0,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -277,7 +331,11 @@
    "group": "Back gesture",
    "title": "When the picture shows",
    "description": "0 shows it the whole time, 1 fades it in and out so it is strongest in the middle of the change.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "The whole time",
+    "1": "Fades in and out"
+   }
   },
   {
    "target": "com.android.launcher3",
@@ -286,7 +344,10 @@
    "group": "Recents",
    "title": "Stack reach",
    "description": "Where the cards behind the middle one pile up, in card steps.",
-   "default": "0.70"
+   "default": "0.70",
+   "min": 0,
+   "max": 3,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -295,7 +356,10 @@
    "group": "Recents",
    "title": "Stack flat part",
    "description": "A card follows the finger one to one up to here, in card steps.",
-   "default": "0.45"
+   "default": "0.45",
+   "min": 0,
+   "max": 3,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -304,7 +368,10 @@
    "group": "Recents",
    "title": "Stack shrink",
    "description": "Scale a card loses per card step away from the middle.",
-   "default": "0.075"
+   "default": "0.075",
+   "min": 0,
+   "max": 0.5,
+   "step": 0.005
   },
   {
    "target": "com.android.launcher3",
@@ -313,7 +380,10 @@
    "group": "Recents",
    "title": "Smallest card",
    "description": "The smallest scale of a card in the stack.",
-   "default": "0.8"
+   "default": "0.8",
+   "min": 0.1,
+   "max": 1,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -322,7 +392,10 @@
    "group": "Recents",
    "title": "Stack lift",
    "description": "How far the middle card lifts over the others, in dp.",
-   "default": "6"
+   "default": "6",
+   "min": 0,
+   "max": 48,
+   "step": 1
   },
   {
    "target": "com.android.launcher3",
@@ -331,7 +404,10 @@
    "group": "Recents",
    "title": "Carousel turn",
    "description": "Degrees a card turns about the vertical axis per card step away from the middle (0 keeps it flat).",
-   "default": "0"
+   "default": "0",
+   "min": -60,
+   "max": 60,
+   "step": 1
   },
   {
    "target": "com.android.launcher3",
@@ -340,7 +416,10 @@
    "group": "Recents",
    "title": "Fan tilt",
    "description": "Degrees a card tilts per card step away from the middle.",
-   "default": "0"
+   "default": "0",
+   "min": -30,
+   "max": 30,
+   "step": 1
   },
   {
    "target": "com.android.launcher3",
@@ -349,7 +428,10 @@
    "group": "Recents",
    "title": "Card sink",
    "description": "How far a card sinks per card step, in dp.",
-   "default": "0"
+   "default": "0",
+   "min": -100,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.launcher3",
@@ -358,7 +440,10 @@
    "group": "Recents",
    "title": "Card fade",
    "description": "Opacity a card loses per card step (0 keeps all opaque).",
-   "default": "0"
+   "default": "0",
+   "min": 0,
+   "max": 1,
+   "step": 0.01
   },
   {
    "target": "com.android.launcher3",
@@ -367,7 +452,10 @@
    "group": "Recents",
    "title": "Faintest card",
    "description": "The least opacity a faded card keeps.",
-   "default": "0.3"
+   "default": "0.3",
+   "min": 0,
+   "max": 1,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -376,7 +464,11 @@
    "group": "Recents",
    "title": "Card order",
    "description": "0: the middle card is on top, 1: cards further right are over the ones to their left.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "The middle card on top",
+    "1": "Cards further right on top"
+   }
   },
   {
    "target": "com.android.launcher3",
@@ -385,7 +477,10 @@
    "group": "Gesture pill",
    "title": "Length",
    "description": "How long the gesture pill is, as a multiple of what the navigation settings chose (2 is twice as long, 0.5 half).",
-   "default": "1.0"
+   "default": "1.0",
+   "min": 0.2,
+   "max": 4,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -394,7 +489,10 @@
    "group": "Gesture pill",
    "title": "Thickness",
    "description": "How thick the gesture pill is, as a multiple of the setting (it cannot be thicker than its window, about 25dp).",
-   "default": "1.0"
+   "default": "1.0",
+   "min": 0.2,
+   "max": 4,
+   "step": 0.05
   },
   {
    "target": "com.android.launcher3",
@@ -403,7 +501,10 @@
    "group": "Gesture pill",
    "title": "Movement",
    "description": "How far the pill moves with the finger when you touch the bottom edge: 0 keeps it still, 1 is the default, 2 moves it twice as far (up and down it stops at 9dp, the size of its window).",
-   "default": "1.0"
+   "default": "1.0",
+   "min": 0,
+   "max": 3,
+   "step": 0.1
   },
   {
    "target": "com.android.launcher3",
@@ -412,7 +513,10 @@
    "group": "Gesture pill",
    "title": "Spring stiffness",
    "description": "How hard the spring is that brings the pill back after you let go. Higher snaps back faster.",
-   "default": "380"
+   "default": "380",
+   "min": 50,
+   "max": 2000,
+   "step": 10
   },
   {
    "target": "com.android.launcher3",
@@ -421,7 +525,10 @@
    "group": "Gesture pill",
    "title": "Wobble",
    "description": "How much the pill wobbles on its way back: 1 settles without a wobble, 0.62 is the default, 0.2 wobbles a lot.",
-   "default": "0.62"
+   "default": "0.62",
+   "min": 0.1,
+   "max": 1.5,
+   "step": 0.01
   },
   {
    "target": "com.android.launcher3",
@@ -466,7 +573,10 @@
    "group": "Launcher motion",
    "title": "App opening speed",
    "description": "How long an app takes to open from the launcher (and from Recents), as a multiple of the stock length: 1 is stock, 0.6 is faster, 1.5 is slower. The curves keep their shape, only the length changes. For every animation of the whole system use the animation scale options of a module's settings (global/window_animation_scale, transition_animation_scale, animator_duration_scale).",
-   "default": "1.0"
+   "default": "1.0",
+   "min": 0.2,
+   "max": 3,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -1039,7 +1149,11 @@
    "group": "Volume panel",
    "title": "Slider rounding",
    "description": "Corner radius of the volume slider in the panel, in dp. -1 keeps the stock 12.",
-   "default": "-1"
+   "default": "-1",
+   "min": 0,
+   "max": 60,
+   "step": 1,
+   "keep": -1
   },
   {
    "target": "com.android.systemui",
@@ -1048,7 +1162,11 @@
    "group": "Volume panel",
    "title": "Slider thickness",
    "description": "How thick the volume slider in the panel is, in dp. -1 keeps the stock 40.",
-   "default": "-1"
+   "default": "-1",
+   "min": 8,
+   "max": 120,
+   "step": 1,
+   "keep": -1
   },
   {
    "target": "com.android.systemui",
@@ -1298,7 +1416,10 @@
    "group": "Settings",
    "title": "Symbol round rounding",
    "description": "The rounding of the round behind the symbol in the card at the top: 24dp is a circle, 0dp a square.",
-   "default": "24dp"
+   "default": "24dp",
+   "min": 0,
+   "max": 24,
+   "step": 1
   },
   {
    "target": "com.android.settings",
@@ -1325,7 +1446,12 @@
    "group": "Settings",
    "title": "Tiles per row",
    "description": "How many tiles are in a row on the main screen of Settings (the KamiOS look): 1 makes a list of wide tiles, 2 is the default, 3 a dense grid.",
-   "default": "2"
+   "default": "2",
+   "choices": {
+    "1": "One (a list of wide tiles)",
+    "2": "Two",
+    "3": "Three (a dense grid)"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -1352,7 +1478,8 @@
    "group": "Quick settings pictures",
    "title": "Tiles with a picture of their own",
    "description": "Which tile uses which of the eight picture slots below, like 'internet:1,bt:2,flashlight:3': the name of the tile, a colon and the slot number. Names: internet, bt, cell, airplane, flashlight, nfc, cast, hotspot, location, rotation, dnd, battery, saver, inversion, night and the other tiles of the list (custom tiles of apps are 'custom(package/Class)'). A tile that is not named, or whose slot has no picture, keeps the picture of all tiles.",
-   "default": "none"
+   "default": "none",
+   "restart": true
   },
   {
    "target": "com.android.systemui",
@@ -1568,7 +1695,12 @@
    "group": "Battery icon",
    "title": "Battery fill direction",
    "description": "0 fills from the left, 1 fills upwards (for a standing battery).",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "From the left",
+    "1": "Upwards"
+   },
+   "restart": true
   },
   {
    "target": "android",
@@ -1712,7 +1844,13 @@
    "group": "Volume panel",
    "title": "How the panel comes in",
    "description": "0 slides in from the edge (stock), 1 grows out of the edge of the screen, 2 pops up and fades in, 3 only fades in.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "Slides in from the edge",
+    "1": "Grows out of the edge",
+    "2": "Pops up and fades in",
+    "3": "Only fades in"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -1721,7 +1859,10 @@
    "group": "Volume panel",
    "title": "Entrance spring stiffness",
    "description": "How hard the spring that moves the panel pulls. Stock 700; higher is faster and snappier (50 to 5000).",
-   "default": "700"
+   "default": "700",
+   "min": 50,
+   "max": 5000,
+   "step": 10
   },
   {
    "target": "com.android.systemui",
@@ -1730,7 +1871,10 @@
    "group": "Volume panel",
    "title": "Entrance spring damping",
    "description": "How quickly the swing of the spring dies out. Stock 0.9; lower swings more and wobbles, 1 stops without overshoot (0.2 to 1.5).",
-   "default": "0.9"
+   "default": "0.9",
+   "min": 0.2,
+   "max": 1.5,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -1915,7 +2059,8 @@
    "group": "Quick settings",
    "title": "Tile sizes",
    "description": "Gives tiles a size of their own, like 'internet:2x1,flashlight:1x2,dnd:2x2': the name of the tile, a colon, the columns it covers, an x and the rows it covers (1 to 3). A tile of one column shows only its symbol, wider ones also the label, and a tile that covers several rows is centred in all of them. Join tiles with a plus to put several in one cell, like 'dnd+flashlight:2x2': in a tall cell they sit one above the other, in a one row cell side by side. The tiles keep their order and each cell goes to the first free place from the top left, so a tall tile leaves a gap beside it that the next small tiles fill. Names are the same as for the tile pictures: internet, bt, cell, airplane, flashlight, nfc, cast, hotspot, location, rotation, dnd, battery, saver, inversion, night. A tile that is not named keeps its size. Empty keeps the stock grid. Only the panel itself changes: the edit screen still shows the stock grid.",
-   "default": ""
+   "default": "",
+   "restart": true
   },
   {
    "target": "android",
@@ -1960,7 +2105,11 @@
    "group": "Lock screen",
    "title": "Unlock animation length",
    "description": "How long the screen behind the lock screen takes to arrive after unlocking, in milliseconds. 0 keeps the stock 300 (100 to 1500).",
-   "default": "0"
+   "default": "0",
+   "min": 100,
+   "max": 1500,
+   "step": 10,
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -1969,7 +2118,10 @@
    "group": "Lock screen",
    "title": "Unlock: start size",
    "description": "How big the screen behind is when unlocking starts, 1 is full size. Stock 0.95; 1.3 starts big and shrinks into place, 0.5 grows from half (0.3 to 2).",
-   "default": "0.95"
+   "default": "0.95",
+   "min": 0.3,
+   "max": 2,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -1978,7 +2130,10 @@
    "group": "Lock screen",
    "title": "Unlock: start height offset",
    "description": "Where the screen behind starts, as a part of the screen height below its place (negative starts above). Stock 0.05 (-1 to 1).",
-   "default": "0.05"
+   "default": "0.05",
+   "min": -1,
+   "max": 1,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -1987,7 +2142,10 @@
    "group": "Lock screen",
    "title": "Unlock: start side offset",
    "description": "Where the screen behind starts, as a part of the screen width to the right of its place (negative starts at the left). Stock 0 (-1 to 1).",
-   "default": "0"
+   "default": "0",
+   "min": -1,
+   "max": 1,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -1996,7 +2154,10 @@
    "group": "Lock screen",
    "title": "Unlock: start turn",
    "description": "How far the screen behind is turned when unlocking starts, in degrees; it turns back to 0 while arriving. Stock 0 (-90 to 90).",
-   "default": "0"
+   "default": "0",
+   "min": -90,
+   "max": 90,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2005,7 +2166,10 @@
    "group": "Lock screen",
    "title": "Unlock: turning point height",
    "description": "The height the screen behind grows and turns around, as a part of the screen height from the top. Stock 0.66 (0 to 1).",
-   "default": "0.66"
+   "default": "0.66",
+   "min": 0,
+   "max": 1,
+   "step": 0.05
   },
   {
    "target": "com.android.systemui",
@@ -2014,7 +2178,11 @@
    "group": "Shade clock",
    "title": "Clock size",
    "description": "The size of the clock above the quick settings. 0 keeps the size of the theme (14sp to 90sp).",
-   "default": "0sp"
+   "default": "0sp",
+   "min": 14,
+   "max": 90,
+   "step": 1,
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -2032,7 +2200,10 @@
    "group": "Shade clock",
    "title": "Clock: move sideways",
    "description": "Moves the clock to the right (negative: to the left), in dp.",
-   "default": "0dp"
+   "default": "0dp",
+   "min": -200,
+   "max": 200,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2041,7 +2212,10 @@
    "group": "Shade clock",
    "title": "Clock: move down",
    "description": "Moves the clock down (negative: up), in dp.",
-   "default": "0dp"
+   "default": "0dp",
+   "min": -200,
+   "max": 200,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2059,7 +2233,11 @@
    "group": "Shade clock",
    "title": "Date size",
    "description": "The size of the date above the quick settings. 0 keeps the size of the theme (10sp to 40sp).",
-   "default": "0sp"
+   "default": "0sp",
+   "min": 10,
+   "max": 40,
+   "step": 1,
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -2077,7 +2255,10 @@
    "group": "Shade clock",
    "title": "Date: move sideways",
    "description": "Moves the date to the right (negative: to the left), in dp.",
-   "default": "0dp"
+   "default": "0dp",
+   "min": -200,
+   "max": 200,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2086,7 +2267,10 @@
    "group": "Shade clock",
    "title": "Date: move down",
    "description": "Moves the date down (negative: up), in dp.",
-   "default": "0dp"
+   "default": "0dp",
+   "min": -200,
+   "max": 200,
+   "step": 1
   },
   {
    "target": "com.android.settings",
@@ -2167,7 +2351,16 @@
    "group": "Lock screen",
    "title": "Screen on animation",
    "description": "How the lock screen arrives when the screen turns on: 0 stock, 1 starts big and settles, 2 starts small and grows, 3 rises from below, 4 falls in with a bounce, 5 turns in, 6 flips like a card.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "Stock",
+    "1": "Starts big and settles",
+    "2": "Starts small and grows",
+    "3": "Rises from below",
+    "4": "Falls in with a bounce",
+    "5": "Turns in",
+    "6": "Flips like a card"
+   }
   },
   {
    "target": "com.android.systemui",
@@ -2176,7 +2369,10 @@
    "group": "Lock screen",
    "title": "Screen on animation length",
    "description": "How long it takes, in milliseconds (80 to 2000).",
-   "default": "350"
+   "default": "350",
+   "min": 80,
+   "max": 2000,
+   "step": 10
   },
   {
    "target": "com.android.systemui",
@@ -2203,7 +2399,11 @@
    "group": "Bottom sheets",
    "title": "Sheet corner radius",
    "description": "The rounding of the top corners in dp. -1 keeps the theme (0 to 60).",
-   "default": "-1"
+   "default": "-1",
+   "min": 0,
+   "max": 60,
+   "step": 1,
+   "keep": -1
   },
   {
    "target": "com.android.systemui",
@@ -2212,7 +2412,11 @@
    "group": "Bottom sheets",
    "title": "Sheet blur",
    "description": "How much the sheets blur what is behind them, in dp. 0 is none, -1 keeps the theme (0 to 120).",
-   "default": "-1"
+   "default": "-1",
+   "min": 0,
+   "max": 120,
+   "step": 1,
+   "keep": -1
   },
   {
    "target": "com.android.systemui",
@@ -2221,7 +2425,10 @@
    "group": "Bottom sheets",
    "title": "Sheet frost",
    "description": "A milky veil over the sheet, 0 to 100.",
-   "default": "0"
+   "default": "0",
+   "min": 0,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2230,7 +2437,10 @@
    "group": "Bottom sheets",
    "title": "Sheet shine",
    "description": "Light on the top edge of the sheet, 0 to 100.",
-   "default": "0"
+   "default": "0",
+   "min": 0,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2239,7 +2449,10 @@
    "group": "Bottom sheets",
    "title": "Sheet gloss",
    "description": "A bright diagonal band across the sheet like a reflection, 0 to 100.",
-   "default": "0"
+   "default": "0",
+   "min": 0,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.systemui",
@@ -2248,7 +2461,10 @@
    "group": "Bottom sheets",
    "title": "Sheet rim light",
    "description": "A bright edge round the sheet, stronger at the top left, 0 to 100.",
-   "default": "0"
+   "default": "0",
+   "min": 0,
+   "max": 100,
+   "step": 1
   },
   {
    "target": "com.android.settings",
@@ -2284,7 +2500,14 @@
    "group": "Settings switches and sliders",
    "title": "Switch toggle animation",
    "description": "How a switch moves when you turn it: 0 not, 1 pop, 2 spin, 3 jelly, 4 drop from above with a bounce.",
-   "default": "0"
+   "default": "0",
+   "choices": {
+    "0": "None",
+    "1": "Pop",
+    "2": "Spin",
+    "3": "Jelly",
+    "4": "Drop with a bounce"
+   }
   },
   {
    "target": "com.android.settings",
@@ -2293,7 +2516,8 @@
    "group": "Settings switches and sliders",
    "title": "Switch turning time",
    "description": "How long a picture-strip switch and the toggle animation take, in milliseconds (0 is the speed of the stock switch, about 250; 700 shows every picture of a longer strip).",
-   "default": "0"
+   "default": "0",
+   "keep": 0
   },
   {
    "target": "com.android.settings",
@@ -2311,7 +2535,11 @@
    "group": "Settings switches and sliders",
    "title": "Switch picture strip: frames",
    "description": "How many frames the strip has (2 to 60).",
-   "default": "0"
+   "default": "0",
+   "min": 2,
+   "max": 60,
+   "step": 1,
+   "keep": 0
   },
   {
    "target": "com.android.systemui",
@@ -2320,7 +2548,123 @@
    "group": "Shade clock",
    "title": "Clock: size when open",
    "description": "How much bigger the clock gets when the quick settings are open. 0 keeps the size the clock has in the stock theme, whatever size you gave it (1 to 4).",
-   "default": "0"
+   "default": "0",
+   "min": 1,
+   "max": 4,
+   "step": 0.1,
+   "keep": 0
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_splash_background",
+   "kind": "color",
+   "group": "App opening",
+   "title": "Opening window colour",
+   "description": "The window an app shows while it starts from nothing (a cold start; an app that is still in memory just animates). With an alpha below full the screen behind shows through it, so a see-through opening window is one colour with some alpha. No colour keeps the colour each app asks for. Apps that bring their own splash screen are painted over as well.",
+   "default": "each app's own"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_splash_background_image",
+   "kind": "drawable",
+   "group": "App opening",
+   "title": "Opening window picture",
+   "description": "A picture over the whole opening window, on top of its colour, centred and cropped. PNG, WebP, JPG or GIF; an animated GIF or WebP moves while the app starts. Give it some alpha to see the colour and the screen behind through it. Only shown on cold starts.",
+   "default": "no picture"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "drawable/kami_splash_image",
+   "kind": "drawable",
+   "group": "App opening",
+   "title": "Picture instead of the app icon",
+   "description": "A picture in the middle of the opening window in place of the app's icon, as big as the icon size below. An animated GIF or WebP moves while the app starts, so one GIF gives every app the same loading animation. Keep it short: the window only stays until the app has drawn its first frame.",
+   "default": "the app's icon"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_splash_icon_alpha",
+   "kind": "int",
+   "group": "App opening",
+   "title": "Strength of the icon",
+   "description": "How much of the app icon (or of the picture in its place) shows in the opening window, in percent. 0 hides it, which leaves only the colour and the background picture.",
+   "default": "100",
+   "min": 0,
+   "max": 100,
+   "step": 1
+  },
+  {
+   "target": "android",
+   "resource": "dimen/starting_surface_icon_size",
+   "kind": "dimension",
+   "group": "App opening",
+   "title": "Icon size in the opening window",
+   "description": "How big the app icon (or the picture in its place) is in the middle of the opening window.",
+   "default": "160dp",
+   "min": 48,
+   "max": 480,
+   "step": 4
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_splash_min_duration",
+   "kind": "int",
+   "group": "App opening",
+   "title": "Least time the opening window stays",
+   "description": "Counted from the start of the app, in milliseconds. The window normally goes the moment the app has drawn its first frame, which can be too quick to see a long animation. 0 keeps that; 1500 keeps it for at least one and a half seconds. The app is ready underneath, only the reveal waits. At most 5000.",
+   "default": "0",
+   "min": 0,
+   "max": 5000,
+   "step": 50
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/starting_window_exit_animation_type",
+   "kind": "int",
+   "group": "App opening",
+   "title": "How the window leaves",
+   "description": "The way the opening window goes away when the app is shown.",
+   "default": "0",
+   "choices": {
+    "0": "Circle opens and the window slides up",
+    "1": "Fades out"
+   }
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/starting_window_app_reveal_anim_duration",
+   "kind": "int",
+   "group": "App opening",
+   "title": "Length of the reveal",
+   "description": "How long the window takes to go away, in milliseconds.",
+   "default": "266",
+   "min": 0,
+   "max": 2000,
+   "step": 10
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/starting_window_app_reveal_anim_delay",
+   "kind": "int",
+   "group": "App opening",
+   "title": "Wait before the reveal",
+   "description": "A pause between the icon starting to fade and the app showing, in milliseconds.",
+   "default": "83",
+   "min": 0,
+   "max": 2000,
+   "step": 10
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/starting_window_app_reveal_icon_fade_out_duration",
+   "kind": "int",
+   "group": "App opening",
+   "title": "Length of the icon fading out",
+   "description": "How long the icon (or the picture in its place) takes to fade away, in milliseconds.",
+   "default": "133",
+   "min": 0,
+   "max": 2000,
+   "step": 10
   }
  ]
 }
