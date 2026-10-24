@@ -580,6 +580,19 @@
   },
   {
    "target": "com.android.launcher3",
+   "resource": "string/kami_close_effect",
+   "kind": "string",
+   "group": "Launcher motion",
+   "title": "How an app closes into its icon",
+   "description": "stock is the shrinking card that flies into the icon. lamp is the magic lamp (genie) effect: the window is pinched into a funnel next to its icon and sucked in, and the same app opens by unrolling out of its icon again (it needs one close with the lamp first, to have a picture of the app). It plays after you let go of the swipe up to the home screen, it does not follow the finger. It only works for icons on the home screen and in the hotseat: an icon in a folder, a widget, an app opened from the app drawer and the home button or the back gesture keep the stock animation.",
+   "default": "stock",
+   "choices": {
+    "stock": "Stock",
+    "lamp": "Magic lamp"
+   }
+  },
+  {
+   "target": "com.android.launcher3",
    "resource": "dimen/kami_close_speed",
    "kind": "float",
    "group": "Launcher motion",
@@ -1126,6 +1139,15 @@
   },
   {
    "target": "com.android.settings",
+   "resource": "color/kami_bento_row_icon",
+   "kind": "color",
+   "group": "Settings",
+   "title": "Main screen list symbol colour",
+   "description": "Colour of the symbols of the rows when the layout of a module has the list style (settings_layout.main.style). Leave it out to keep their own colours.",
+   "default": "their own colours"
+  },
+  {
+   "target": "com.android.settings",
    "resource": "color/kami_bento_hero",
    "kind": "color",
    "group": "Settings",
@@ -1177,6 +1199,66 @@
    "title": "Volume slider, empty part",
    "description": "Colour of the empty part of the volume sliders. Leave it out to keep the theme colour.",
    "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_background_square_corner_radius",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Ringer button corner",
+   "description": "Corner radius of the ringer buttons (the one that shows the mode, and the ones in its drawer) in the volume panel. 0dp makes them square.",
+   "default": "12dp",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/volume_dialog_ringer_selected_button_background_radius",
+   "kind": "dimension",
+   "group": "Volume panel",
+   "title": "Selected ringer button corner",
+   "description": "Corner radius of the ringer button that shows the mode that is on.",
+   "default": "20dp",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_ringer_selected_bg",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Ringer button, mode that is on",
+   "description": "Background of the ringer button that shows the mode that is on. Leave it out to keep the theme colour.",
+   "default": "the theme colour",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_ringer_selected_fg",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Ringer button symbol, mode that is on",
+   "description": "Colour of the symbol on that button.",
+   "default": "the theme colour",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_ringer_bg",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Ringer buttons, the others",
+   "description": "Background of the ringer buttons of the modes that are not on (in the drawer).",
+   "default": "the theme colour",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_ringer_fg",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Ringer button symbols, the others",
+   "description": "Colour of the symbols of those buttons.",
+   "default": "the theme colour",
+   "restart": true
   },
   {
    "target": "com.android.systemui",
@@ -1726,6 +1808,16 @@
   },
   {
    "target": "com.android.systemui",
+   "resource": "bool/kami_battery_charging_cutout",
+   "kind": "bool",
+   "group": "Battery icon",
+   "title": "Charging picture cuts out",
+   "description": "True cuts the shape of the charging picture out of the frame and the fill while the phone charges, so a bolt shows even on a full battery. False draws it over them.",
+   "default": "false",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
    "resource": "integer/kami_battery_fill_direction",
    "kind": "int",
    "group": "Battery icon",
@@ -2087,6 +2179,46 @@
    "default": "the ROM icon",
    "height": "24dp",
    "untested": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/qs_tile_margin_horizontal",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Tile gap, across",
+   "description": "Space between quick settings tiles side by side, and (unless the next knob is set) between rows.",
+   "default": "8dp",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/qs_tile_margin_vertical",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Tile gap, down",
+   "description": "Space between rows of quick settings tiles. Follows the gap across until it is set.",
+   "default": "the gap across",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "dimen/common_tile_default_tile_height",
+   "kind": "dimension",
+   "group": "Quick settings",
+   "title": "Tile height",
+   "description": "Height of a quick settings tile.",
+   "default": "72dp",
+   "restart": true
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "bool/kami_qs_tile_metro",
+   "kind": "bool",
+   "group": "Quick settings",
+   "title": "Windows Phone tiles",
+   "description": "True draws every quick settings tile like on Windows Phone: one size of flat box, the symbol in the top left corner and the name at the bottom left. A tile that was large becomes one cell like the others, so use it with 4 columns and small gaps (the tile gap knobs). The colours and the corners are the usual tile knobs. Only the panel itself changes: the edit screen still shows the stock grid.",
+   "default": "false",
+   "restart": true
   },
   {
    "target": "com.android.systemui",

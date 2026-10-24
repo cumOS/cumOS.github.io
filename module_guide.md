@@ -45,6 +45,7 @@ A module cannot run code of its own. The only code it can bring is a Lua script 
 | System sounds: ringtone, notification, alarm, touch and keyboard clicks, lock screen, charging, low battery, dock, screenshot | `sounds` |
 | The animation while the phone starts, and while it shuts down | `bootanimation`, `shutdownanimation` |
 | The look of Settings itself: tiles of the main screen, tabs or a bar for the sub pages, backgrounds | `settings_layout` |
+| The whole quick settings panel: its blocks, tiles, sliders and media | `qs_style` |
 | Wallpaper and lock screen | `wallpaper` |
 | Material You accent colour and style | `accent`, `accent_style` |
 | Home app | `home_app` |
@@ -109,7 +110,7 @@ A module is one file, `module.json`, or a zip that has it at the top. The file s
 | `id` | `a-z`, `0-9`, `-` and `_`. Importing a file with the id of a module you already have replaces it. The ids of the modules that ship with the ROM cannot be used. |
 | `name`, `author`, `description` | shown in the list |
 | `module_version` | optional, like `1.2` or `2.0-beta`. Shown in the lists, and compared with the version in the module store to offer an update. `version` above is the version of the file format, not of your module. |
-| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `bootanimation`, `emoji`, `fonts`, `wallpaper`, `icons` or `apps`. Where the module is listed. Without it the phone works it out from what the module sets: only sounds (or only a boot animation, emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds, boot animation) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
+| `category` | optional: `theme`, `launcher`, `tweak`, `sounds`, `bootanimation`, `emoji`, `fonts`, `wallpaper`, `icons`, `apps`, `quicksettings`, `pill`, `volume` or `lockscreen`. Where the module is listed, and the filter of the module store. A value that is not in this list (a typo, or a category of a newer ROM) is ignored, not an error: the module is listed under **Other** in the store, and `validate.py` warns. Name the one that fits best: a module that only changes the pill is `pill`, one that only changes the volume panel is `volume`, a whole look is `theme`. Without it the phone works it out from what the module sets: only sounds (or only a boot animation, emoji, fonts, a wallpaper, launcher icons) gets its own heading; a home app without fonts or a wallpaper is a launcher; a module that mixes a style part (font, wallpaper, accent, icons, sounds, boot animation) with anything else, or reaches into three or more apps, is a theme; the rest are tweaks. |
 | `group` | optional. Modules of the same group switch each other off. Use it for separate modules that exclude each other; for the choices inside one module use `options`. |
 | `restart` | optional, `true`. System UI is started again when the module is switched, for resources that are only read at start. |
 | `targets` | knob resources, per package, see below |
@@ -117,6 +118,7 @@ A module is one file, `module.json`, or a zip that has it at the top. The file s
 | `overlays` | resources of any app |
 | `bootanimation`, `shutdownanimation`, `fonts`, `wallpaper`, `home_app`, `accent`, `accent_style`, `launcher_icons` | see the sections below |
 | `apps` | apps (APKs in the zip) that are installed while the module is on, see [Apps that come with a module](#apps-that-come-with-a-module) |
+| `qs_style` | the look and the layout of the whole quick settings panel, see [Quick settings style](#quick-settings-style) |
 | `settings` | options of the phone to write while the module is on |
 
 ### Values
@@ -318,6 +320,7 @@ removes them when it is switched off, so an app can be shipped and updated throu
 | `package` | the package name of the app, it has to be the one in the APK |
 | `apk` | the path of the APK in the zip |
 | `cert` | the SHA-256 of the certificate the APK is signed with (64 hex digits, `apksigner verify --print-certs`). Required: the APK is installed only when it is signed with this certificate, and an update of an app that is there has to have the same one (the system sees to that). |
+| `keep_data` | optional, `true` or `false` (the default). With `true` the data of the app stays on the phone when the app is removed (the module is switched off, removed, or replaced by a newer one, which comes in switched off) and is there again when the module installs the app again. Use it for an app that holds something the user made, like the start screen of a launcher. Without it the data goes with the app, and a removed module leaves nothing behind. |
 
 - At most four apps per module, 128 MB for each APK. The APK has to carry its native libraries (`use_embedded_native_libs`).
 - The install is silent (Settings is a system app), the module does not ask. An app that was there before (an app of the ROM) is
@@ -356,6 +359,29 @@ colours without any wallpaper (not see-through at all). The picture is one of yo
 phone. Android lets an app read the wallpaper of the phone only with "All files access", so the settings have a row that opens that page;
 without it, and without a picture, the tiles are plain colours.
 
+The **weather tile** is the tile of the weather app of the system (OmniJaws, the app that the weather on the lock screen comes from):
+pin it and, when the app is set up and has data, the tile shows the temperature, the weather as a symbol, the place and today's
+high and low; until then it is an ordinary app tile.
+
+The launcher keeps its **start screen** when its module is switched off or replaced by a newer one, because the module names its
+app with `"keep_data": true` (see "Apps that come with a module").
+
+The **size of the tiles** is a row of the Metro settings too ("tile size"): large (4 small-tile columns, two medium tiles in a row),
+medium (6 columns, three in a row) or small (8 columns, four in a row). A medium tile is two columns wide, a wide tile four.
+
+**The module dresses the whole phone, not only the launcher** (`examples/metro_theme.py`, built into `metro-launcher.zip`): the
+quick settings are four columns of flat boxes close together, the symbol top left and the name bottom left, the tile that is on in the
+accent colour and the others grey (a choice, see `kami_qs_tile_metro`); notifications, sliders, buttons and the volume panel are flat
+and square, with square ringer buttons; Settings is a list like the one of Windows Phone (a big accent coloured symbol, the name and
+a live line beside it, `settings_layout.main.style` `list`) under lowercase titles on a pivot, and its pages and the apps turn like a
+turnstile; the status bar has a flat horizontal battery (the bolt is cut out of it while it charges) and Wi-Fi and mobile signal like
+Windows Phone, as pictures; the switches are a flat box with a bar that slides across (a picture strip made for each accent colour, see "A switch
+as a strip of pictures"); the system font is Open Sans in a light weight (SIL Open Font License; the nearest free font to Segoe WP
+Light); the easing is short and sharp. The module's choices are the accent colour (16 of the 20 of the launcher, cobalt like
+the launcher: pick the same one in the Metro settings), the shade background, how apps open and the back swipe turn (turnstile,
+fade or stock), and whether the volume panel has one slider or all of them. The ROM does not ship the font: `build.sh` finds
+`OpenSans[wdth,wght].ttf` in `../memories/fonts/OpenSans.ttf` beside the source tree (or in `OPEN_SANS`).
+
 <!-- group: System look -->
 
 ## Quick settings and shade
@@ -388,6 +414,14 @@ flashlight (in a cell of one row they sit side by side). Each keeps its own swit
 The tiles keep their order and each cell goes to the first free place from the top left, so a tall tile leaves a gap beside it
 that the small tiles after it fill. A tile that is not in the list keeps its stock size, and an empty list keeps the stock grid.
 The `tile-mosaic.json` example is made for four columns. Only the panel itself changes: the edit screen still shows the stock grid.
+
+### Tiles like Windows Phone
+
+`bool/kami_qs_tile_metro` draws every tile as a flat box with the symbol in the top left corner and the name at the bottom left (a
+second line under it when the tile has one, like the network name). All tiles get one size and a tap toggles; a long press opens the
+settings of the tile. Use it with 4 columns (`system/qs_tiles_columns`), square corners (the four `common_tile_default_*_corner_radius`
+knobs), small gaps (`dimen/qs_tile_margin_horizontal` and `dimen/qs_tile_margin_vertical`, 8dp by default) and, if you want, another
+height (`dimen/common_tile_default_tile_height`, 72dp). Only the panel itself changes: the edit screen still shows the stock grid.
 
 ### Tile symbols
 
@@ -469,6 +503,153 @@ The clock and the date above the quick settings. A size of 0 and a fully transpa
 | `string/kami_shade_clock_digits` | string | empty | One entry for every digit from the left (hour tens, hour ones, minute tens, minute ones), separated by commas; an entry is `scale/colour/lift` and any part may be empty: `1.3/#FF5CC8/-4,1/#FFFFFF/0,,` makes the first digit bigger, pink and 4dp lower and the second white |
 | `dimen/kami_shade_clock_expanded_scale` | float | 0 | How much bigger the clock gets when the quick settings are open, from the small clock (stock 2.57, 1 to 4). Only used when `kami_shade_clock_size` is 0 |
 
+## Quick settings style
+
+The knobs above change one thing each. `qs_style` describes the whole panel in one document: the background, the header, the row of tiles you see when the shade is only pulled down a little, and the blocks of the open panel from top to bottom (tiles, sliders, media, a connectivity cluster, rows and columns, spacers, labels). The built-in styles of the quick settings page are presets of the same document, so a module can start from one and change what it likes.
+
+```json
+{
+  "format": "kamios-module", "version": 1,
+  "id": "glass-control-centre", "name": "Glass Control Centre",
+  "description": "The control centre look: glass, a connectivity cluster, tall sliders",
+  "category": "quicksettings",
+  "qs_style": {
+    "base": "kami",
+    "panel": {"background": "glass", "blur": 70, "alpha": 0.3, "radius": 32, "padding": 16, "gap": 14},
+    "header": {"style": "ios", "clock": true, "date": false, "settings": false},
+    "qqs": {"columns": 4, "rows": 1, "media": false, "brightness": false},
+    "tiles": {"columns": 4, "shape": "circle", "size": "icon", "gap": 12, "labels": false, "icon_size": 24},
+    "blocks": [
+      {"type": "row", "weights": [1, 2], "gap": 14, "children": [
+        {"type": "folder", "specs": ["wifi", "bt", "airplane", "cell"], "style": "cluster", "size": 48},
+        {"type": "media", "height": 160}
+      ]},
+      {"type": "row", "weights": [1, 1], "children": [
+        {"type": "slider", "kind": "brightness", "orientation": "v", "height": 200, "width": 64, "icon": true},
+        {"type": "slider", "kind": "volume", "orientation": "v", "height": 200, "width": 64, "icon": true}
+      ]},
+      {"type": "spacer", "height": 8},
+      {"type": "tiles", "specs": ["flashlight", "dnd", "rotation", "battery"]}
+    ]
+  }
+}
+```
+
+`base` is the preset the document starts from: `stock`, `kami`, `oneui`, `myui`, `ios`, `harmony` or `deck` (the scenes preset, see [Scenes](#scenes)). Without it a module document starts from `kami`. Every key is optional and only what is written changes, so a module usually writes a `base` and a few knobs. Unknown keys are ignored and unknown block types are skipped, so a document of a newer ROM still draws on an older phone. Units are dp, except label sizes (sp) and colours. A colour is `#RGB`, `#RRGGBB` or `#AARRGGBB`.
+
+| Key | Value |
+|---|---|
+| `panel.background` | `scrim`, `blur`, `glass` or `none` |
+| `panel.blur` | 0 to 100 |
+| `panel.alpha` | 0 to 1 |
+| `panel.radius` | 0 to 60 |
+| `panel.padding` | 0 to 32 |
+| `panel.gap` | 0 to 24 |
+| `header.style` | `stock`, `ios`, `oneui`, `compact` or `none` |
+| `header.clock`, `header.date`, `header.power`, `header.settings` | `true` or `false` |
+| `qqs.columns` | 2 to 6 |
+| `qqs.rows` | 1 to 2 |
+| `qqs.media`, `qqs.brightness` | `true` or `false` |
+| `qqs.hidden` | `true` draws no collapsed row: the shade that opens first is the notification list |
+| `shade.split` | `right`, `left` or `off`: a pull down from that side of the status bar opens the whole panel directly (the Control Centre way), a pull from the rest opens the notifications; `off` is the one shade of stock |
+| `shade.region` | 15 to 60: how wide that side is, in percent of the screen (default 40) |
+| `tiles.columns` | 1 to 6 |
+| `tiles.rows` | 0 to 8 per page, 0 is as many as needed |
+| `tiles.shape` | `circle`, `squircle`, `rounded`, `pill`, `square` or `stock` |
+| `tiles.size` | `icon`, `wide` or `stock` |
+| `tiles.radius`, `tiles.gap` | 0 to 60, 0 to 24 |
+| `tiles.labels`, `tiles.sublabels`, `tiles.pages`, `tiles.page_indicator` | `true` or `false` |
+| `tiles.height` | 40 to 140: the height of an icon tile (a circle is never wider than it is high; a name below a circle comes on top) |
+| `tiles.icon_size` | 16 to 48 |
+| `tiles.active_bg`, `tiles.inactive_bg`, `tiles.active_fg`, `tiles.inactive_fg` | a colour |
+| `blocks` | the list of blocks of the open panel, from top to bottom; without it the blocks of the preset are kept |
+
+| Block | Keys |
+|---|---|
+| `tiles` | `specs` limits it to these tiles (without it: all of them); any of the `tiles` keys above overrides them for this block |
+| `slider` | `kind` `brightness` or `volume`, `orientation` `h` or `v`, `height`, `width`, `radius`, `icon`, `fill` `accent` (the theme colour) or `light` (white, like the Control Centre) |
+| `media` | `height` |
+| `ringer` | `height`, `radius`: the three-way ringer switch, one pill with a thumb that sits on silent, vibrate or sound |
+| `folder` | `specs`: the toggles in the cluster (`wifi`, `bt`, `airplane`, `cell` ...), `style` `cluster` or `list`, `size` |
+| `row` | `weights`: how the row divides its width (`[1, 2]`), `gap`, `children`: the blocks in it |
+| `column` | `gap`, `children` |
+| `spacer` | `height` |
+| `label` | `text`, `size` (8 to 32 sp), `color` |
+| `scenes` | the scenes of the document (or the user's own list), see [Scenes](#scenes): `style` `chips` or `cards`, `columns` 1 to 4, `height` 36 to 120, `radius` 0 to 60, `add` `true` or `false` |
+
+| `grid` | the whole panel as one grid of cells, see [Grid layout](#grid-layout) |
+| `tile` | `spec`: one tile; only used inside a grid |
+
+A tile is drawn once in the panel, so the first block that names a tile keeps it and a later block loses it; a `tiles` block without `specs` takes all the tiles no other block named (it is the one that pages and has the edit button, and only the first of them counts). The tiles of this ROM are `wifi`, `bt`, `cell`, `nfc`, `cast`, `dnd`, `wallet`, `airplane`, `rotation`, `flashlight`, `battery`, `alarm`, `controls` and `screenrecord`; friendly names (`bluetooth`, `mobile`, `torch`, `battery_saver`) are mapped to them. A slider is 0 to 400 dp high or wide. `panel.background` `glass` is a light veil (white over the dark theme, a stronger white over the light one), not a dark one.
+
+A style with `shade.split` and `qqs.hidden` is how the iOS, MyUI and Harmony presets work: the notifications come from the left of the status bar, the panel from the right, and there is no collapsed row. While a slider of the panel is dragged, the other blocks fade and the slider stays; a bar that runs up and down takes a swipe along it, a bar that runs sideways leaves a swipe up or down to the shade. The tile editor (the pencil) draws the tiles the way the style does: the same shape, columns and names.
+
+A list has at most 24 blocks and `row` and `column` nest 3 deep. A tile `specs` name is one of the quick settings tiles (`wifi`, `bt`, `cell`, `airplane`, `flashlight`, `dnd`, `rotation`, `battery` ...). The module style is used while the module is on; when two modules have one, the one switched on last wins. A module with a `qs_style` does not change the user's panel by itself: when it is switched on, the phone asks "Use the quick settings of this theme?" (Yes or No). Yes switches the panel to the style of the theme and keeps the style the user had, with their own changes; when the last theme with a style goes off or is removed, that style comes back. No leaves the panel alone, and "Quick settings style" in Settings can still pick "From module" later. The quick settings page still works on top of it: the style the user picked there is not changed by a module, and the user can change single knobs (the phone merges those over the module's document).
+
+### Grid layout
+
+The panel editor of the phone (the layout button next to the pencil) writes a `grid` block: the whole panel is one grid of cells that the user rearranges by dragging, so a module can ship one too. A grid has `columns` (1 to 6, default 4), `gap`, `cell` (the row height in dp, default the tile height of the style) and a list of `items`. The items are laid out in order, each one in the first free spot from the top left that is `w` cells wide and `h` cells tall, so a later small item fills a hole left by an earlier one.
+
+```json
+{"type": "grid", "columns": 4, "items": [
+  {"type": "tile", "spec": "wifi", "w": 2},
+  {"type": "tile", "spec": "bt", "w": 2},
+  {"type": "slider", "kind": "brightness", "w": 4},
+  {"type": "ringer", "w": 2},
+  {"type": "tile", "spec": "flashlight"},
+  {"type": "tile", "spec": "dnd"},
+  {"type": "media", "w": 4, "h": 2}
+], "hidden": ["nfc"]}
+```
+
+| Item | Keys and size |
+|---|---|
+| `tile` | `spec`; 1 to 4 cells wide, always 1 tall (2 or more wide is the wide tile with the name beside the icon) |
+| `slider` | `kind`, `fill`, `icon`, `radius`; a bar that is wider than tall runs sideways (2 to 4 wide, 1 tall), a taller one runs up and down (1 wide, 2 or 3 tall). A sideways bar in one row is 48 dp thick (or `height`), in the middle of the row |
+| `media` | the system media card, 4 wide, 2 or 3 tall (it is never drawn shorter than the card itself); only one in a panel. The user can shrink it in the editor: it then becomes a `mediatile` for any app |
+| `mediatile` | a small player for one app: `package` (for example `com.spotify.music`, `com.google.android.youtube`), none means whichever app plays; 2 to 4 wide and 1 tall (a pill with the cover, title and play button; a tap opens a popup over a blurred screen with the seek bar, previous and next, volume and a button that opens the app) or 2 wide and 2 tall (a card with the cover as background). It takes no room while its app is not playing. One tile per app. |
+| `ringer` | 2 to 4 wide, 1 tall (the switch keeps its own height of 56 dp, or the `height` you give it, in the middle of the row) |
+| `scenes` | `style`, `columns`, `add`; 4 wide, 1 or 2 tall |
+| `folder` | `specs`, `style`; the round-button cluster, 2 by 2 |
+| `spacer` | an empty cell |
+
+`w` and `h` are optional (a tile is 1 by 1, a slider 4 by 1, the media card 4 by 2, the ringer 2 by 1). `hidden` lists tiles the user took out of the panel. A tile of the tile list that no item names and `hidden` does not list is added at the end as a small tile, so tiles added later with the pencil still show up. A grid is a block of the top level of `blocks`; use it alone.
+
+### Scenes
+
+A scene is a named set of phone settings that the user applies with one tap from the panel, for example Focus, Cinema or Night. Only `id` and `name` are needed; every other key is optional, and a key that is missing leaves that setting as it is. A style document may ship up to eight scenes as defaults, and a `scenes` block draws them.
+
+```json
+{"id": "focus", "name": "Focus", "icon": "moon",
+ "brightness": 35, "volume": 0, "ringer": "silent", "dnd": true, "rotation_lock": false, "flashlight": false}
+```
+
+| Key | Value |
+|---|---|
+| `id` | 1 to 24 characters of `a-z`, `0-9`, `_` and `-`; unique in the list |
+| `name` | 1 to 16 characters, the name under the icon |
+| `icon` | `moon`, `sun`, `focus`, `movie`, `book`, `game`, `home`, `bell`, `bolt`, `car`, `music` or `sleep`; anything else draws the default icon |
+| `brightness` | 0 to 100, the manual brightness in percent of the display range |
+| `volume` | 0 to 100, the media volume in percent |
+| `ringer` | `silent`, `vibrate` or `normal` |
+| `dnd` | `true` turns Do Not Disturb on, `false` turns it off |
+| `rotation_lock` | `true` turns auto-rotate off |
+| `flashlight` | `true` turns the flashlight on |
+
+The list of scenes of a style document sits at the top level of `qs_style`, beside `base` and `blocks`:
+
+```json
+"scenes": [
+  {"id": "study", "name": "Study", "icon": "book", "brightness": 55, "ringer": "silent", "dnd": true}
+]
+```
+
+The user's own list is the system setting `kami_qs_scenes` (a JSON array of the same objects). When that key exists, even as an empty list, it replaces the list of the document; when it is missing the document's list is used. "Reset" deletes the key. A module never writes the key.
+
+The block draws the scenes: `{"type": "scenes", "style": "cards", "columns": 3, "height": 72, "radius": 20, "add": true}`. `style` is `chips` (a pill with the icon and the name) or `cards` (a rounded square with the icon above the name), `columns` is 1 to 4, `height` is 36 to 120 and `radius` is 0 to 60. With `add` true a last "+" chip saves the current phone state as a new scene, named "Scene N". A long press on a scene overwrites it with the current state. A scene is highlighted while the phone matches it.
+
+The built-in style `deck` (base `deck`) is the preset for this: a panel built around a row of scenes with the brightness bar below it.
+
 ## Volume panel and bottom sheets
 
 The panel that opens when you press a volume key, its sliders, and the bottom sheets of the system UI.
@@ -491,6 +672,11 @@ The panel that opens when you press a volume key, its sliders, and the bottom sh
 | `integer/kami_volume_spring_stiffness` | int | 700 | Stiffness of the spring that moves the panel in and out, 50 to 5000; higher is quicker |
 | `dimen/kami_volume_spring_damping` | float | 0.9 | Damping of that spring, 0.2 to 1.5; lower wobbles more, 1 does not overshoot |
 | `bool/kami_volume_all_sliders` | bool | false | Shows the sliders of ring, notification, alarm, call and system beside the media one, in a row at the side of the panel |
+
+The ringer buttons: `dimen/volume_dialog_background_square_corner_radius` (the buttons in the drawer and the one that shows the mode,
+12dp; 0dp is square), `dimen/volume_dialog_ringer_selected_button_background_radius` (the button of the mode that is on, 20dp, which is
+round), and the colours `color/kami_volume_ringer_selected_bg` / `..._selected_fg` (the mode that is on) and `..._ringer_bg` /
+`..._ringer_fg` (the others); a colour that is not set keeps the theme colour.
 
 The width of the slider cannot be changed: the track is drawn with its own size. Icons of the panel (`drawable`, scaled to 24
 dp high, white shapes; the panel may tint them): `ic_volume_media`, `ic_volume_media_low`, `ic_volume_media_mute`,
@@ -574,7 +760,11 @@ Status bar icons (`com.android.systemui`, kind drawable): `stat_sys_airplane_mod
 `stat_sys_ringer_vibrate`, `stat_sys_ringer_silent`, `stat_sys_data_saver`, `stat_sys_nfc` (all seen changing),
 `stat_sys_hotspot`, `stat_sys_data_bluetooth_connected`, `stat_sys_cast`, `stat_sys_headset`, `stat_sys_vpn_ic`,
 `stat_sys_rotate_portrait` (same mechanism, not seen yet). Not knobs: the do-not-disturb icon (it comes from the active mode),
-Wi-Fi and mobile signal (several states and levels), the Bluetooth icons with a battery level (ten variants).
+Wi-Fi and mobile signal (several states and levels), the Bluetooth icons with a battery level (ten variants). The Wi-Fi and the mobile
+signal can still be changed with `overlays` (one picture for each level): Wi-Fi is `drawable/ic_wifi_signal_0` to `_4` in `android` and
+`drawable/ic_wifi_0` to `_3` in `com.android.systemui`, the mobile signal `drawable/ic_signal_cellular_N_4_bar` (N from 0 to 4) and
+`..._N_5_bar` (0 to 5) in `android` and `drawable/ic_mobile_N_4_bar` / `_5_bar` in `com.android.systemui`. `examples/metro_theme.py`
+does it. The states with an exclamation mark or a cut-out keep their own pictures.
 
 Every `stat_sys_*` knob takes an animated GIF or WebP; it plays while the icon is shown.
 
@@ -589,6 +779,9 @@ is set. With both empty the stock battery is back.
 | `drawable/kami_battery_fill` | the inside, shown from the empty side up to the charge level |
 | `drawable/kami_battery_charging` | a picture over both while the phone charges (a bolt) |
 | `integer/kami_battery_fill_direction` | `0` fills from the left, `1` upwards (a standing battery) |
+
+`bool/kami_battery_charging_cutout` makes the charging picture cut its shape out of the frame and the fill instead of being drawn over them,
+so a bolt shows even on a full battery (a white bolt over a white fill would not).
 
 Make them **white with transparency**: the status bar tints them (charging green, red when low). They are drawn at the same
 size, as large as fits the status bar, so give them the same canvas. The percentage text and the battery saver tile are not
@@ -621,15 +814,23 @@ Swiping up from an app, the home button and back to the home screen make the app
 | Resource | What it does |
 |---|---|
 | `dimen/kami_close_speed` | how fast the app closes: 1 stock, 2 twice as fast, 0.5 half as fast (0.3 to 3) |
+| `string/kami_close_effect` | how the app goes into its icon: `stock` (the shrinking card) or `lamp` (the magic lamp, see below) |
 | `dimen/swipe_up_rect_x_damping_ratio`, `..._y_damping_ratio` | how much the window bounces into the icon after you let go: 1 none, stock about 0.96, 0.5 a clear wobble |
 
 Speed changes the spring of the swipe and the length of the fade of the home button. The wobble belongs to the swipe; the home button
 only fades. These knobs do not depend on the gesture pill. The example `closing-lab.zip` (`examples/make-closing-lab.py`) has two
 separate choices, the speed (fast, stock, slow) and the bounce (none, stock, bouncy, jelly), that can be mixed freely.
 
+**Magic lamp.** `string/kami_close_effect` set to `lamp` (the example `examples/magic-lamp.json`, or Settings > KamiOS > Launcher motion)
+pinches the window into a funnel and sucks it into the middle of its icon, like the magic lamp of Compiz and GNOME. It plays after you let
+go of the swipe up, it does not follow the finger, and it has its own length (it ignores `kami_close_speed` and the bounce). The same
+app opens by unrolling out of its icon, but only after it was closed with the lamp once in this session (the launcher keeps a picture
+of the last three apps; without one the opening is the stock one). It works for an icon on the home screen or in the hotseat. An icon
+in a folder, a widget, an app opened from the app drawer, the home button and the back gesture keep the stock animation.
+
 ### Recents
 
-The module **Recents style** (one module, one choice: carousel, fan, soft overlap or tight deck) sets the numbers below for you. To make
+The module **Recents style** (one module, one choice: carousel, fan with the right cards on top, fan with the middle card on top, soft overlap or tight deck) sets the numbers below for you. To make
 your own look, set them yourself.
 
 These tune the stack of cards. They only act while "Stacked cards" is on in the
@@ -839,13 +1040,14 @@ and a layout that is wrong is left out as a whole (the import says why).
 | `hero` | `false` takes the card with the name of the system away |
 | `columns` | 1, 2 or 3 tiles in a row (the tiles that have no `size` share the row) |
 | `tiles` | a list. The tiles named here come first, in this order; the others follow in the usual order |
+| `style` | `tiles` (the default) or `list`: one column of rows like the Settings of Windows Phone, no tile background, a big symbol at the left (40 dp), the name and one line of live text beside it. `columns` and the tile `size` are not used then, `text` is. The symbols take the colour `color/kami_bento_row_icon` (`com.android.settings`) when a module sets one |
 | `text` | the texts of the tiles: `title_size` (10 to 28 sp), `title_lines` (1 to 3), `summary_size` (9 to 20 sp), `summary_lines` (0 to 3; 0 shows no summary line). With 3 tiles in a row the titles are 14 sp unless you say otherwise |
 
 A tile has `page` and any of: `size` (`third`, `half` or `full` of the width; a tile with a size starts a row of its own),
 `color` and `text_color` (`#RRGGBB` or `#AARRGGBB`; the symbol takes the text colour), `hide` (`true` takes the tile off the screen).
 
 Pages that are tiles: `network`, `connected_devices`, `sound`, `display`, `themes` (the Theme Engine), `notifications`, `modes`,
-`wallpaper`, `kamios` (the KamiOS settings), `battery`, `storage`, `apps`, `system`.
+`wallpaper`, `kamios` (the KamiOS settings), `extensions` (KamiOS Extensions), `battery`, `storage`, `apps`, `system`.
 
 The pages that Android lists under them are tiles of the same grid, so the whole main screen looks uniform: `about_device`,
 `safety_center`, `security`, `privacy`, `location`, `accounts` (passwords and passkeys), `accounts_and_backup`, `supervision`,
@@ -856,6 +1058,9 @@ and privacy" is `safety_center` and `security` is not on the screen. Colouring b
 **`themes` and `kamios` cannot be hidden**: they are the way
 back to the modules, so a layout can never lock you out. Corner radius, gap and tile height are `targets` as before
 (`dimen/kami_bento_radius`, `kami_bento_gap`, `kami_bento_tile_height`).
+
+A choice of an option (see "Options") may carry a `settings_layout` of its own: its `main` and `pages` take the place of the ones of the module while that choice is
+selected. The Metro theme uses it to let you pick the list or the tiles for the main screen of Settings.
 
 ### The sub pages: pages
 
@@ -950,7 +1155,7 @@ The most you can do with a switch is draw all of it yourself. A **strip** is one
 - The switch is 32 dp high. Draw at 3 times: **96 px high**, and about 156 px wide for one frame. The strip may be up to 2560 px wide.
 - Corners and shape are part of the picture. Give the corners some transparency to make a pill.
 - **Let the track fill the frame.** The stock switch is a track of 32 dp, the whole height. A track that only uses the middle of the frame (a common mistake is 56 of 96 px) looks small next to the other switches of the phone. Draw it from about y 4 to y 92 and from edge to edge; the knob may be as high as the track or a little higher.
-- **See-through colours need a layer.** If you make the strip with a program, do not draw a see-through colour (a highlight, a glow, a shadow) straight onto the picture: in Pillow, `ImageDraw` on an RGBA image *replaces* the pixels with that see-through colour instead of mixing it, so the track under the highlight is gone and the spot shows as a dark or black bar in dark mode. Paint such things on their own empty layer and put the layer over the strip (`Image.alpha_composite(strip, layer)`), or use opaque colours. `examples/glasslib.py` has `over()` for it. A quick test: put the finished strip on a black and on a white background; the switch must look the same on both.
+- **See-through colours need a layer.** If you make the strip with a program, do not draw a see-through colour (a highlight, a glow, a shadow) straight onto the picture: in Pillow, `ImageDraw` on an RGBA image *replaces* the pixels with that see-through colour instead of mixing it, so the track under the highlight is gone and the spot shows as a dark or black bar in dark mode. Paint such things on their own empty layer and put the layer over the strip (`Image.alpha_composite(strip, layer)`), or use opaque colours. `examples/glasslib.py` has `over()` for it. A quick test: put the finished strip on a black and on a white background; the switch must look the same on both. `python3 validate.py my-module.zip` does this check for you (it needs Pillow): it warns when the track uses less than 85% of the frame height or when there are see-through pixels inside the switch.
 - The switch plays the strip forward when it is turned on and backward when it is turned off, and it cross-fades between two neighbouring frames, so even 8 frames look smooth.
 - The animation only plays when you touch the switch. A page that opens, or a list that scrolls, shows the right frame at once.
 
@@ -1714,15 +1919,17 @@ Modules that other people made live in the module store. Open **Settings > KamiO
 ### Using it
 
 - A tap downloads a module and puts it in **Your modules**, switched off. You switch it on there, with the same warnings as for a module you imported yourself.
+- **Updates.** When you open the store it checks the modules you have: those with a newer version in the store are under the **Updates** chip, with an **Update all** row. A module that is switched on stays on when it is updated (and an app that comes with it is updated in place, its data stays if the app names `keep_data`), so your changes are not taken away. The exception is a module that now asks for the warning of an advanced module and did not before: that one is switched off until you read the warning. A module without a `module_version` is compared with the version it had in the store when you downloaded it, so bump the version of your module with every release.
 - Nothing is fetched until you open the store. Only https is used, the sizes are limited, and what comes back is data: a module from the store can do no more than any module you import by hand.
-- An entry has a name, author, version, description, a thumbnail and screenshots (a tap on a screenshot opens it full screen). The `module_version` of a module is compared with the one on the phone, so the store offers an update when yours is newer.
+- The store has a search box (name, author, description and category) and a row of categories to filter by; only the categories that have a module are shown, and a **Updates** chip appears when a module you have is newer in the store. A module that names no category (yet) is listed under **Other**.
+- An entry has a name, author, version, description, a `category`, a thumbnail and screenshots (a tap on a screenshot opens it full screen). The `module_version` of a module is compared with the one on the phone, so the store offers an update when yours is newer.
 
 ### Sharing your own
 
 The store is a public GitHub repository, [`kamiosmodules/module-store`](https://github.com/kamiosmodules/module-store), with a small website. Adding or updating a module is a pull request and needs no update of the ROM.
 
 1. Fork the repository and add a folder `modules/<id>/`. The folder name has to be **exactly** the `id` in your `module.json`.
-2. Put `module.json` at the top of that folder, with the pictures, fonts and sounds it names next to it. Fill `name`, `author` and a real one-line `description`, and a `module_version`.
+2. Put `module.json` at the top of that folder, with the pictures, fonts and sounds it names next to it. Fill `name`, `author` and a real one-line `description`, a `module_version` and a `category` (see the table of fields above), so people find the module under the right heading.
 3. Optional, for the store only (they are left out of the download): `thumbnail.png` (a small square icon) and a `screenshots/` folder with PNG, JPG, WebP or GIF files, shown in number order.
 4. Open a pull request. A maintainer looks at it; once it is merged, a GitHub Action zips the modules, publishes them and rewrites `modules.json`, so the module is in the store 1 to 2 minutes later.
 
