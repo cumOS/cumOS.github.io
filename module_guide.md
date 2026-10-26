@@ -787,6 +787,44 @@ Make them **white with transparency**: the status bar tints them (charging green
 size, as large as fits the status bar, so give them the same canvas. The percentage text and the battery saver tile are not
 part of this.
 
+## KamiOrbit: the capsule around the camera
+
+KamiOrbit (Settings > KamiOS Extensions) is a small capsule around the front camera of the phone: the song that plays (its cover and an equalizer, or the icon of the app), a screen recording with a timer, a call, casting, a timer of the clock app, and any voice recorder app. A tap on a song opens a player card, a tap on a recording asks to stop it, a swipe to the side goes to the next thing, a swipe up folds it into two brackets around the camera. It finds the camera from the display, so it fits phones with the camera in the middle, and it takes the place of the Dynamic Bar (only one of them is on).
+
+Every knob is a setting of the phone, so a module sets it in `settings` like the quick settings options. The keys are in the `secure` table:
+
+```json
+"settings": {
+  "secure/kami_bar_enabled": true,
+  "secure/kami_bar_roundness": 40,
+  "secure/kami_bar_halo": 3,
+  "secure/kami_bar_halo_effect": 2,
+  "secure/kami_bar_glow_size": 14
+}
+```
+
+| Key | Value |
+|---|---|
+| `secure/kami_bar_enabled` | `true` switches KamiOrbit on (and the Dynamic Bar off), `false` off |
+| `secure/kami_bar_color_mode` | 0 black, 1 the colour of the thing it shows, 2 the accent of the theme. A recording stays black inside its frame in mode 0 and 2 |
+| `secure/kami_bar_opacity` | 20 to 100, the fill of the capsule and the card |
+| `secure/kami_bar_roundness` | 0 (square) to 100 (round as a pill); the card follows it |
+| `secure/kami_bar_scale` | 50 to 150, the size of what is inside the capsule in percent; the capsule keeps covering the camera |
+| `secure/kami_bar_gap_adjust` | -16 to 40 dp: the gap for the camera is the size of the camera, found by the display, this makes it wider or narrower (never narrower than the camera) |
+| `secure/kami_bar_x_dp`, `secure/kami_bar_y_dp` | -80 to 80 and -8 to 16 dp, moves the capsule |
+| `secure/kami_bar_halo` | the light around the capsule: 0 off, 1 a frame, 2 a glow, 3 both. The colour is the colour of the app of the song, red for a recording, green for a call |
+| `secure/kami_bar_halo_source` | 0 the colour of the app or the thing, 1 the own colour of the next key |
+| `secure/kami_bar_halo_color` | the own colour of the halo as a signed ARGB number (`0xFFB388FF` is `-5011201`) |
+| `secure/kami_bar_halo_effect` | 0 solid, 1 pulse, 2 rainbow (turns round and ignores the colour) |
+| `secure/kami_bar_halo_width` | 1 to 8 dp, thickness of the frame |
+| `secure/kami_bar_glow_size` | 2 to 30 dp, how far the glow reaches |
+| `secure/kami_bar_card_blur` | `true` blurs what is behind the player card (the opacity still counts) |
+| `secure/kami_bar_card_halo` | 0 to 3, the same frame and glow around the player card, in the colour of the app of the song |
+| `secure/kami_bar_music_icon` | `true` shows the icon of the music app instead of the equalizer |
+| `secure/kami_bar_hide_paused` | `true` takes the capsule away while the song is paused |
+| `secure/kami_bar_extras` | `false` shows music only, no recording, call, casting, timer or recorder app |
+| `secure/kami_bar_haptics` | `false` switches the vibration of taps and swipes off |
+
 ## Launcher and gestures
 
 The bar you swipe up from, the stack of recent apps and the arrow that follows your finger at the screen edge.
@@ -1123,6 +1161,9 @@ The KamiOS look of the first screen: a card, tiles, a list (`com.android.setting
 | `dimen/kami_bento_gap` | dimension | Gap between tiles |
 | `dimen/kami_bento_tile_height` | dimension | Height of a tile |
 | `integer/kami_bento_columns` | int | Tiles per row: 1, 2 or 3 |
+| `color/kami_list_row` | color | Colour of the cards of the rows that are not tiles: Google services and preferences, Digital Wellbeing, KamiOS Extensions and any page another app adds. It holds for every look of the screen (the tiles, the list, the stock look) |
+| `dimen/kami_list_radius` | dimension | The outer rounding of those cards (the top of the first row, the bottom of the last one); 0dp makes them square |
+| `dimen/kami_list_inner_radius` | dimension | The rounding where two of those rows meet (4dp by default) |
 | `color/kami_page_bg`, `drawable/kami_page_background` | | The page behind, see "Moving pictures" |
 
 With these a flat, square Settings is a module, not a build.

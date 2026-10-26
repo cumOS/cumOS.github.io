@@ -1550,6 +1550,33 @@
   },
   {
    "target": "com.android.settings",
+   "resource": "color/kami_list_row",
+   "kind": "color",
+   "group": "Settings",
+   "title": "Main screen list row colour",
+   "description": "Colour of the cards behind the rows of the main screen of Settings that are not tiles (Google services and preferences, Digital Wellbeing, KamiOS Extensions, pages that other apps add). Holds for every look of the screen, also the stock one. Leave it out to keep the stock colour.",
+   "default": "the stock card colour"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_list_radius",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Main screen list row rounding",
+   "description": "The rounding of the outer corners of those cards (the top of the first row, the bottom of the last one). 0dp makes them square.",
+   "default": "the stock rounding"
+  },
+  {
+   "target": "com.android.settings",
+   "resource": "dimen/kami_list_inner_radius",
+   "kind": "dimension",
+   "group": "Settings",
+   "title": "Main screen list row inner rounding",
+   "description": "The rounding of the corners where two of those cards meet.",
+   "default": "4dp"
+  },
+  {
+   "target": "com.android.settings",
    "resource": "dimen/kami_bento_tile_height",
    "kind": "dimension",
    "group": "Settings",
