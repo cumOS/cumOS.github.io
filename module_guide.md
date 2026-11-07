@@ -321,6 +321,8 @@ removes them when it is switched off, so an app can be shipped and updated throu
 | `apk` | the path of the APK in the zip |
 | `cert` | the SHA-256 of the certificate the APK is signed with (64 hex digits, `apksigner verify --print-certs`). Required: the APK is installed only when it is signed with this certificate, and an update of an app that is there has to have the same one (the system sees to that). |
 | `keep_data` | optional, `true` or `false` (the default). With `true` the data of the app stays on the phone when the app is removed (the module is switched off, removed, or replaced by a newer one, which comes in switched off) and is there again when the module installs the app again. Use it for an app that holds something the user made, like the start screen of a launcher. Without it the data goes with the app, and a removed module leaves nothing behind. |
+| `trust` | optional, `"full"` (default: not set). Asks for **full trust** for the app: system-level access like an app that is built into the phone (no hidden API limits, the privileged permissions it asks for). Needs `cert`. When the user switches the module on, Settings shows a warning first: **Allow** records the trust, **Not now** still installs the app as a normal app. The user can take it back in Settings > modules > Fully trusted apps (after a restart of the phone). The trust is tied to the package **and** the certificate: an update signed with another key loses it. Use it only for an app that cannot work without (a patched launcher of another maker); a normal app does not need it. |
+| `recents` | optional, `true` or `false` (default). The launcher also becomes the **recents provider**: the recents screen, the navigation gestures (swipe up, quick switch) and the app open and close animations come from it, as on a phone where it is built in. Needs `trust: "full"` and the same package in `home_app`; only one app can be the recents provider. The launcher has to be built on Launcher3 Quickstep (its recents activity is `com.android.quickstep.RecentsActivity`, as in the Pixel Launcher). It is chosen when the phone starts, so Settings offers a restart after the user allows it and after the module goes off. Switching the module off, taking the trust back, uninstalling or disabling the app: the built-in launcher's recents and gestures are back after the next restart. |
 
 - At most four apps per module, 128 MB for each APK. The APK has to carry its native libraries (`use_embedded_native_libs`).
 - The install is silent (Settings is a system app), the module does not ask. An app that was there before (an app of the ROM) is
@@ -335,6 +337,7 @@ removes them when it is switched off, so an app can be shipped and updated throu
   nothing about who made it.
 - Trust is in the module: a module names the certificate its app is signed with, and switching it on is the decision to trust
   that. The list is kept for Quickstep in the secure setting `kami_trusted_apps`, which only Settings can write.
+- Full trust (`"trust": "full"`) is a separate, opt-in list: the secure setting `kami_fully_trusted_apps` (`package:certificate` lines), which only the system uid can write (SettingsProvider refuses shell, root and apps with WRITE_SECURE_SETTINGS) and which is never backed up or restored. The system checks the signing certificate of the installed app against the recorded one every time.
 
 The examples `examples/make-kami-shell.py` (Kami Shell, with its looks), `make-metro-launcher.py` (Metro Launcher) and
 `make-app-module.py --home-app` build such modules. The ready zips of the ROM post are in `vendor/kami/zips/` (`kami-shell.zip`,
@@ -447,6 +450,8 @@ For a tile of its own there are eight more slots of each:
 the slot number). A tile that is not named, or whose slot is empty, keeps the picture for all tiles. The names are the
 ones quick settings uses: `internet`, `bt`, `cell`, `airplane`, `flashlight`, `nfc`, `cast`, `hotspot`, `location`,
 `rotation`, `dnd`, `battery`, `saver`, `inversion`, `night`, and so on. A tile of an app is `custom(package/Class)`.
+The Sound engine tile of KamiOS is `custom(com.android.settings/com.kami.settings.KamiSoundTile)`:
+on shows the output and the preset that matches.
 
 ### Layout, shape and labels (settings)
 
@@ -457,6 +462,16 @@ ones quick settings uses: `internet`, `bt`, `cell`, `airplane`, `flashlight`, `n
 | `system/qs_tile_shape` | 0 dynamic, 1 smooth rounded square, 2 rounded square, 3 square, 4 circle |
 | `system/qs_panel_style` | 0 card, 1 classic |
 | `system/qs_tile_label_hide` | `true` hides the labels of the small tiles |
+| `system/kami_qs_slider_percent` | `0` or `1` (default `0`): the percent inside the bars, for every style whose document does not say `sliders.percent` |
+| `system/kami_qs_slider_spring` | `0` or `1` (default `0`): the spring of a jumped value, where the document does not say `sliders.spring` |
+| `system/kami_qs_slider_long_press` | `0` or `1` (default `0`): the long press of the bars (auto brightness, ringer), where the document does not say `sliders.long_press` |
+| `system/kami_qs_tile_squish` | `0` or `1` (default `0`): the press squish of the tiles, where the document does not say `tiles.squish` |
+| `system/kami_qs_tile_split` | `0` or `1` (default `0`): the split look of a tile with two targets, where the document does not say `tiles.split` |
+| `system/qs_tile_haptic` | the haptics of the styled sliders follow it too (a tick while dragging, the confirm of a long press), so one switch turns all of them off |
+
+The five `kami_qs_*` keys are the fallback for the panel of [Quick settings style](#quick-settings-style): a document (or one
+`slider` block) that says the same wins, so a module can still force a look for its own style. They are switches on the quick
+settings style page.
 
 `system/qs_tile_icon_shape` is not available to modules. To round or square the icon background use the
 `common_tile_default_*_icon_corner_radius` knobs.
@@ -478,6 +493,8 @@ ones quick settings uses: `internet`, `bt`, `cell`, `airplane`, `flashlight`, `n
 | Key | Value |
 |---|---|
 | `system/kami_blur_strength` | 10 to 150, percent of the normal blur (100 is the default). Scales every window blur of the system UI: shade, lock screen, bouncer. Live. |
+| `system/kami_dialog_blur` | `true` (the default): the dialogs of the system (internet, Bluetooth, screen cast, permissions) blur the screen behind them, with the strength above; `false` keeps them on a plain dim |
+| `global/kami_blur_mode` | Settings > KamiOS Extensions > Visuals > Blur quality: `0` stock blur (follows everything behind it), `1` optimized blur (a moving background is blurred again at most 60 times a second, the radius still animates smoothly), `2` performance blur (one blur when a panel opens, kept while it stays open; a video behind it stands still in the blur). Not set: performance on phones with 4 GB of memory or less, optimized on the others (the system writes it on the first boot) |
 | `system/kami_shade_dual_tone` | `true` (default) the stock shade, notifications on their own scrim; `false` one tone and one blur for quick settings and notifications |
 | `system/kami_shade_qs_tone` | 0 to 100 (default 0), an extra tone behind the quick settings while the dual tone shade is on |
 | `system/kami_qs_dual_tone` | `true` (default) tiles with two targets (Wi-Fi, Bluetooth, mobile data) draw the icon in its own colour; `false` draws them in one colour |
@@ -489,6 +506,12 @@ alpha to see the shade through). `drawable/kami_notification_image` is drawn ove
 (`notification_corner_radius` still sets them). Cards that an app colours (a call, a music player) keep the app's colour and
 get no picture. The text colour is not a knob: it follows the light or dark theme. Give a light colour and picture for day
 and a dark one for night.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `dimen/notification_corner_radius` | dimension | 28dp | Rounding of the card (already a knob) |
+| `color/kami_notification_ripple` | color | not set | Colour of the press ripple on a card |
+| `integer/kami_notification_image_alpha` | int | 100 | How strongly `kami_notification_image` is drawn, percent (0 to 100) |
 
 ### The clock above the quick settings
 
@@ -535,7 +558,9 @@ The knobs above change one thing each. `qs_style` describes the whole panel in o
 }
 ```
 
-`base` is the preset the document starts from: `stock`, `kami`, `oneui`, `myui`, `ios`, `harmony` or `deck` (the scenes preset, see [Scenes](#scenes)). Without it a module document starts from `kami`. Every key is optional and only what is written changes, so a module usually writes a `base` and a few knobs. Unknown keys are ignored and unknown block types are skipped, so a document of a newer ROM still draws on an older phone. Units are dp, except label sizes (sp) and colours. A colour is `#RGB`, `#RRGGBB` or `#AARRGGBB`.
+`base` is the preset the document starts from: `stock`, `kami`, `oneui`, `myui`, `coloros`, `ios`, `harmony` or `deck` (the scenes preset, see [Scenes](#scenes)). Without it a module document starts from `kami`. Every key is optional and only what is written changes, so a module usually writes a `base` and a few knobs. Unknown keys are ignored and unknown block types are skipped, so a document of a newer ROM still draws on an older phone. Units are dp, except label sizes (sp) and colours. A colour is `#RGB`, `#RRGGBB` or `#AARRGGBB`.
+
+`coloros` is an optional ColorOS 17-inspired Control Centre: two connectivity pills, a persistent media card beside two vertical sliders, a ringer/mobile-data row and round tiles below. It uses the existing compact header and theme-derived tile colours, not fixed screenshot colours. Its ordinary rows have independent heights rather than a shared grid cell height. Stock selection and the existing `myui` preset are unchanged. Try `examples/coloros-control-centre.json` to start from it. The new plate, typography and media fields below are optional: leaving them out keeps the appearance and media visibility of older presets. Initial layout, media playback and editor preservation were checked on bloodstone; other devices still need testing.
 
 | Key | Value |
 |---|---|
@@ -561,15 +586,31 @@ The knobs above change one thing each. `qs_style` describes the whole panel in o
 | `tiles.labels`, `tiles.sublabels`, `tiles.pages`, `tiles.page_indicator` | `true` or `false` |
 | `tiles.height` | 40 to 140: the height of an icon tile (a circle is never wider than it is high; a name below a circle comes on top) |
 | `tiles.icon_size` | 16 to 48 |
+| `tiles.icon_plate` | optional boolean, wide tiles only: `true` draws a subtle round plate even on a tile without two click targets; `false` hides the visual plate, not the toggle action. Unset keeps the existing look |
+| `tiles.icon_plate_size` | optional integer 32 to 64 dp, wide tiles only: the visual plate size, not the touch target (which stays at least 48 dp) |
+| `tiles.label_size`, `tiles.sublabel_size` | optional integers 10 to 20 sp and 9 to 16 sp, respectively; wide tiles only. Unset keeps existing typography |
+| `tiles.glass` | optional boolean, per tile or per `tiles` block: `true` forces liquid glass on these tiles, `false` forces a plain fill, unset follows the ROM's Liquid glass look. Also on a single `tile` item in a grid |
 | `tiles.active_bg`, `tiles.inactive_bg`, `tiles.active_fg`, `tiles.inactive_fg` | a colour |
+| `tiles.stroke_width` | 0 to 8, the width of the edge of a tile in dp; 0 (the default) draws none. The edge is drawn under the content and ends at the border of the tile, whatever its shape |
+| `tiles.stroke_active`, `tiles.stroke_inactive` | a colour of that edge for a tile that is on and one that is off |
+| `tiles.gradient_active` | two colours, e.g. `["#FF5CC8", "#2E6BFF"]`: the fill of a tile that is on, instead of its flat `active_bg` |
+| `tiles.gradient_angle` | 0 to 360, the direction of that fill in degrees: 0 runs left to right, 90 top to bottom (the default) |
+| `tiles.squish` | `true` or `false`: the tile springs to 94 % while a finger is on it, and back when the finger lifts (tiles with liquid glass do not squish: the glass is drawn by the system and does not shrink with the tile) |
+| `tiles.split` | `true` or `false`: a tile with two targets (a wide Wi-Fi or Bluetooth tile) draws a thin line between the icon half, which toggles, and the name half, which opens the details; a tile without a second click is unchanged |
+| `sliders` | how the bars of the panel behave: `percent`, `spring`, `long_press`, `flat_fill`, `glass` (a `slider` block takes the same keys; the block wins) |
+| `sliders.percent` | `true` or `false`: the value in percent written inside the bar, at its end (the top for a bar that runs up and down); it turns to the fill colour once the fill reaches it |
+| `sliders.spring` | `true` or `false`: a value that jumps (a tap on the track, the volume keys) glides in on a spring that overshoots a little; dragging stays exact |
+| `sliders.long_press` | `true` or `false`: a long press on a bar does more than a tap: the brightness bar turns auto brightness on or off, the volume bar cycles the ringer mode normal, vibrate, silent, normal |
+| `sliders.flat_fill` | optional boolean, default `false`: a straight leading edge of the fill, clipped to the outer pill. Works on a slider block too; the block wins. Used by `coloros`, without changing older styles |
 | `blocks` | the list of blocks of the open panel, from top to bottom; without it the blocks of the preset are kept |
 
 | Block | Keys |
 |---|---|
 | `tiles` | `specs` limits it to these tiles (without it: all of them); any of the `tiles` keys above overrides them for this block |
-| `slider` | `kind` `brightness` or `volume`, `orientation` `h` or `v`, `height`, `width`, `radius`, `icon`, `fill` `accent` (the theme colour) or `light` (white, like the Control Centre) |
-| `media` | `height` |
-| `ringer` | `height`, `radius`: the three-way ringer switch, one pill with a thumb that sits on silent, vibrate or sound |
+| `slider` | `kind` `brightness` or `volume`, `orientation` `h` or `v`, `height`, `width`, `radius`, `icon`, `fill` `accent` (the theme colour) or `light` (white, like the Control Centre), `percent`, `spring`, `long_press`, `flat_fill`, `glass` (see `sliders` above; written on a block it wins for that one bar) |
+| `media` | `height`; `glass` boolean forces liquid glass on / off in the Compose media card (unset follows the ROM's look). The legacy View carousel does not support this override yet; artwork can cover the glass |
+| `mediatile` | `package` optionally follows one app (otherwise whichever app plays); `placeholder` boolean, default `false`, keeps an idle card visible; `height` integer 96 to 320 dp, default 168, outside a grid; `glass` boolean forces liquid glass on / off. May be used in an ordinary row or column; grid allocation ignores `height` |
+| `ringer` | `height`, `radius`: the three-way ringer switch, one pill with a thumb that sits on silent, vibrate or sound; `glass` boolean forces liquid glass on / off |
 | `folder` | `specs`: the toggles in the cluster (`wifi`, `bt`, `airplane`, `cell` ...), `style` `cluster` or `list`, `size` |
 | `row` | `weights`: how the row divides its width (`[1, 2]`), `gap`, `children`: the blocks in it |
 | `column` | `gap`, `children` |
@@ -578,11 +619,11 @@ The knobs above change one thing each. `qs_style` describes the whole panel in o
 | `scenes` | the scenes of the document (or the user's own list), see [Scenes](#scenes): `style` `chips` or `cards`, `columns` 1 to 4, `height` 36 to 120, `radius` 0 to 60, `add` `true` or `false` |
 
 | `grid` | the whole panel as one grid of cells, see [Grid layout](#grid-layout) |
-| `tile` | `spec`: one tile; only used inside a grid |
+| `tile` | `spec`: one tile in a grid; flat optional `tiles` appearance keys override the document for this item, including plates, label sizes, colours, stroke and gradient |
 
 A tile is drawn once in the panel, so the first block that names a tile keeps it and a later block loses it; a `tiles` block without `specs` takes all the tiles no other block named (it is the one that pages and has the edit button, and only the first of them counts). The tiles of this ROM are `wifi`, `bt`, `cell`, `nfc`, `cast`, `dnd`, `wallet`, `airplane`, `rotation`, `flashlight`, `battery`, `alarm`, `controls` and `screenrecord`; friendly names (`bluetooth`, `mobile`, `torch`, `battery_saver`) are mapped to them. A slider is 0 to 400 dp high or wide. `panel.background` `glass` is a light veil (white over the dark theme, a stronger white over the light one), not a dark one.
 
-A style with `shade.split` and `qqs.hidden` is how the iOS, MyUI and Harmony presets work: the notifications come from the left of the status bar, the panel from the right, and there is no collapsed row. While a slider of the panel is dragged, the other blocks fade and the slider stays; a bar that runs up and down takes a swipe along it, a bar that runs sideways leaves a swipe up or down to the shade. The tile editor (the pencil) draws the tiles the way the style does: the same shape, columns and names.
+A style with `shade.split` and `qqs.hidden` is how the iOS, MyUI, ColorOS-inspired and Harmony presets work: the notifications come from the left of the status bar, the panel from the right, and there is no collapsed row. While a slider of the panel is dragged, the other blocks fade and the slider stays; a bar that runs up and down takes a swipe along it, a bar that runs sideways leaves a swipe up or down to the shade. The tile editor (the pencil) draws the tiles the way the style does: the same shape, columns and names.
 
 A list has at most 24 blocks and `row` and `column` nest 3 deep. A tile `specs` name is one of the quick settings tiles (`wifi`, `bt`, `cell`, `airplane`, `flashlight`, `dnd`, `rotation`, `battery` ...). The module style is used while the module is on; when two modules have one, the one switched on last wins. A module with a `qs_style` does not change the user's panel by itself: when it is switched on, the phone asks "Use the quick settings of this theme?" (Yes or No). Yes switches the panel to the style of the theme and keeps the style the user had, with their own changes; when the last theme with a style goes off or is removed, that style comes back. No leaves the panel alone, and "Quick settings style" in Settings can still pick "From module" later. The quick settings page still works on top of it: the style the user picked there is not changed by a module, and the user can change single knobs (the phone merges those over the module's document).
 
@@ -604,16 +645,18 @@ The panel editor of the phone (the layout button next to the pencil) writes a `g
 
 | Item | Keys and size |
 |---|---|
-| `tile` | `spec`; 1 to 4 cells wide, always 1 tall (2 or more wide is the wide tile with the name beside the icon) |
-| `slider` | `kind`, `fill`, `icon`, `radius`; a bar that is wider than tall runs sideways (2 to 4 wide, 1 tall), a taller one runs up and down (1 wide, 2 or 3 tall). A sideways bar in one row is 48 dp thick (or `height`), in the middle of the row |
+| `tile` | `spec` and flat optional `tiles` appearance overrides; 1 to 4 cells wide, always 1 tall (2 or more wide is the wide tile with the name beside the icon). Cell allocation determines size, while supported per-item appearance is preserved |
+| `slider` | `kind`, `fill`, `icon`, `radius`, `percent`, `spring`, `long_press`, `flat_fill`; a bar that is wider than tall runs sideways (2 to 4 wide, 1 tall), a taller one runs up and down (1 wide, 2 or 3 tall). A sideways bar in one row is 48 dp thick (or `height`), in the middle of the row |
 | `media` | the system media card, 4 wide, 2 or 3 tall (it is never drawn shorter than the card itself); only one in a panel. The user can shrink it in the editor: it then becomes a `mediatile` for any app |
-| `mediatile` | a small player for one app: `package` (for example `com.spotify.music`, `com.google.android.youtube`), none means whichever app plays; 2 to 4 wide and 1 tall (a pill with the cover, title and play button; a tap opens a popup over a blurred screen with the seek bar, previous and next, volume and a button that opens the app) or 2 wide and 2 tall (a card with the cover as background). It takes no room while its app is not playing. One tile per app. |
+| `mediatile` | a small player for one app: `package` (for example `com.spotify.music`, `com.google.android.youtube`), none means whichever app plays; 2 to 4 wide and 1 tall (a pill with the cover, title and play button; a tap opens a popup over a blurred screen with the seek bar, previous and next, volume and a button that opens the app) or 2 wide and 2 tall (a card with the cover as background). Optional `placeholder` defaults to `false`: normally it takes no room while its app is not playing; `true` keeps an idle player slot visible. Optional `height` (96 to 320 dp) is preserved but ignored for grid allocation: `w` and `h` decide its cells. One tile per app. |
 | `ringer` | 2 to 4 wide, 1 tall (the switch keeps its own height of 56 dp, or the `height` you give it, in the middle of the row) |
 | `scenes` | `style`, `columns`, `add`; 4 wide, 1 or 2 tall |
 | `folder` | `specs`, `style`; the round-button cluster, 2 by 2 |
 | `spacer` | an empty cell |
 
 `w` and `h` are optional (a tile is 1 by 1, a slider 4 by 1, the media card 4 by 2, the ringer 2 by 1). `hidden` lists tiles the user took out of the panel. A tile of the tile list that no item names and `hidden` does not list is added at the end as a small tile, so tiles added later with the pencil still show up. A grid is a block of the top level of `blocks`; use it alone.
+
+Opening the layout editor converts ordinary blocks into a packed grid, not pixel-identical positions. It copies supported tile appearance overrides onto individual `tile` items, keeps slider behavior flags, and turns an ordinary `mediatile` into a two-row item with a width based on its row share, retaining `package`, `placeholder` and `height`. Independent ordinary row heights become shared grid cells when the edited layout is saved.
 
 ### Scenes
 
@@ -634,7 +677,9 @@ A scene is a named set of phone settings that the user applies with one tap from
 | `ringer` | `silent`, `vibrate` or `normal` |
 | `dnd` | `true` turns Do Not Disturb on, `false` turns it off |
 | `rotation_lock` | `true` turns auto-rotate off |
-| `flashlight` | `true` turns the flashlight on |
+| `flashlight` | `true` turns the flashlight on (only when the scene is tapped: a scene that switches on by itself with `when` leaves the flashlight alone, because it could not switch it back) |
+| `when` | optional: the scene switches on by itself while **all** of these hold, and off again when they stop holding; the first scene in the list that holds wins. `{"charging": true, "headphones": true, "time": "22:30-06:30", "apps": ["com.spotify.music"]}`: `charging` the charger is plugged in (`false`: not plugged in), `headphones` wired, USB or Bluetooth headphones are connected, `time` a window of the day that may cross midnight, `apps` the app on screen is one of these. A missing key is no condition, unknown keys are ignored. Needs `system/kami_scene_auto` (below) |
+| `looks` | optional: settings the scene writes on top of its own keys, `{"system/kami_qs_style": "ios", "secure/kami_bar_motion": "island"}`. `table/key` with the table `system`, `secure` or `global`, and only keys that start with `kami_`; anything else is ignored. `true`/`false` is written as 1/0. A new quick settings style restarts the system UI, also when the scene ends |
 
 The list of scenes of a style document sits at the top level of `qs_style`, beside `base` and `blocks`:
 
@@ -646,6 +691,18 @@ The list of scenes of a style document sits at the top level of `qs_style`, besi
 
 The user's own list is the system setting `kami_qs_scenes` (a JSON array of the same objects). When that key exists, even as an empty list, it replaces the list of the document; when it is missing the document's list is used. "Reset" deletes the key. A module never writes the key.
 
+A scene with a `when` can switch on by itself. That is off by default: the switch is **Automatic scenes** on the scenes page (`system/kami_scene_auto`). When the scene ends, every value it changed goes back to what it was before, unless you changed that value yourself in the meantime (then it stays as you set it). The values from before are kept in `system/kami_scene_auto_state`, so a restart of the system UI can still put them back.
+
+| Key | Value |
+|---|---|
+| `system/kami_scene_auto` | `0` (default) or `1`: scenes with a `when` switch on and off by themselves. Setting it to `0` also puts back what the scene that is on had changed |
+| `system/kami_scene_auto_state` | written by the system UI, never by a module: the scene that is on by itself and the values it replaced |
+
+```json
+{"id": "night", "name": "Night", "when": {"time": "22:30-06:30"},
+ "brightness": 15, "dnd": true, "looks": {"system/kami_qs_style": "deck"}}
+```
+
 The block draws the scenes: `{"type": "scenes", "style": "cards", "columns": 3, "height": 72, "radius": 20, "add": true}`. `style` is `chips` (a pill with the icon and the name) or `cards` (a rounded square with the icon above the name), `columns` is 1 to 4, `height` is 36 to 120 and `radius` is 0 to 60. With `add` true a last "+" chip saves the current phone state as a new scene, named "Scene N". A long press on a scene overwrites it with the current state. A scene is highlighted while the phone matches it.
 
 The built-in style `deck` (base `deck`) is the preset for this: a panel built around a row of scenes with the brightness bar below it.
@@ -655,6 +712,12 @@ The built-in style `deck` (base `deck`) is the preset for this: a panel built ar
 The panel that opens when you press a volume key, its sliders, and the bottom sheets of the system UI.
 
 ### The volume panel
+
+The look of the whole panel is one Settings key, which a module sets through its `settings` block:
+
+| Key | Value |
+|---|---|
+| `system/kami_volume_style` | `stock` (default, the panel below), `ios` (a tall pill at the side with a ringer button above it), `oneui` (a card at the top with a slider, the percent and a chevron that opens every stream), `edge` (a thin bar at the screen edge that grows while it is touched). A style replaces the layout, so the resources below only apply to `stock`. It takes effect the next time the panel shows. |
 
 | Resource | Kind | Default | What |
 |---|---|---|---|
@@ -684,6 +747,37 @@ dp high, white shapes; the panel may tint them): `ic_volume_media`, `ic_volume_m
 `ic_ring_volume_off`, `ic_volume_alarm_mute`, `ic_alarm`, `ic_volume_system`, `ic_volume_system_mute`,
 `ic_notifications_active`, `ic_notifications_off`, `ic_tuner`, `ic_volume_odi_captions`, `ic_music_note`. `ic_volume_media`
 and `ic_mobile_vibrate` have been seen changing.
+
+#### Knobs of the iOS, One UI and edge panels
+
+The styled panels (`system/kami_volume_style` not `stock`) read these once when the panel is made. Not set means the panel keeps its
+own look; a bad value is ignored. `day` and `night` values work.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `color/kami_volume_panel_bg` | color | not set | Colour of the iOS pill, the One UI card and the edge percent label. The blur stays behind it, so use alpha to let it through |
+| `color/kami_volume_panel_icon` | color | not set | Icons, percent text and chevron. On the iOS pill it is also the icon colour over the fill |
+| `integer/kami_volume_panel_corner` | int | -1 | Corner radius of the pill (at most half its width), the card and the edge label, dp; -1 keeps their own |
+| `color/kami_volume_slider_active`, `color/kami_volume_slider_inactive` | color | not set | The same knobs as the stock panel: fill and empty part of the iOS pill, the One UI sliders and the edge bar |
+| `integer/kami_volume_slider_corner` | int | -1 | Also the rounding of the One UI sliders and the edge bar (the pill uses the panel corner) |
+| `drawable/kami_volume_dialog_image` | picture | none | Also a picture over the background of the iOS pill and the One UI card, cut to their shape, under the track and fill. Not on the edge bar |
+
+### volume_style: your own volume panel
+
+A module can build its own volume panel on top of one of ours with the field `volume_style`. It starts from the base and changes only
+what you list:
+
+```json
+"volume_style": {"base": "ios", "side": "right", "width": 56, "thickness": 44, "corner": 28,
+                 "background": "glass", "streams": ["media", "ring"], "percent": true, "anim": "fade", "anim_ms": 220}
+```
+
+Fields: `base` (`ios`, `oneui` or `edge`), `side` (`auto`, `left`, `right`), `width`, `thickness`, `length`, `corner`, `slider_corner`,
+`gap`, `offset_y` (dp), `streams` (a list of `media`, `ring`, `notification`, `alarm`, `call`), `labels` and `percent` (true/false),
+`icon` (`start`, `end`, `none`), `background` (`color`, `glass`, `blur`, `none`), `bg_color`, `fill`, `track`, `icon_color`
+(`#RRGGBB` or `#AARRGGBB`), `expand` (`tap` or `always`, the One UI card), `anim` (`slide`, `fade`, `scale`), `anim_ms` (50 to 1500).
+Unknown fields are ignored and numbers out of range are clamped. It is written to `system/kami_volume_custom` and the volume style
+becomes `custom`; switching the module off gives back the style the user had. Example: `examples/volume-glass-slim.json`.
 
 ### Slider fills in the shade and the panel
 
@@ -728,6 +822,49 @@ other shortcuts a user picks in Settings).
 | `color/kami_lockscreen_shortcut_inactive_bg`, `..._inactive_fg` | color | theme | Button and symbol of a shortcut that is off |
 | `drawable/ic_camera`, `ic_videocam`, `ic_wallet_lockscreen`, `ic_qr_code_scanner`, `ic_assistant`, `ic_notifications_silence`, `ic_do_not_disturb` | drawable | | Symbols of the shortcuts, white shapes, scaled to 24dp high (untested). The flashlight is changed with `drawable/qs_flashlight_icon_on` and `_off` |
 
+### Lock screen clock layout
+
+The lock screen has two layouts: the big clock when there are no notifications and the small one at
+the top with them. In each, the clock (the stock one, a crDroid style or the custom clock), the date and
+the weather can be moved, sized, turned, tilted and blurred on their own, and each layout has its own
+depth effect (the subject of the wallpaper in front of them). With notifications, the notifications can
+end higher or lower. These are plain `settings`, so a theme sets them next to its clock style, or a small
+module carries only them (`"group": "clock-layout"` makes two such modules switch each other off).
+Settings > Lock screen > Clock > Clock layout has the same values as sliders, an editor on the lock
+screen itself (it switches between the two layouts while you edit) and **Export as module**.
+
+Every value has a key `secure/kami_clock_fx_<layout><element><value>`:
+
+| part | choices |
+|---|---|
+| `<layout>` | nothing for the big clock layout, `small_` for the small one |
+| `<element>` | nothing for the clock, `date_`, `weather_` |
+| `<value>` | `x` move sideways in dp, -300 to 300 (right is positive); `y` move up or down in dp, -900 to 900 (down is positive); `scale` size in percent, 30 to 300; `rotation` turn, -180 to 180 degrees; `tilt_x` tip the top away (positive) or towards you, -70 to 70; `tilt_y` turn about the vertical middle, -70 to 70; `blur` in dp, 0 to 40 (not drawn in always-on display) |
+
+For example `secure/kami_clock_fx_y` (the big clock), `secure/kami_clock_fx_small_date_rotation` (the
+date with notifications), `secure/kami_clock_fx_weather_blur` (the weather without notifications).
+
+| setting | value |
+|---|---|
+| `secure/lock_screen_custom_clock_style` | the clock style: 0 the stock clock, 1 to 67 the built-in styles, 68 the custom clock (`secure/kami_clock_doc`) |
+| `secure/kami_clock_fx_depth`, `secure/kami_clock_fx_small_depth` | `true`: the subject of the wallpaper is drawn in front of the clock, date and weather of that layout |
+| `secure/kami_clock_fx_depth_file` | a PNG in the module (for example `depth.png`): the subject cut out of the module's wallpaper, the rest transparent, the size of the wallpaper. Without it the phone finds the subject by itself. |
+| `secure/kami_lockscreen_notif_style` | 0 the stock list, 1 stacked: the notifications of the lock screen as one deck of cards |
+| `secure/kami_lockscreen_notif_bottom`, `secure/kami_lockscreen_notif_anchor` | `true` and 10 to 100: the notifications end this many percent down the screen instead of starting under the clock |
+
+The depth effect works on picture wallpapers only (not on live ones). Found by itself, the subject is
+what stands out of the picture (U²-Net-p on the phone, once per wallpaper, about 2 s); a module that
+ships its own wallpaper should ship its own cut-out too, it is exact. A moved or turned date or weather
+is drawn in its new place, but a tap on it still counts where it was.
+
+```json
+{ "format": "kamios-module", "version": 1, "id": "tilted-clock", "name": "Tilted clock",
+  "group": "clock-layout",
+  "settings": { "secure/lock_screen_custom_clock_style": 0,
+    "secure/kami_clock_fx_scale": 140, "secure/kami_clock_fx_tilt_y": 25, "secure/kami_clock_fx_depth": true,
+    "secure/kami_clock_fx_small_y": 650, "secure/kami_clock_fx_small_depth": false } }
+```
+
 ### Unlocking and waking
 
 How the lock screen goes away and comes back.
@@ -741,6 +878,17 @@ How the lock screen goes away and comes back.
 | `dimen/kami_unlock_pivot_y` | float | 0.66 | The height it grows and turns around, 0 top to 1 bottom |
 | `integer/kami_wake_style` | int | 0 | How the lock screen comes in when the screen turns on: 0 stock, 1 starts big and settles, 2 starts small and grows, 3 rises from below, 4 falls in with a bounce, 5 turns in, 6 flips like a card |
 | `integer/kami_wake_duration` | int | 350 | Length of it in milliseconds (80 to 2000) |
+| `system/kami_unlock_effect` | setting | 0 | What is drawn over the lock screen while it goes away: 0 nothing, 1 a soft band of light that rises from the bottom edge and fades, 2 a ring that runs out from the bottom middle like water, 3 aurora (two soft curtains of light drifting sideways), 4 sparkle (tiny points that twinkle). 600 ms unless `system/kami_effect_params` says otherwise. Settings > UI |
+| `system/kami_charging_effect` | setting | 0 | What is drawn when a charger is plugged in while the screen is on: 0 the stock ripple only, 1 a ring from the bottom middle, 2 a light running once around the edge of the screen, 3 aurora, 4 sparkle. 1.2 s. Settings > UI |
+| `system/kami_effect_color` | setting | (accent) | `#AARRGGBB`: the colour of both effects instead of the theme's accent colour |
+| `system/kami_effect_params` | setting (JSON) | (none) | The look of those two effects: `{"unlock": {...}, "charging": {...}}`, each with `template` (`glow`, `ripple`, `edge`, `aurora`, `sparkle`), `color` and `color2` (`#AARRGGBB`), `duration_ms` (200 to 2000), `intensity` (0 to 2) and `width_dp` (1 to 24). Numbers out of range are clamped, unknown names and keys are ignored, and it never turns an effect on: a knob at 0 stays off. Only the built-in templates exist, a module cannot bring shader code. At most 1000 characters |
+
+```json
+"settings": {
+  "system/kami_unlock_effect": 3,
+  "system/kami_effect_params": "{\"unlock\":{\"template\":\"aurora\",\"color\":\"#FF7CF5C8\",\"color2\":\"#FF8A5CFF\",\"duration_ms\":900}}"
+}
+```
 
 <!-- demo: wake -->
 
@@ -763,7 +911,8 @@ Status bar icons (`com.android.systemui`, kind drawable): `stat_sys_airplane_mod
 Wi-Fi and mobile signal (several states and levels), the Bluetooth icons with a battery level (ten variants). The Wi-Fi and the mobile
 signal can still be changed with `overlays` (one picture for each level): Wi-Fi is `drawable/ic_wifi_signal_0` to `_4` in `android` and
 `drawable/ic_wifi_0` to `_3` in `com.android.systemui`, the mobile signal `drawable/ic_signal_cellular_N_4_bar` (N from 0 to 4) and
-`..._N_5_bar` (0 to 5) in `android` and `drawable/ic_mobile_N_4_bar` / `_5_bar` in `com.android.systemui`. `examples/metro_theme.py`
+`..._N_5_bar` (0 to 5) in `android` and `drawable/ic_mobile_N_4_bar` / `_5_bar` in `com.android.systemui`. How many bars are
+shown is the setting `system/kami_signal_bars`: `0` as the carrier sets it, `4` or `5`. `system/kami_signal_type_on_bars` `1` puts the network type (4G, 5G) small into the top corner of the bars instead of beside them (the HD calling mark then takes the place beside the bars). `examples/metro_theme.py`
 does it. The states with an exclamation mark or a cut-out keep their own pictures.
 
 Every `stat_sys_*` knob takes an animated GIF or WebP; it plays while the icon is shown.
@@ -787,9 +936,48 @@ Make them **white with transparency**: the status bar tints them (charging green
 size, as large as fits the status bar, so give them the same canvas. The percentage text and the battery saver tile are not
 part of this.
 
+## Liquid glass
+
+The compositor can draw the blur of panels, cards and dialogs as a lens of glass: the background bends at the edge, the three
+colours bend a little differently, and a thin light runs along the rim (brighter where it faces the light). It follows the rounded
+corners of the panel. The blur of the whole screen (the shade, the app drawer) is always a plain blur. They are options of Settings >
+KamiOS Extensions > Liquid glass, so a module sets them in `settings`:
+
+```json
+"settings": {
+  "global/kami_glass": 2,
+  "global/kami_glass_strength": 70,
+  "global/kami_glass_notif": 1,
+  "global/kami_glass_volume": 0
+}
+```
+
+| Key | Value |
+|---|---|
+| `global/kami_glass` | the look of panels and cards: 0 plain blur (the default), 1 liquid glass (2 is the same as 1) |
+| `global/kami_glass_frost` | 0 to 100 (30 is the default): 0 is clear glass you see through, only the edge bends; 100 is frosted glass with the blur inside. A fill on top of the glass (a tile, the volume panel) gets thinner the clearer the glass is |
+| `global/kami_glass_strength` | 0 to 100, how far the edge bends, how much the colours split and how bright the rim is (50 is the middle) |
+| `global/kami_perf_guard` | `true`: when the shade keeps stuttering, liquid glass or the blur steps down one level by itself (with a notification and Undo); it never steps up on its own. `false` is the default |
+| `global/kami_glass_notif`, `_volume`, `_lock`, `_launcher`, `_orbit`, `_qs`, `_other` | while the look is glass: 1 (the default) is glass, 0 keeps that surface a plain blur. The groups are the cards of the shade, the volume panel, the shortcuts and the fingerprint icon of the lock screen, the folders and popups of the launcher, the player card of KamiOrbit, the quick settings tiles (they keep the shape, colours and animation a module gives them, only their colour gets thinner), and every other dialog or panel |
+
+A quick settings style whose panel background is `"glass"` is real liquid glass, and one whose background is `"blur"` stays a plain blur, whatever the look of the ROM is (the tiles follow their panel; the fill and `alpha` of the style are the tint on top of the glass).
+
+A KamiOrbit player card with a moving frame (rainbow or pulse) stays a plain blur in every mode: a glass rim under a moving light shimmers.
+
+## Media card
+
+The media card and the small media pill (a player tile in the quick settings or the shade). Not set means the card keeps its look; a bad value is ignored. `day` and `night` values work.
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `color/kami_media_bg` | color | not set | Colour of the card and the pill. Cover art still covers it |
+| `color/kami_media_fg` | color | not set | Title, artist, app name and the skip buttons (stock is the theme text colour, white on cover art) |
+| `color/kami_media_accent` | color | not set | The round play and pause button (stock is the theme accent) |
+| `integer/kami_media_corner` | int | -1 | Corner radius in dp; -1 keeps the stock rounding |
+
 ## KamiOrbit: the capsule around the camera
 
-KamiOrbit (Settings > KamiOS Extensions) is a small capsule around the front camera of the phone: the song that plays (its cover and an equalizer, or the icon of the app), a screen recording with a timer, a call, casting, a timer of the clock app, and any voice recorder app. A tap on a song opens a player card, a tap on a recording asks to stop it, a swipe to the side goes to the next thing, a swipe up folds it into two brackets around the camera. It finds the camera from the display, so it fits phones with the camera in the middle, and it takes the place of the Dynamic Bar (only one of them is on).
+KamiOrbit (Settings > KamiOS Extensions) is a small capsule around the front camera of the phone: the song that plays (its cover and an equalizer, or the icon of the app), a screen recording with a timer, a call, casting, a timer of the clock app, and any voice recorder app. A tap on a song opens a player card, a tap on a recording asks to stop it, a swipe to the side goes to the next thing, a swipe up folds it into two brackets around the camera. What a tap, a double tap and a long press do are knobs as well (the `kami_bar_*_action` keys below). It finds the camera from the display, so it fits phones with the camera in the middle, and it takes the place of the Dynamic Bar (only one of them is on).
 
 Every knob is a setting of the phone, so a module sets it in `settings` like the quick settings options. The keys are in the `secure` table:
 
@@ -806,24 +994,60 @@ Every knob is a setting of the phone, so a module sets it in `settings` like the
 | Key | Value |
 |---|---|
 | `secure/kami_bar_enabled` | `true` switches KamiOrbit on (and the Dynamic Bar off), `false` off |
-| `secure/kami_bar_color_mode` | 0 black, 1 the colour of the thing it shows, 2 the accent of the theme. A recording stays black inside its frame in mode 0 and 2 |
+| `secure/kami_bar_color_mode` | 0 black, 1 the colour of the thing it shows, 2 the accent of the theme, 3 a deep tone of the cover of the song (the capsule and the card). A recording stays black inside its frame in mode 0, 2 and 3 |
 | `secure/kami_bar_opacity` | 20 to 100, the fill of the capsule and the card |
 | `secure/kami_bar_roundness` | 0 (square) to 100 (round as a pill); the card follows it |
 | `secure/kami_bar_scale` | 50 to 150, the size of what is inside the capsule in percent; the capsule keeps covering the camera |
 | `secure/kami_bar_gap_adjust` | -16 to 40 dp: the gap for the camera is the size of the camera, found by the display, this makes it wider or narrower (never narrower than the camera) |
 | `secure/kami_bar_x_dp`, `secure/kami_bar_y_dp` | -80 to 80 and -8 to 16 dp, moves the capsule |
 | `secure/kami_bar_halo` | the light around the capsule: 0 off, 1 a frame, 2 a glow, 3 both. The colour is the colour of the app of the song, red for a recording, green for a call |
-| `secure/kami_bar_halo_source` | 0 the colour of the app or the thing, 1 the own colour of the next key |
+| `secure/kami_bar_halo_source` | 0 the colour of the app or the thing, 1 the own colour of the next key, 2 the colour of the cover of the song |
 | `secure/kami_bar_halo_color` | the own colour of the halo as a signed ARGB number (`0xFFB388FF` is `-5011201`) |
 | `secure/kami_bar_halo_effect` | 0 solid, 1 pulse, 2 rainbow (turns round and ignores the colour) |
 | `secure/kami_bar_halo_width` | 1 to 8 dp, thickness of the frame |
 | `secure/kami_bar_glow_size` | 2 to 30 dp, how far the glow reaches |
 | `secure/kami_bar_card_blur` | `true` blurs what is behind the player card (the opacity still counts) |
 | `secure/kami_bar_card_halo` | 0 to 3, the same frame and glow around the player card, in the colour of the app of the song |
+| `secure/kami_bar_art_shape` | the cover of the song, in the capsule and the card: 0 a circle, 1 rounded (the default), 2 square |
+| `secure/kami_bar_art_rotate` | `true` turns a round cover like a record while the song plays |
+| `secure/kami_bar_seekbar` | `false` takes the seek bar out of the player card |
+| `secure/kami_bar_seek_style` | the look of the seek bar: 0 a line, 1 a wave that moves while the song plays and lies down when it stops (the default), 2 a wave with a gradient, 3 a glowing wave, 4 a comet (a trail that fades out behind a glowing head, with sparks), 5 a silk ribbon (two strands that cross and swing wider toward the head), 6 bars of a waveform (the same for the same song, the bars at the head rise and dance), 7 a bead of glass (it stretches when you drag it fast), 8 an aurora (soft strands in two colours that drift), 9 a heartbeat (a spike that rides with the playhead), 10 a thick capsule with the time left inside, 11 a row of dots that light up and swell at the head. The time is at both ends |
+| `secure/kami_bar_extra_buttons` | `false` leaves out the extra action of the music app (a heart, shuffle) and the button for where the sound goes |
+| `secure/kami_bar_anim_speed` | 50 to 200 (percent), how fast the capsule and the card move; the card grows out of the capsule and goes back into it |
+| `secure/kami_bar_anim_bounce` | 0 none, 1 a little, 2 normal, 3 a lot: how much the movement overshoots |
+| `secure/kami_bar_charging` | `false` (the default is `true`) stops the capsule from showing a lightning bolt and the charge for a few seconds when the charger is plugged in, and the red warning at 20 % and 10 % |
+| `secure/kami_bar_song_peek` | `false` (the default is `true`) stops the capsule from showing the name of a new song for a moment when the song changes |
+| `secure/kami_bar_peek_style` | how the name of a new song shows: 0 (the default) splits it around the camera, the part left of the camera on the left and the part right of it on the right, each side cut at a word and ellipsized, so the capsule stays a compact pill and does not grow over the icons of the status bar; 1 scrolls the whole name once on one side. A camera in a corner has only one free side, so it always scrolls there. The animator scale 0 of developer options turns the scroll into a plain cut |
+| `secure/kami_bar_companion` | `false` takes away the small round chip beside the capsule that a second thing gets (a recording while a song plays) |
+| `secure/kami_bar_lyrics` | `true` shows the words of the song under the player card, the line that is sung big, a tap on a line jumps there. It asks lrclib.net, a free community database, and sends the title, artist, album and length of the song; off by default |
+| `secure/kami_bar_notifications` | `true` shows a message that pops up in the capsule for a few seconds (a tap opens it, a swipe takes it away); not for the app that is in front, a private message on a locked phone shows only the app. Off by default |
+| `secure/kami_bar_show_record`, `_call`, `_share`, `_timer`, `_mic` | `false` leaves one kind out of the capsule: a screen recording, a call, casting and sharing, a timer or stopwatch, a voice recording of an app. They all need `kami_bar_extras` |
+| `secure/kami_bar_navigation` | `false` (the default is `true`) keeps navigation out of the capsule. While Maps, Waze, OsmAnd or another navigation app guides you, the capsule shows the arrow of the next turn and the distance to it; the street shows for a few seconds when the turn changes, a tap opens the app. During a call the capsule shows the app of the call, not a recorder |
 | `secure/kami_bar_music_icon` | `true` shows the icon of the music app instead of the equalizer |
 | `secure/kami_bar_hide_paused` | `true` takes the capsule away while the song is paused |
 | `secure/kami_bar_extras` | `false` shows music only, no recording, call, casting, timer or recorder app |
 | `secure/kami_bar_haptics` | `false` switches the vibration of taps and swipes off |
+| `secure/kami_bar_tap_action` | what a tap on the capsule does: 0 the default (a song opens the player card, a call, a message or a navigation item opens its app, a chip does what the status bar chip does), 1 the app of what it shows, 2 play or pause (a song only, anything else does the default), 3 the next track (a song only), 4 the next thing the capsule has, 5 minimize it to the two brackets around the camera, 6 nothing |
+| `secure/kami_bar_double_tap_action` | a double tap on the capsule, the same numbers; 0 (the default) does nothing, and that is the fast way: a double tap that does something makes every single tap wait for the double-tap time before it acts |
+| `secure/kami_bar_long_press_action` | a long press on the capsule, the same numbers; 0 nothing, 4 (the default) the next thing the capsule has |
+| `secure/kami_bar_volume` | `true` shows the volume level as a thin bar in the capsule while a volume key is pressed (off by default) |
+| `secure/kami_bar_bt` | `false` (the default is `true`) stops the capsule from showing the name and battery of earbuds or a headset that connects |
+| `secure/kami_bar_ringer` | `false` (the default is `true`) stops the capsule from showing ring, vibrate or silent when the ringer mode changes |
+| `secure/kami_bar_dnd` | `true` shows Do Not Disturb going on or off in the capsule (off by default) |
+| `secure/kami_bar_thickness` | 70 to 150 (percent, default 100), how thick the capsule is; it stays centred on the camera, the player card keeps its size |
+| `secure/kami_bar_motion` | how the player card opens from the capsule and closes into it: `morph` (the default, the capsule grows into the card), `lamp` (a magic lamp: the card is pulled out of the capsule and sucked back in through a narrowing funnel), `drop` (falls from the capsule with a bounce), `fade` (a short fade and scale, the lightest, for slow phones), `island` (the width, height and place of the card each follow their own spring, so it spreads out and then settles; the content appears once it is about 85 % open) |
+| `secure/kami_bar_call_card` | `true` (the default is `false`) opens a small card on a tap of the call chip: the caller, a live duration, and an End button (and an Answer button while the phone rings). The card uses the same window and shield as the player card, so a tap outside closes it |
+| `secure/kami_bar_launch_anim` | `false` (the default is `true`) takes away the launch animation: an app opened from the capsule then starts with the plain launch instead of growing out of the capsule |
+| `secure/kami_bar_bt_details` | `false` (the default is `true`) keeps the Bluetooth moment at its old look (name and one battery); `true` also shows the left, right and case battery and the device art when the earbuds expose them |
+
+The colours of the capsule are knobs of SystemUI, set in `targets` (not set means the capsule keeps its colours):
+
+| Resource | Kind | Default | What |
+|---|---|---|---|
+| `color/kami_bar_fill_color` | color | not set | Fill of the capsule, whatever the colour mode says |
+| `color/kami_bar_text_color` | color | not set | Text and icons inside the capsule (stock is white) |
+| `color/kami_bar_record_color` | color | not set | The recording dot and the recording halo (stock is red) |
+| `color/kami_bar_call_color` | color | not set | The call icon, the charging bolt and their halo (stock is green) |
 
 ## Launcher and gestures
 
@@ -943,6 +1167,35 @@ thrown in from the side. Opening an app (a new task), dialogs and screens that b
 animation. The picture over the back swipe is not drawn here.
 `examples/make-back-lab.py` builds a module with the looks of the back swipe, of opening a page and of leaving a page as three
 separate choices, and a glitch animation over the swipe.
+
+#### Your own motion (`motions`)
+
+Instead of one of the named looks a module can define the motion of going into a screen and leaving it. It is a top-level field
+(next to `targets`) and it applies while the module is on and no named style is set in `kami_open_style` / `kami_close_style`
+(`stock` or `custom`; a named style wins). It does not change the back swipe, which keeps its named looks.
+
+```json
+"motions": {
+  "open":  { "duration": 380, "curve": "decelerate",
+             "window": { "scale": 0.85, "alpha": 0, "dy": 0.25 },
+             "behind": { "scale": 0.95, "alpha": 0.6 } },
+  "close": { "duration": 300, "curve": [0.3, 0, 0.8, 0.15],
+             "window": { "scale": 1.15, "alpha": 0, "rotate": 6, "pivot": "bottom" },
+             "behind": { "scale": 0.9 } }
+}
+```
+
+| Key | Range | What |
+|---|---|---|
+| `duration` | 100 to 1500 | Length in milliseconds (default 350) |
+| `curve` | `emphasized` (default), `decelerate`, `accelerate`, `standard`, `linear`, or four numbers `[x1, y1, x2, y2]` | x from 0 to 1, y from -1 to 2 (above 1 overshoots) |
+| `window` | pose | The window that moves: opening, the new screen starts in this pose and ends at rest; closing, the old screen ends in it |
+| `behind` | pose | The other window: opening, the old screen ends in it; closing, the screen below starts in it and ends at rest |
+
+A pose has `scale` (0.05 to 3, default 1), `alpha` (0 to 1), `dx` and `dy` (-1.5 to 1.5, as a fraction of the window width and height),
+`rotate` (-180 to 180 degrees) and `pivot` (`center`, `top`, `bottom`, `left`, `right`; the point it scales and turns about). Left out =
+at rest. Numbers outside a range are rejected by the validator and clamped by the system; a motion that cannot be read plays the
+stock animation, and the animation always ends at its duration. `examples/motion-slide-fade.json` is a small module.
 
 ## Opening an app
 
@@ -1080,9 +1333,41 @@ and a layout that is wrong is left out as a whole (the import says why).
 | `tiles` | a list. The tiles named here come first, in this order; the others follow in the usual order |
 | `style` | `tiles` (the default) or `list`: one column of rows like the Settings of Windows Phone, no tile background, a big symbol at the left (40 dp), the name and one line of live text beside it. `columns` and the tile `size` are not used then, `text` is. The symbols take the colour `color/kami_bento_row_icon` (`com.android.settings`) when a module sets one |
 | `text` | the texts of the tiles: `title_size` (10 to 28 sp), `title_lines` (1 to 3), `summary_size` (9 to 20 sp), `summary_lines` (0 to 3; 0 shows no summary line). With 3 tiles in a row the titles are 14 sp unless you say otherwise |
+| `tiles[].height` | `normal` (the default) or `tall`: a tall tile is 48 dp taller than the theme's tile height; the wide and the list layouts are unchanged |
+| `icon` | the round behind the symbol of a tile, a row or a pin. Without it the stock symbol stays exactly as it is |
+| `icon.shape` | `circle` (the default), `squircle`, `rounded_square` or `none`: `none` draws the symbol alone, with no round behind it |
+| `icon.color` | the colour of that round, `#RRGGBB` or `#AARRGGBB` (the theme's `kami_bento_icon_bg` unless you say otherwise); ignored with `none` |
+| `search` | where the search bar sits on the first screen: `top` (the default), `bottom` or `hidden`; only in the KamiOS look on a phone |
+| `header` | extra content of the card at the top; without it the card stays exactly as it is |
+| `header.avatar` | `true` shows the profile picture (the first letter of the name on a round when there is none), `false` (the default) shows nothing |
+| `header.greeting` | `true` adds a small greeting above the name ("Good morning" ... by the time of day), `false` (the default) adds nothing |
+| `wallpaper` | `true` puts a small (about 256 px), blurred and dimmed copy of the home wallpaper behind the list (skipped for a live wallpaper); `false` (the default) leaves the background as it is |
+| `divider` | the line between the rows of the list style: `none` (the default), `inset` (aligned with the text) or `full` |
+| `chevron` | `true` shows a chevron at the end of the rows of the list style, `false` (the default) does not |
 
 A tile has `page` and any of: `size` (`third`, `half` or `full` of the width; a tile with a size starts a row of its own),
 `color` and `text_color` (`#RRGGBB` or `#AARRGGBB`; the symbol takes the text colour), `hide` (`true` takes the tile off the screen).
+
+A first screen that uses all of these keys (every key is optional):
+
+```json
+"settings_layout": {
+  "main": {
+    "columns": 2,
+    "icon": { "shape": "squircle", "color": "#66FFD86A" },
+    "search": "bottom",
+    "header": { "avatar": true, "greeting": true },
+    "wallpaper": true,
+    "divider": "inset",
+    "chevron": true,
+    "tiles": [
+      { "page": "network", "height": "tall" },
+      { "page": "themes", "size": "full" },
+      { "page": "storage", "hide": true }
+    ]
+  }
+}
+```
 
 Pages that are tiles: `network`, `connected_devices`, `sound`, `display`, `themes` (the Theme Engine), `notifications`, `modes`,
 `wallpaper`, `kamios` (the KamiOS settings), `extensions` (KamiOS Extensions), `battery`, `storage`, `apps`, `system`.
@@ -1487,6 +1772,23 @@ Tiling WM module uses this, see below.
 - Blur and tones of the shade: [The shade, blur and tones](#the-shade-blur-and-tones).
 - Animation scales: [Speed](#speed).
 - The screen off effect: [Screen off effects](#screen-off-effects).
+
+### Settings without a row on a page
+
+Besides the keys of the Settings pages, a module may set these global keys:
+
+| Key | Value |
+|---|---|
+| `global/kami_upscaler` | `off`, `performance`, `balanced` or `sharp` |
+| `global/kami_upscaler_sharpness` | 0 to 100 |
+| `global/kami_framegen_quality` | 0 performance, 1 balanced, 2 quality |
+| `global/kami_sound_enabled` | `true` or `false` |
+| `global/kami_sound_preset_0`, `global/kami_sound_preset_1` | the preset of the speaker and of headphones: `flat`, `music`, `movie`, `game`, `voice` or `bass` |
+
+The resolution, the kernel, the performance profile and the list of frame generation games stay with the user.
+
+A number for a slider that is outside its range is set to the nearest end (a gap of 999 on a slider that goes to 40 is 40).
+Text for a slider is refused: the module is not imported.
 
 ## Kami Shell: a home screen in Lua
 

@@ -178,6 +178,103 @@
   },
   {
    "target": "com.android.systemui",
+   "resource": "color/kami_notification_ripple",
+   "kind": "color",
+   "group": "Notifications",
+   "title": "Notification card press colour",
+   "description": "Colour of the ripple when you press a notification card. Leave it out to keep the stock ripple.",
+   "default": "the stock ripple"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_notification_image_alpha",
+   "kind": "int",
+   "group": "Notifications",
+   "title": "Notification card picture strength",
+   "description": "How strongly the card picture is drawn over the card, in percent. 100 draws it fully, 0 hides it.",
+   "default": "100",
+   "min": 0,
+   "max": 100,
+   "step": 5
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_media_bg",
+   "kind": "color",
+   "group": "Media card",
+   "title": "Media card colour",
+   "description": "Background of the media card and the media pill. Leave it out to keep the theme colour. On a card with cover art the art covers it.",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_media_fg",
+   "kind": "color",
+   "group": "Media card",
+   "title": "Media card text and icons",
+   "description": "Colour of the title, the artist and the skip buttons. Leave it out to keep the theme colour (white on cover art).",
+   "default": "the theme colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_media_accent",
+   "kind": "color",
+   "group": "Media card",
+   "title": "Media card play button",
+   "description": "Colour of the round play and pause button. Leave it out to keep the theme accent.",
+   "default": "the theme accent"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_media_corner",
+   "kind": "int",
+   "group": "Media card",
+   "title": "Media card rounding",
+   "description": "Corner radius of the media card and pill, in dp. -1 keeps their own.",
+   "default": "-1",
+   "min": 0,
+   "max": 60,
+   "step": 1,
+   "keep": -1
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_bar_fill_color",
+   "kind": "color",
+   "group": "KamiOrbit",
+   "title": "KamiOrbit fill",
+   "description": "Fill of the KamiOrbit capsule, over every colour mode. Leave it out to keep the colour mode of the capsule.",
+   "default": "by colour mode"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_bar_text_color",
+   "kind": "color",
+   "group": "KamiOrbit",
+   "title": "KamiOrbit text and icons",
+   "description": "Colour of the text and icons inside the KamiOrbit capsule. Leave it out to keep white.",
+   "default": "white"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_bar_record_color",
+   "kind": "color",
+   "group": "KamiOrbit",
+   "title": "KamiOrbit recording colour",
+   "description": "Colour of the recording dot and the recording halo of KamiOrbit. Leave it out to keep the red.",
+   "default": "red"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_bar_call_color",
+   "kind": "color",
+   "group": "KamiOrbit",
+   "title": "KamiOrbit call colour",
+   "description": "Colour of the call icon, the charging bolt and their halo in KamiOrbit. Leave it out to keep the green.",
+   "default": "green"
+  },
+  {
+   "target": "com.android.systemui",
    "resource": "color/kami_back_arrow",
    "kind": "color",
    "group": "Back gesture",
@@ -1283,6 +1380,37 @@
    "default": "-1",
    "min": 8,
    "max": 120,
+   "step": 1,
+   "keep": -1
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_panel_bg",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Styled panel colour",
+   "description": "Colour of the iOS, One UI and edge volume panels (the pill, the card, the percent label). Leave it out to keep their own look. Only used when the volume panel style is not stock.",
+   "default": "the panel's own colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "color/kami_volume_panel_icon",
+   "kind": "color",
+   "group": "Volume panel",
+   "title": "Styled panel icons and text",
+   "description": "Colour of the icons, the percent text and the chevron on the iOS, One UI and edge volume panels. Leave it out to keep their own look.",
+   "default": "the panel's own colour"
+  },
+  {
+   "target": "com.android.systemui",
+   "resource": "integer/kami_volume_panel_corner",
+   "kind": "int",
+   "group": "Volume panel",
+   "title": "Styled panel rounding",
+   "description": "Corner radius of the iOS pill, the One UI card and the edge percent label, in dp (the pill cannot be rounder than half its width). -1 keeps their own.",
+   "default": "-1",
+   "min": 0,
+   "max": 60,
    "step": 1,
    "keep": -1
   },
