@@ -822,6 +822,13 @@ other shortcuts a user picks in Settings).
 | `color/kami_lockscreen_shortcut_inactive_bg`, `..._inactive_fg` | color | theme | Button and symbol of a shortcut that is off |
 | `drawable/ic_camera`, `ic_videocam`, `ic_wallet_lockscreen`, `ic_qr_code_scanner`, `ic_assistant`, `ic_notifications_silence`, `ic_do_not_disturb` | drawable | | Symbols of the shortcuts, white shapes, scaled to 24dp high (untested). The flashlight is changed with `drawable/qs_flashlight_icon_on` and `_off` |
 
+### Peek after screen off
+
+| Key | Values | What |
+|---|---|---|
+| `secure/kami_aod_peek` | `0` (off), seconds up to `60` | The always-on display (clock, date, notifications) for this many seconds after the screen turns off, then the screen goes fully dark. Works the same from the lock screen and from an unlocked phone. A notification after that lights the screen as without AOD. Off while the full always-on display is on (also AOD while charging). Settings > Lock screen > Ambient display > Peek after screen off |
+| `system/doze_trigger_doubletap` | `1` on | With double tap to wake on, a double tap on the dark screen shows the ambient display (a new peek when peek is on, else a pulse) instead of waking; a second double tap wakes. Shown on phones whose device tree sets `config_supports_double_tap_ambient` (Settings overlay, as in Android 15/16 ROMs) or `config_supportDoubleTapWake` |
+
 ### Lock screen clock layout
 
 The lock screen has two layouts: the big clock when there are no notifications and the small one at
@@ -839,10 +846,85 @@ Every value has a key `secure/kami_clock_fx_<layout><element><value>`:
 |---|---|
 | `<layout>` | nothing for the big clock layout, `small_` for the small one |
 | `<element>` | nothing for the clock, `date_`, `weather_` |
-| `<value>` | `x` move sideways in dp, -300 to 300 (right is positive); `y` move up or down in dp, -900 to 900 (down is positive); `scale` size in percent, 30 to 300; `rotation` turn, -180 to 180 degrees; `tilt_x` tip the top away (positive) or towards you, -70 to 70; `tilt_y` turn about the vertical middle, -70 to 70; `blur` in dp, 0 to 40 (not drawn in always-on display) |
+| `<value>` | `x` move sideways in dp, -900 to 900 (right is positive); `y` move up or down in dp, -900 to 900 (down is positive); `scale` size in percent, 30 to 300; `rotation` turn, -180 to 180 degrees; `tilt_x` tip the top away (positive) or towards you, -70 to 70; `tilt_y` turn about the vertical middle, -70 to 70; `blur` in dp, 0 to 60 (not drawn in always-on display); `blur_start` and `blur_soft` in percent (see below) |
 
 For example `secure/kami_clock_fx_y` (the big clock), `secure/kami_clock_fx_small_date_rotation` (the
 date with notifications), `secure/kami_clock_fx_weather_blur` (the weather without notifications).
+
+`secure/kami_clock_fx_[small_][date_|weather_]alpha`: 0 to 100 percent, default 100.
+Opacity multiplies the normal clock fades; it does not replace doze or unlock animation alpha.
+
+`secure/kami_clock_fx_[small_][date_|weather_]glow`: 0 to 100, default 0 (off).
+The size of a soft glow around the glyphs; on always-on display its strength is halved.
+
+`secure/kami_clock_fx_[small_][date_|weather_]glow_color`: signed ARGB int, default 0 (auto).
+Auto follows the glyph colours; always-on display uses auto too, so a chosen bright tint cannot overpower the clock.
+
+`secure/kami_clock_fx_[small_][date_|weather_]blur_mode`: 0 even, 1 sharp top / soft bottom, 2 soft top / sharp bottom,
+3 sharp left / soft right, 4 soft right / sharp left.
+Default 0; the existing blur value sets the strength. All five modes are off on always-on display.
+
+`secure/kami_clock_fx_[small_][date_|weather_]blur_start`: 0 to 100 percent, default 0.
+How far along the glyphs, from the sharp edge, the blur begins; 0 is today's behaviour.
+
+`secure/kami_clock_fx_[small_][date_|weather_]blur_soft`: 0 to 100 percent, default 100.
+How long the fade from sharp to fully blurred is; 100 is the whole remaining span, 0 is a hard split.
+
+`secure/kami_clock_fx_[small_][date_|weather_]glow_alpha`: 0 to 100 percent, default 100.
+How strong the glow is; 100 is today's look, 0 keeps the size but no glow.
+
+`secure/kami_clock_fx_[small_][date_|weather_]bend`: -100 to 100, default 0.
+Curves the glyphs: 0 is flat, + bends the ends down so the middle is higher, - the opposite. It is
+drawn as a shader warp, so it works together with the blur, glow and opacity of the same part.
+
+`secure/kami_clock_fx_[small_][date_|weather_]blur_angle`: -1 to 359 degrees, default -1 (not set).
+The direction the blur fades along: 0 is sharp at the top fading downward, 90 sharp at the left
+fading right, 45 sharp at the top-left fading to the bottom-right. When it is -1 the `blur_mode`
+buttons above decide the direction; `blur_start` and `blur_soft` run along the same angle.
+
+`secure/kami_lockscreen_notif_scale`: 50 to 150 percent, default 100. Scales the lock screen
+notification stack from its top edge (the keyguard only). The touch targets still follow the cards.
+
+`secure/kami_lock_media_scale`: 50 to 150 percent, default 100. Scales the lock screen media player.
+
+`secure/kami_lock_media_rotation`, `secure/kami_lock_media_tilt_x`, `secure/kami_lock_media_tilt_y`: the turn (-180 to 180) and the lean back and sideways tilt (-70 to 70) of the lock screen media player, in degrees, default 0. They apply while the player has its own place (`kami_lock_media_place` 1 to 3).
+
+`secure/kami_lockscreen_notif_rotation`, `secure/kami_lockscreen_notif_tilt_x`, `secure/kami_lockscreen_notif_tilt_y`: the same turn and tilts for the lock screen notifications, default 0 (only on the lock screen; the shade is never turned).
+
+`secure/kami_clock_editor_dock`: where the lock screen editor's panel sits, 0 bottom, 1 top. The editor remembers it; a module does not need to set it.
+
+`secure/kami_lock_media_place`: 0 with notifications (stock), 1 top, 2 bottom above shortcuts, 3 free.
+Default 0; only the lock screen media host moves, not the shade or quick settings player. Settings has the four places.
+
+`secure/kami_lock_media_x`: -900 to 900 dp, default 0 (right is positive).
+Sideways offset for places 1 to 3; ignored in stock place 0.
+
+`secure/kami_lock_media_y`: -900 to 900 dp, default 0 (down is positive).
+Vertical offset for places 1 to 3; Free starts at the usual media row. Both offsets are Settings sliders.
+
+The lock icon and the bottom status text are shared by both layouts, so their keys have no big/small part:
+
+`secure/kami_lock_lock_x`, `secure/kami_lock_lock_y`: -900 to 900 dp, default 0 (right and down are
+positive). Where the lock icon sits. On a fingerprint-under-screen phone the icon stays over the
+sensor, so these two are ignored there; only its size and opacity apply.
+
+`secure/kami_lock_lock_scale`: 30 to 300 percent, default 100. The lock icon's size (works on every
+phone, including under-screen fingerprint).
+
+`secure/kami_lock_lock_alpha`: 0 to 100 percent, default 100. The lock icon's opacity.
+
+`secure/kami_lock_status_x`, `secure/kami_lock_status_y`: -900 to 900 dp, default 0 (right and down
+are positive). Where the bottom indication text (charging, unlock hints) sits.
+
+`secure/kami_lock_status_scale`: 30 to 300 percent, default 100. The status text size.
+
+`secure/kami_lock_status_alpha`: 0 to 100 percent, default 100. The status text opacity.
+
+`secure/kami_lock_hide_clock`, `_date`, `_weather`, `_lock`, `_status`: `1` hides that part of the lock screen (both layouts; it keeps its place, drawn at zero opacity).
+`secure/kami_lock_hide_gesture_bar`: `1` hides the gesture bar on the bare lock screen (the swipe up still works; the PIN pad, apps over the lock screen and the unlocked phone keep it).
+
+The brackets above mean optional parts, not literal characters. Omitting the element means the clock.
+Share this layout keeps these keys in the same version 1 module format; older zips still work.
 
 | setting | value |
 |---|---|
@@ -864,6 +946,79 @@ is drawn in its new place, but a tap on it still counts where it was.
     "secure/kami_clock_fx_scale": 140, "secure/kami_clock_fx_tilt_y": 25, "secure/kami_clock_fx_depth": true,
     "secure/kami_clock_fx_small_y": 650, "secure/kami_clock_fx_small_depth": false } }
 ```
+
+### The custom clock document (version 2)
+
+Clock style 68 is a whole clock drawn from `secure/kami_clock_doc`, a JSON document. A version 1 document
+has the element types `time`, `date`, `text`, `battery` and `next_alarm`, each with `x`/`y` as parts of the
+clock area (0 to 1), `anchor` (`left`, `center`, `right`), `size_sp`, `font` (a system family, or `clock`
+for the theme's clock font), `color` and `color2` (a vertical gradient), `rotation`, `letter_spacing`,
+`shadow` and `alpha`, plus a document-wide `tilt` and `rotation`. A version 2 document (`"version": 2`)
+adds the element types below and the per-element `fill`, `outline`, `inline`, `glow`, `blur`, `anim` and
+`font_file` fields; a version 1 document still draws exactly as it did.
+
+- `"image"`: a picture or an animated GIF/WebP. `"file"` names it (a file in the module zip, or a path
+  Settings copied), `width`/`height` are parts of the clock area, plus `alpha`, `rotation` and `"loop": true`.
+- `"analog"`: a face (`none`, `circle`, `ticks`), a `radius` (parts of the clock width) and `hour`/`minute`/
+  `second` hands, each a `color`, `width` (dp), `length` (part of the radius), `round` and optionally a
+  `file` (a picture for the hand). The second hand is optional: omit it to leave it out.
+- `"ring"`: a progress ring. `"value"` is `battery`, `seconds`, `minutes` or `hours` (only what Android
+  gives without new permissions), plus `radius`, `width` (dp) and `start_angle`.
+- `"shape"`: `rect`, `round_rect`, `circle` or `line`, with `width`/`height` and a `corner` radius.
+
+Every element can take:
+
+- `fill`: a colour string, or `{"type": "linear"|"radial", "stops": [{"color": "#...", "pos": 0}, ...],
+  "angle": 90}` (two to four stops), or `{"type": "rgb", "speed": 1}` for a cycling hue.
+- `outline`: `{"width": 2, "color": "#..."}` a stroke around the glyphs; `inline` is the same inside them.
+- `glow`: `{"radius": 10, "color": "#...", "alpha": 1}`; `shadow` (a boolean, as in version 1).
+- `blur` (dp), and `anim`: `none`, `pulse`, `breathe`, `rotate`, `rgb`, `blink-colon` or `slide`, with
+  `anim_speed`. A text element can also take `bend` (-180 to 180 degrees of arc the glyphs run along).
+- `font_file`: a TTF/OTF in the module zip or a path the user picked, for the text elements.
+
+At most 16 elements, at most 3 images, each image decoded to 1024 px at most. Animations run at most 30
+times a second, only while the screen is on; the always-on display is a single static frame. A module
+that names a `file` in its zip is unpacked and the files copied where SystemUI can read them, so the
+paths in the document may point into the zip.
+
+A static example (a neon outline clock):
+
+```json
+{ "format": "kamios-module", "version": 1, "id": "neon-clock", "name": "Neon clock",
+  "group": "clock-layout", "settings": {
+    "secure/lock_screen_custom_clock_style": 68,
+    "secure/kami_clock_doc": {
+      "version": 2, "elements": [
+        { "type": "time", "format": "HH:mm", "x": 0.5, "y": 0.42, "anchor": "center", "size_sp": 80,
+          "font": "clock", "fill": {"type": "linear", "stops": [{"color": "#FF5CC8", "pos": 0},
+          {"color": "#2E6BFF", "pos": 1}], "angle": 90},
+          "outline": {"width": 2, "color": "#FFFFFFFF"} }
+      ]
+    } } }
+```
+
+An animated example (a picture and a font from the zip, an rgb ring and an analog clock):
+
+```json
+{ "format": "kamios-module", "version": 1, "id": "aurora-clock", "name": "Aurora clock",
+  "group": "clock-layout", "settings": {
+    "secure/lock_screen_custom_clock_style": 68,
+    "secure/kami_clock_doc": {
+      "version": 2, "elements": [
+        { "type": "image", "file": "aurora.gif", "x": 0.5, "y": 0.5, "width": 1.0, "height": 0.6,
+          "alpha": 0.5, "loop": true },
+        { "type": "time", "format": "HH:mm", "x": 0.5, "y": 0.40, "anchor": "center", "size_sp": 60,
+          "font_file": "OpenSans.ttf", "fill": {"type": "rgb", "speed": 0.5} },
+        { "type": "ring", "value": "seconds", "x": 0.5, "y": 0.85, "radius": 0.18, "width": 4,
+          "fill": "#FF5CC8" },
+        { "type": "analog", "x": 0.5, "y": 0.5, "radius": 0.25, "face": "ticks" }
+      ]
+    } } }
+```
+
+The zip carries `aurora.gif` and `OpenSans.ttf` next to `module.json`; Settings copies them where
+SystemUI can read them and rewrites the document to the copied paths.
+
 
 ### Unlocking and waking
 
@@ -901,6 +1056,12 @@ of their own (10 to 15) need a build that has them; the other builds treat an un
 ## Status bar and battery
 
 The icons at the top of the screen and the battery.
+
+### Tap to scroll to the top
+
+| Key | Values | What |
+|---|---|---|
+| `system/kami_statusbar_scroll_top` | `0` off, `1` tap the clock, `2` tap anywhere on the status bar | The app below scrolls back to the top, as on an iPhone. Works in lists, web pages and Jetpack Compose apps; a chip or button on the status bar keeps its own tap. Settings > Status bar > Tap to scroll to the top |
 
 ### Status bar icons
 
@@ -1782,8 +1943,21 @@ Besides the keys of the Settings pages, a module may set these global keys:
 | `global/kami_upscaler` | `off`, `performance`, `balanced` or `sharp` |
 | `global/kami_upscaler_sharpness` | 0 to 100 |
 | `global/kami_framegen_quality` | 0 performance, 1 balanced, 2 quality |
+| `global/kami_display_profile` | `natural` (unchanged), `vivid`, `cinema` (slightly warm), `reading` (warm, softer colours), `custom` (the user's shared controls), `calibrated` (the result of the Calibrate for your eyes test, with its own fine-tune controls); Settings > Display > Darkmoon DisplayEngine |
 | `global/kami_sound_enabled` | `true` or `false` |
-| `global/kami_sound_preset_0`, `global/kami_sound_preset_1` | the preset of the speaker and of headphones: `flat`, `music`, `movie`, `game`, `voice` or `bass` |
+| `global/kami_sound_preset_0`, `global/kami_sound_preset_1` | the preset of the speaker and of headphones: `flat`, `music`, `movie`, `game`, `voice`, `bass`, `balanced`, `small_speaker` (bass a small speaker can play: the low notes are heard through their overtones), `late_night` (quiet parts louder, loud parts softer) or `warm` |
+
+Two more global keys belong to the user and are not module knobs: `kami_battery_monitor` (`1` or `0`, the silent battery monitor notification: screen on and off time, drain per hour, deep sleep, and the charging view) and
+`kami_wakelock_block` (the app wake locks that are never held: `tag`, `package:tag` or `package`, separated by `|`; system, radio, audio and call wake locks are always left alone).
+The monitor also writes `kami_battery_snapshot` (the numbers as JSON, for the tile) and `kami_battery_charges` (the last 20 charges), and reads `kami_battery_monitor_reset` and `kami_battery_charges_clear` (counters the page raises); nothing else should write those.
+
+Display profiles leave Night Light, Extra dim and the screen colour mode alone. Per-app display rules and Custom controls stay with the user; a legacy writer of `secure/display_engine_mode` takes over from the module's default profile.
+
+Darkmoon DisplayEngine also holds the device's offered screen colour modes. Custom user settings are Global integers: `kami_display_warmth` 0–100 (default 0), `kami_display_tint` -50–50 (default 0), `kami_display_saturation` 0–120 (default 100), `kami_display_red`, `kami_display_green`, `kami_display_blue` 80–100 percent (default 100), and `kami_display_hue` -30–30 degrees (default 0). The Calibrated profile keeps its own copy under the same ranges and defaults, prefixed `kami_display_cal_` (`kami_display_cal_warmth`, `_tint`, `_saturation`, `_red`, `_green`, `_blue`, `_hue`); the page's fine-tune sliders write those when Calibrated is selected. `kami_display_apps` holds package-to-profile rules. These are user preferences, not module knobs; only `global/kami_display_profile` is a display knob. Channel balance only reduces gains; stronger saturation or hue changes can still clip already-colourful content.
+
+The sound engine itself (Settings > KamiOS Extensions > Sound engine) also has, per speaker and headphones: voice clarity, warmth, a room (space and reverb), a volume leveler, a quiet listening boost (more bass and treble at low volume), and **the sound of a room or speaker**: a WAV impulse response (any rate, mono or stereo, up to 2 s are used) mixed in with its own slider. **Per-app sound** gives an app its own speaker and headphone sound while it plays. These are the user's own choices, not module knobs.
+
+`global/kami_sound_apps` (per-app sound) and `global/kami_sound_ir` (the impulse response WAV, "Sound of a room or speaker") belong to the user: a module does not set them. The impulse response is a WAV file (PCM 16/24/32 bit or float, mono or stereo, any rate, cut to 2 s); it only sounds when the profile's room mix is above 0.
 
 The resolution, the kernel, the performance profile and the list of frame generation games stay with the user.
 
